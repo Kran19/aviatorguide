@@ -19,5 +19,5 @@ jobs:
           script: |
             cd /home/stzk/nextblog
             git pull origin main
-            docker-compose up -d --build
-            docker-compose exec -T app sh -c "npx prisma db push --accept-data-loss"
+            docker compose up -d --build
+            docker compose exec -T app sh -c "npx prisma db push --accept-data-loss"
