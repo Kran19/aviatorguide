@@ -28,7 +28,6 @@ export default async function Home() {
       {/* Hero Section with 3D/Glassmorphism Vibe */}
       <section className="relative overflow-hidden w-full pt-24 pb-32">
         {/* Animated Background Gradients */}
-        <div className="absolute inset-0 bg-background/90 -z-10" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/40 dark:bg-primary/20 rounded-full blur-[100px] -z-20 pointer-events-none animate-pulse duration-10000" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/30 dark:bg-blue-500/10 rounded-full blur-[80px] -z-20 pointer-events-none" />
         
