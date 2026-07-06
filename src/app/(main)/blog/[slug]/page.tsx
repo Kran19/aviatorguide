@@ -42,7 +42,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <article className="prose prose-lg dark:prose-invert max-w-none">
         <div className="mb-8">
           <div className="flex gap-2 mb-4">
-            {post.categories.map(cat => (
+            {post.categories.map((cat: any) => (
               <span key={cat.id} className="text-sm font-semibold text-primary uppercase tracking-wider">
                 {cat.name}
               </span>

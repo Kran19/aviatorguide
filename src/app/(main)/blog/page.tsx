@@ -27,7 +27,7 @@ export default async function BlogPage() {
         </p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => (
+          {posts.map((post: any) => (
             <Card key={post.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
               {post.featuredImage && (
                 <div className="w-full h-48 overflow-hidden bg-muted">
@@ -40,7 +40,7 @@ export default async function BlogPage() {
               )}
               <CardHeader>
                 <div className="flex gap-2 mb-2">
-                  {post.categories.map(cat => (
+                  {post.categories.map((cat: any) => (
                     <span key={cat.id} className="text-xs font-semibold text-primary uppercase tracking-wider">
                       {cat.name}
                     </span>

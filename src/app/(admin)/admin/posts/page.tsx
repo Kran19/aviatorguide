@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma"
+
+export const dynamic = 'force-dynamic';
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
@@ -39,7 +41,7 @@ export default async function AdminPostsPage() {
                 </td>
               </tr>
             ) : (
-              posts.map((post) => (
+              posts.map((post: any) => (
                 <tr key={post.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 font-medium">{post.title}</td>
                   <td className="px-4 py-3">
