@@ -36,7 +36,7 @@ export default async function CategoriesPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((cat) => (
+            {categories.map((cat: any) => (
               <Link href={`/categories/${cat.slug}`} key={cat.id} className="group">
                 <div className="p-8 h-full rounded-2xl border border-border/50 bg-card hover:bg-muted/50 hover:border-primary/50 transition-all duration-300 transform perspective-1000 hover:rotate-y-2 hover:-translate-y-2 shadow-sm hover:shadow-xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
