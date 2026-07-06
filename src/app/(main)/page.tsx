@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { HeroGrid } from "@/components/ui/hero-grid"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { ScrambleText } from "@/components/ui/scramble-text"
@@ -28,9 +29,7 @@ export default async function Home() {
     <div className="flex flex-col w-full min-h-screen">
       {/* Hero Section with 3D/Glassmorphism Vibe */}
       <section className="relative overflow-hidden w-full pt-24 pb-32">
-        {/* Animated Background Gradients */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/40 dark:bg-primary/20 rounded-full blur-[100px] -z-20 pointer-events-none animate-pulse duration-10000" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/30 dark:bg-blue-500/10 rounded-full blur-[80px] -z-20 pointer-events-none" />
+        <HeroGrid />
         
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="animate-in fade-in slide-in-from-top-4 duration-700 delay-100 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8 backdrop-blur-md">
