@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import Link from "next/link"
 import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut, Image as ImageIcon } from "lucide-react"
-import { auth } from "@/lib/auth"
+import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
