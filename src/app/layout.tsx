@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const inter = Inter({
+const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${outfit.variable} antialiased`}>
       <body className="min-h-screen flex flex-col bg-background font-sans">
         <ThemeProvider
           attribute="class"
