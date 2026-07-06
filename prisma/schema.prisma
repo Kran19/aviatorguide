@@ -179,3 +179,12 @@ model ContactMessage {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model GlobalSettings {
+  id              String   @id @default("global")
+  siteName        String   @default("betsetgo.xyz")
+  seoTitle        String?
+  seoDescription  String?  @db.Text
+  seoKeywords     String?
+  updatedAt       DateTime @updatedAt
+}
