@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import Link from "next/link"
-import { FileText, LayoutDashboard, Tags, Users, Settings, User } from "lucide-react"
+import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut } from "lucide-react"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
@@ -48,6 +48,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <User className="h-4 w-4" />
               Profile
             </Link>
+            <div className="pt-4 mt-4 border-t">
+              <form action={async () => {
+                "use server"
+                await signOut({ redirectTo: "/" })
+              }}>
+                <button type="submit" className="flex w-full items-center gap-3 rounded-lg px-4 py-2 hover:bg-destructive/10 text-destructive text-sm font-medium transition-colors cursor-pointer">
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </button>
+              </form>
+            </div>
           </nav>
         </div>
       </aside>
@@ -78,6 +89,15 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <User className="h-5 w-5" />
           <span className="text-[10px] font-medium">Profile</span>
         </Link>
+        <form action={async () => {
+          "use server"
+          await signOut({ redirectTo: "/" })
+        }}>
+          <button type="submit" className="flex flex-col items-center gap-1 p-2 text-destructive hover:text-destructive/80 transition-colors">
+            <LogOut className="h-5 w-5" />
+            <span className="text-[10px] font-medium">Logout</span>
+          </button>
+        </form>
       </nav>
 
       <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
