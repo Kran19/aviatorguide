@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import Link from "next/link"
-import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut } from "lucide-react"
+import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut, Image as ImageIcon } from "lucide-react"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
@@ -27,6 +27,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <Link href="/admin/posts" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
               <FileText className="h-4 w-4" />
               Posts
+            </Link>
+            <Link href="/admin/media" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
+              <ImageIcon className="h-4 w-4" />
+              Media
             </Link>
             {isAdmin && (
               <>
@@ -72,6 +76,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <Link href="/admin/posts" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
           <FileText className="h-5 w-5" />
           <span className="text-[10px] font-medium">Posts</span>
+        </Link>
+        <Link href="/admin/media" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+          <ImageIcon className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Media</span>
         </Link>
         {isAdmin && (
           <>
