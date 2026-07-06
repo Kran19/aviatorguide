@@ -4,6 +4,12 @@ import { HeroGrid } from "@/components/ui/hero-grid"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { ScrambleText } from "@/components/ui/scramble-text"
+import { Orbitron } from 'next/font/google'
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  weight: ['900'],
+})
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +42,7 @@ export default async function Home() {
             Welcome to {siteName} 2.0
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-top-12 duration-1000">
+          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-top-12 duration-1000 ${orbitron.className}`}>
             <ScrambleText text="Level Up Your" /> <br className="hidden md:block"/>
             <ScrambleText text="Gaming Experience." className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x inline-block" />
           </h1>
