@@ -25,7 +25,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://betsetgo_user:${POSTGRES_PASSWORD:-betsetgo_password}@db:5432/betsetgo_db?schema=public
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-your-super-secret-key-change-in-production}
+      - AUTH_SECRET=${AUTH_SECRET:-your-super-secret-key-change-in-production}
     depends_on:
       - db
     networks:
