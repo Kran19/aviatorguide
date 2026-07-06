@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
-import { FallingAlphabets } from "@/components/ui/falling-alphabets"
+import { ScrambleText } from "@/components/ui/scramble-text"
 
 export const dynamic = 'force-dynamic';
 
@@ -29,20 +29,17 @@ export default async function Home() {
       {/* Hero Section with 3D/Glassmorphism Vibe */}
       <section className="relative overflow-hidden w-full pt-24 pb-32">
         {/* Animated Background Gradients */}
-        <FallingAlphabets />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/40 dark:bg-primary/20 rounded-full blur-[100px] -z-20 pointer-events-none animate-pulse duration-10000" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/30 dark:bg-blue-500/10 rounded-full blur-[80px] -z-20 pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto px-6 text-center animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="animate-in fade-in slide-in-from-top-4 duration-700 delay-100 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8 backdrop-blur-md">
             Welcome to {siteName} 2.0
           </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl">
-            Level Up Your <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x">
-              Gaming Experience.
-            </span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-top-12 duration-1000">
+            <ScrambleText text="Level Up Your" /> <br className="hidden md:block"/>
+            <ScrambleText text="Gaming Experience." className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x inline-block" />
           </h1>
           
           <p className="mt-8 text-xl text-muted-foreground md:text-2xl text-balance max-w-3xl mx-auto">
