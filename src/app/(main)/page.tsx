@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const settings = await prisma.globalSettings.findUnique({
     where: { id: "global" }
