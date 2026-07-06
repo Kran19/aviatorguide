@@ -73,7 +73,7 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {latestPosts.map((post) => (
+            {latestPosts.map((post: any) => (
               <Link href={`/blog/${post.slug}`} key={post.id} className="group h-full">
                 <article className="flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl transition-all duration-300 transform perspective-1000 hover:rotate-y-2 hover:-translate-y-2 group-hover:border-primary/50 relative">
                   {/* Glassmorphism shine effect */}

@@ -45,7 +45,7 @@ export default async function UsersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {users.map((user: any) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name || "Unknown"}</TableCell>
                 <TableCell>{user.email}</TableCell>
