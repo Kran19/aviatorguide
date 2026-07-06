@@ -45,8 +45,12 @@ export default async function AdminPostsPage() {
                 <tr key={post.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 font-medium">{post.title}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${post.published ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                      {post.published ? 'Published' : 'Draft'}
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                      ${post.status === 'PUBLISHED' ? 'bg-primary/10 text-primary' : 
+                        post.status === 'PENDING_APPROVAL' ? 'bg-yellow-500/10 text-yellow-500' :
+                        post.status === 'REJECTED' ? 'bg-destructive/10 text-destructive' :
+                        'bg-muted text-muted-foreground'}`}>
+                      {post.status.replace("_", " ")}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{post.author?.name || 'Unknown'}</td>

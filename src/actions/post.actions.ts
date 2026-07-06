@@ -20,7 +20,7 @@ export async function createPostAction(formData: FormData) {
       content,
       excerpt,
       authorId: session.user.id,
-      published: false,
+      status: 'DRAFT',
     }
   })
 

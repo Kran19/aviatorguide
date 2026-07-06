@@ -17,7 +17,18 @@ export async function createPost(formData: FormData) {
   const excerpt = formData.get("excerpt") as string
   const content = formData.get("content") as string
   const featuredImage = formData.get("featuredImage") as string
-  const published = formData.get("published") === "on"
+  const metaTitle = formData.get("metaTitle") as string
+  const metaDescription = formData.get("metaDescription") as string
+  const focusKeyword = formData.get("focusKeyword") as string
+  
+  // Handle status/approval logic
+  let status = "DRAFT"
+  if (session.user.role === "ADMIN") {
+    status = formData.get("status") as string || "DRAFT"
+  } else {
+    // Authors can only submit drafts or pending
+    status = formData.get("submitForApproval") === "true" ? "PENDING_APPROVAL" : "DRAFT"
+  }
 
   if (!title || !slug || !content) {
     throw new Error("Missing required fields")
@@ -30,7 +41,10 @@ export async function createPost(formData: FormData) {
       excerpt,
       content,
       featuredImage: featuredImage || null,
-      published,
+      status: status as any,
+      metaTitle: metaTitle || null,
+      metaDescription: metaDescription || null,
+      focusKeyword: focusKeyword || null,
       authorId: session.user.id,
     },
   })
@@ -43,7 +57,7 @@ export async function createPost(formData: FormData) {
 export async function updatePost(id: string, formData: FormData) {
   const session = await auth()
   
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
+  if (!session?.user?.id || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
     throw new Error("Unauthorized")
   }
 
@@ -52,7 +66,35 @@ export async function updatePost(id: string, formData: FormData) {
   const excerpt = formData.get("excerpt") as string
   const content = formData.get("content") as string
   const featuredImage = formData.get("featuredImage") as string
-  const published = formData.get("published") === "on"
+  const metaTitle = formData.get("metaTitle") as string
+  const metaDescription = formData.get("metaDescription") as string
+  const focusKeyword = formData.get("focusKeyword") as string
+  const adminRemarks = formData.get("adminRemarks") as string
+
+  // Handle status/approval logic
+  let status = "DRAFT"
+  let dataToUpdate: any = {
+    title,
+    slug,
+    excerpt,
+    content,
+    featuredImage: featuredImage || null,
+    metaTitle: metaTitle || null,
+    metaDescription: metaDescription || null,
+    focusKeyword: focusKeyword || null,
+  }
+
+  if (session.user.role === "ADMIN") {
+    status = formData.get("status") as string || "DRAFT"
+    dataToUpdate.status = status as any
+    if (adminRemarks !== undefined) {
+      dataToUpdate.adminRemarks = adminRemarks
+    }
+  } else {
+    // Authors can only submit drafts or pending, and can't edit adminRemarks
+    status = formData.get("submitForApproval") === "true" ? "PENDING_APPROVAL" : "DRAFT"
+    dataToUpdate.status = status as any
+  }
 
   if (!title || !slug || !content) {
     throw new Error("Missing required fields")
@@ -60,14 +102,7 @@ export async function updatePost(id: string, formData: FormData) {
 
   await prisma.post.update({
     where: { id },
-    data: {
-      title,
-      slug,
-      excerpt,
-      content,
-      featuredImage: featuredImage || null,
-      published,
-    },
+    data: dataToUpdate,
   })
 
   revalidatePath("/admin/posts")

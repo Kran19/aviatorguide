@@ -30,6 +30,8 @@ services:
       - db
     networks:
       - app-network
+    volumes:
+      - uploads_data:/app/public/uploads
 
 networks:
   app-network:
@@ -37,3 +39,4 @@ networks:
 
 volumes:
   db_data:
+  uploads_data:
