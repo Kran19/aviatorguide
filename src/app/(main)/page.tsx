@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
+import { FallingAlphabets } from "@/components/ui/falling-alphabets"
 
 export const dynamic = 'force-dynamic';
 
@@ -28,6 +29,7 @@ export default async function Home() {
       {/* Hero Section with 3D/Glassmorphism Vibe */}
       <section className="relative overflow-hidden w-full pt-24 pb-32">
         {/* Animated Background Gradients */}
+        <FallingAlphabets />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/40 dark:bg-primary/20 rounded-full blur-[100px] -z-20 pointer-events-none animate-pulse duration-10000" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/30 dark:bg-blue-500/10 rounded-full blur-[80px] -z-20 pointer-events-none" />
         
