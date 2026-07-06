@@ -20,4 +20,4 @@ jobs:
             cd /home/stzk/nextblog
             git pull origin main
             docker-compose up -d --build
-            docker run --rm --network nextblog_app-network --env-file .env -v $(pwd):/app -w /app node:22-alpine sh -c "npm install -g pnpm@9 && pnpm install && npx prisma db push"
+            docker-compose exec -T app sh -c "npx prisma db push --accept-data-loss"
