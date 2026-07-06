@@ -22,10 +22,14 @@ services:
     restart: always
     ports:
       - "127.0.0.1:3000:3000"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://betsetgo_user:${POSTGRES_PASSWORD:-betsetgo_password}@db:5432/betsetgo_db?schema=public
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - AUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
       - AUTH_SECRET=${AUTH_SECRET:-your-super-secret-key-change-in-production}
+      - AUTH_TRUST_HOST=true
     depends_on:
       - db
     networks:
