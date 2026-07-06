@@ -13,8 +13,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const isAdmin = session.user.role === "ADMIN"
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 border-r bg-muted/30">
+    <div className="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0">
+      <aside className="hidden md:block w-64 border-r bg-muted/30">
         <div className="sticky top-16 p-4">
           <div className="mb-8 px-4 font-bold text-sm tracking-widest text-muted-foreground uppercase">
             {isAdmin ? "Super Admin" : "Author Panel"}
@@ -51,7 +51,36 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           </nav>
         </div>
       </aside>
-      <main className="flex-1 p-8">
+      
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t bg-background/95 backdrop-blur-md z-50 flex items-center justify-around p-3 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] dark:shadow-[0_-5px_15px_rgba(0,0,0,0.2)]">
+        <Link href="/admin" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+          <LayoutDashboard className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Overview</span>
+        </Link>
+        <Link href="/admin/posts" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+          <FileText className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Posts</span>
+        </Link>
+        {isAdmin && (
+          <>
+            <Link href="/admin/categories" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+              <Tags className="h-5 w-5" />
+              <span className="text-[10px] font-medium">Categories</span>
+            </Link>
+            <Link href="/admin/settings" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+              <Settings className="h-5 w-5" />
+              <span className="text-[10px] font-medium">Settings</span>
+            </Link>
+          </>
+        )}
+        <Link href="/admin/profile" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+          <User className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Profile</span>
+        </Link>
+      </nav>
+
+      <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
         <div className="mx-auto max-w-5xl">
           {children}
         </div>
