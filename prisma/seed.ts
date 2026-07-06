@@ -1,4 +1,5 @@
 import { prisma } from "../src/lib/prisma"
+import { PostStatus } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
 async function main() {
@@ -39,7 +40,7 @@ async function main() {
       excerpt: "How Riot's tactical shooter took over the competitive gaming scene.",
       content: "Valorant has seen unprecedented growth since its release in 2020. The combination of precise gunplay and unique agent abilities has created a compelling viewing experience for eSports fans worldwide. The VCT (Valorant Champions Tour) has consistently broken viewership records, proving that tactical shooters still have a massive place in modern gaming.",
       featuredImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED',
+      status: PostStatus.PUBLISHED,
       categoryId: categories[0].id,
     },
     {
@@ -48,7 +49,7 @@ async function main() {
       excerpt: "Get ready for a massive year in role-playing games. Here are our top picks.",
       content: "2026 is shaping up to be a legendary year for RPG fans. With massive open worlds, deep narrative choices, and next-gen graphics, here are the top 5 games you need to look out for:\n\n1. Cyber-Odyssey\n2. The Elder Scrolls VI\n3. Chrono Rebirth\n4. Space Explorers\n5. Fantasy Kingdom V",
       featuredImage: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED',
+      status: PostStatus.PUBLISHED,
       categoryId: categories[1].id,
     },
     {
@@ -57,7 +58,7 @@ async function main() {
       excerpt: "Fast, brutal, and incredibly satisfying. Our thoughts on the latest Doom iteration.",
       content: "The latest Doom title takes everything we loved about the 2016 reboot and dials it up to eleven. The pacing is frantic, the music is heavy, and the demon-slaying action has never felt better. It's a masterclass in FPS design that keeps you in the \"fun zone\" constantly.",
       featuredImage: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED',
+      status: PostStatus.PUBLISHED,
       categoryId: categories[3].id,
     },
     {
@@ -66,7 +67,7 @@ async function main() {
       excerpt: "Practical tips and training routines to rank up in Counter-Strike 2.",
       content: "Aiming in CS2 isn't just about reflexes; it's about crosshair placement, movement, and map knowledge. In this guide, we break down the best workshop maps for practice and the daily routines used by professional players to keep their aim crisp.",
       featuredImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED',
+      status: PostStatus.PUBLISHED,
       categoryId: categories[2].id,
     },
     {
@@ -75,7 +76,7 @@ async function main() {
       excerpt: "How small studios are pushing the boundaries of creativity and game design.",
       content: "Over the last decade, indie games have transformed from niche passion projects to industry-leading masterpieces. Games like Hollow Knight, Hades, and Celeste have proven that you don't need a massive AAA budget to deliver a profound and polished gaming experience.",
       featuredImage: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED',
+      status: PostStatus.PUBLISHED,
       categoryId: categories[1].id,
     },
   ]
