@@ -8,7 +8,7 @@ import Image from "next/image"
 
 interface MediaLibraryModalProps {
   onInsert: (url: string) => void
-  trigger?: React.ReactNode
+  trigger?: React.ReactElement
 }
 
 interface MediaFile {
