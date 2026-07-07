@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      url: `/uploads/${filename}` 
+      url: `/api/media/${filename}` 
     })
 
   } catch (error: any) {

@@ -3,13 +3,13 @@
 import * as React from "react"
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
+import { CustomImage } from './CustomImage'
 import LinkExtension from '@tiptap/extension-link'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 
 interface RichTextEditorProps {
@@ -37,7 +37,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
   }, [editor])
 
   return (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-border/50 bg-muted/50 rounded-t-md items-center">
+    <div className="flex flex-wrap gap-1 p-2 border-b border-border/50 bg-muted/95 backdrop-blur z-10 sticky top-0 rounded-t-xl items-center">
       <Button
         type="button"
         variant="ghost"
@@ -87,6 +87,16 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        className={editor.isActive('paragraph') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Paragraph"
+      >
+        <Pilcrow className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
@@ -109,6 +119,33 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading3 className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+      >
+        <Heading4 className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+        className={editor.isActive('heading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+      >
+        <Heading5 className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+        className={editor.isActive('heading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+      >
+        <Heading6 className="h-4 w-4" />
       </Button>
 
       <div className="w-px h-6 bg-border mx-1" />
@@ -210,7 +247,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image,
+      CustomImage,
       TextStyle,
       Color,
       Highlight.configure({ multicolor: true }),
@@ -224,7 +261,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     content,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto focus:outline-none min-h-[500px] p-6 bg-background max-w-none prose-p:leading-relaxed prose-headings:font-bold prose-img:rounded-xl prose-a:text-primary',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-relaxed prose-headings:font-bold prose-img:rounded-xl prose-a:text-primary',
       },
     },
     onUpdate: ({ editor }) => {
@@ -242,9 +279,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   }, [editor])
 
   return (
-    <div className="border border-border/60 rounded-xl overflow-hidden bg-background shadow-sm hover:border-primary/30 transition-colors duration-300">
+    <div className="border border-border/60 rounded-xl bg-background shadow-sm hover:border-primary/30 transition-colors duration-300 relative w-full h-full flex flex-col">
       <MenuBar editor={editor} onImageClick={onImageClick} />
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="flex-1 w-full" />
     </div>
   )
 }
