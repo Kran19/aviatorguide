@@ -177,8 +177,8 @@ export default function EditPostForm({ post, userRole }: { post: Post, userRole:
                 <input
                   id="featuredImage"
                   name="featuredImage"
-                  type="url"
-                  placeholder="https://..."
+                  type="text"
+                  placeholder="https://... or /uploads/..."
                   value={featuredImageUrl}
                   onChange={(e) => setFeaturedImageUrl(e.target.value)}
                   className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
