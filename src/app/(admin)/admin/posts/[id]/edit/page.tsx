@@ -10,7 +10,11 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   const session = await auth()
   const post = await prisma.post.findUnique({
     where: { id: resolvedParams.id },
-    include: { categories: true }
+    include: { categories: true, tags: true }
+  })
+
+  const allCategories = await prisma.category.findMany({
+    orderBy: { name: 'asc' }
   })
 
   if (!post) {
@@ -19,7 +23,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="container mx-auto py-10">
-      <EditPostForm post={post} userRole={session?.user?.role || "USER"} />
+      <EditPostForm post={post} userRole={session?.user?.role || "USER"} categories={allCategories} />
     </div>
   )
 }

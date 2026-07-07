@@ -20,10 +20,11 @@ export async function createPost(formData: FormData) {
   const metaTitle = formData.get("metaTitle") as string
   const metaDescription = formData.get("metaDescription") as string
   const focusKeyword = formData.get("focusKeyword") as string
-  const categoriesStr = formData.get("categories") as string
+  const categoryId = formData.get("categoryId") as string
+  const tagsStr = formData.get("tags") as string
   
-  const categoryNames = categoriesStr 
-    ? categoriesStr.split(",").map(c => c.trim()).filter(Boolean) 
+  const tagNames = tagsStr 
+    ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
     : []
   
   // Handle status/approval logic
@@ -51,8 +52,11 @@ export async function createPost(formData: FormData) {
       metaDescription: metaDescription || null,
       focusKeyword: focusKeyword || null,
       authorId: session.user.id,
-      categories: {
-        connectOrCreate: categoryNames.map(name => ({
+      categories: categoryId ? {
+        connect: { id: categoryId }
+      } : undefined,
+      tags: {
+        connectOrCreate: tagNames.map(name => ({
           where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
           create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
         }))
@@ -88,10 +92,11 @@ export async function updatePost(id: string, formData: FormData) {
   const metaDescription = formData.get("metaDescription") as string
   const focusKeyword = formData.get("focusKeyword") as string
   const adminRemarks = formData.get("adminRemarks") as string
-  const categoriesStr = formData.get("categories") as string
+  const categoryId = formData.get("categoryId") as string
+  const tagsStr = formData.get("tags") as string
   
-  const categoryNames = categoriesStr 
-    ? categoriesStr.split(",").map(c => c.trim()).filter(Boolean) 
+  const tagNames = tagsStr 
+    ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
     : []
 
   // Handle status/approval logic
@@ -105,9 +110,12 @@ export async function updatePost(id: string, formData: FormData) {
     metaTitle: metaTitle || null,
     metaDescription: metaDescription || null,
     focusKeyword: focusKeyword || null,
-    categories: {
+    categories: categoryId ? {
+      set: [{ id: categoryId }]
+    } : undefined,
+    tags: {
       set: [], // Clear existing connections
-      connectOrCreate: categoryNames.map(name => ({
+      connectOrCreate: tagNames.map(name => ({
         where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
         create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
       }))

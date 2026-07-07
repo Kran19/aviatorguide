@@ -6,14 +6,28 @@ import { Button } from "@/components/ui/button"
 
 import { auth } from "@/lib/auth"
 
-export default async function AdminPostsPage() {
+export default async function AdminPostsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  const resolvedParams = await searchParams;
   const session = await auth()
   
-  const posts = await prisma.post.findMany({
-    where: session?.user?.role === "AUTHOR" ? { authorId: session.user.id } : undefined,
-    orderBy: { createdAt: 'desc' },
-    include: { author: true }
-  })
+  const page = Number(resolvedParams.page) || 1
+  const limit = 10
+  const skip = (page - 1) * limit
+
+  const whereCondition = session?.user?.role === "AUTHOR" ? { authorId: session.user.id } : undefined
+
+  const [posts, totalCount] = await Promise.all([
+    prisma.post.findMany({
+      where: whereCondition,
+      orderBy: { createdAt: 'desc' },
+      include: { author: true },
+      skip,
+      take: limit
+    }),
+    prisma.post.count({ where: whereCondition })
+  ])
+  
+  const totalPages = Math.ceil(totalCount / limit)
 
   return (
     <div className="space-y-6">
@@ -70,6 +84,19 @@ export default async function AdminPostsPage() {
             )}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-between items-center pt-4">
+        <p className="text-sm text-muted-foreground">
+          Showing {skip + 1} to {Math.min(skip + limit, totalCount)} of {totalCount} posts
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" disabled={page <= 1} asChild={page > 1}>
+            {page > 1 ? <Link href={`/admin/posts?page=${page - 1}`}>Previous</Link> : <span>Previous</span>}
+          </Button>
+          <Button variant="outline" size="sm" disabled={page >= totalPages} asChild={page < totalPages}>
+            {page < totalPages ? <Link href={`/admin/posts?page=${page + 1}`}>Next</Link> : <span>Next</span>}
+          </Button>
+        </div>
       </div>
     </div>
   )

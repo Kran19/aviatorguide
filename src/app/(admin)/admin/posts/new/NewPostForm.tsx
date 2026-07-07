@@ -8,7 +8,7 @@ import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
 
-export default function NewPostForm({ userRole }: { userRole: string }) {
+export default function NewPostForm({ userRole, categories }: { userRole: string, categories: any[] }) {
   const [isPending, startTransition] = React.useTransition()
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
@@ -64,10 +64,28 @@ export default function NewPostForm({ userRole }: { userRole: string }) {
           </div>
 
           <div className="space-y-3">
-            <label className="text-sm font-semibold text-foreground/90" htmlFor="categories">Categories (comma separated)</label>
+            <label className="text-sm font-semibold text-foreground/90" htmlFor="categoryId">Category</label>
+            <select
+              id="categoryId"
+              name="categoryId"
+              required
+              className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background cursor-pointer"
+            >
+              <option value="" disabled selected>Select a category...</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              ))}
+            </select>
+            {categories.length === 0 && (
+              <p className="text-xs text-destructive">No categories found. Please create a category first.</p>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-foreground/90" htmlFor="tags">Tags (comma separated)</label>
             <input
-              id="categories"
-              name="categories"
+              id="tags"
+              name="tags"
               type="text"
               placeholder="e.g. eSports, Reviews, Strategy"
               className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background"
