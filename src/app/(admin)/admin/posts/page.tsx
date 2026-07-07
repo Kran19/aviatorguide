@@ -4,8 +4,13 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
+import { auth } from "@/lib/auth"
+
 export default async function AdminPostsPage() {
+  const session = await auth()
+  
   const posts = await prisma.post.findMany({
+    where: session?.user?.role === "AUTHOR" ? { authorId: session.user.id } : undefined,
     orderBy: { createdAt: 'desc' },
     include: { author: true }
   })

@@ -61,6 +61,13 @@ export async function updatePost(id: string, formData: FormData) {
     throw new Error("Unauthorized")
   }
 
+  if (session.user.role === "AUTHOR") {
+    const existingPost = await prisma.post.findUnique({ where: { id } })
+    if (existingPost?.authorId !== session.user.id) {
+      throw new Error("Unauthorized: You can only edit your own posts.")
+    }
+  }
+
   const title = formData.get("title") as string
   const slug = formData.get("slug") as string
   const excerpt = formData.get("excerpt") as string

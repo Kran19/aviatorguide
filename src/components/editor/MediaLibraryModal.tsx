@@ -20,7 +20,7 @@ export function MediaLibraryModal({ onInsert, trigger }: MediaLibraryModalProps)
   const [isOpen, setIsOpen] = React.useState(false)
   const [isUploading, setIsUploading] = React.useState(false)
   const [urlInput, setUrlInput] = React.useState("")
-  const [tab, setTab] = React.useState<"upload" | "url" | "gallery">("upload")
+  const [tab, setTab] = React.useState<"upload" | "url" | "gallery">("gallery")
   const [error, setError] = React.useState("")
   
   const [files, setFiles] = React.useState<MediaFile[]>([])
@@ -94,14 +94,11 @@ export function MediaLibraryModal({ onInsert, trigger }: MediaLibraryModalProps)
       setIsOpen(open)
       if (!open) setError("")
     }}>
-      {/* @ts-expect-error */}
-      <DialogTrigger asChild>
-        {trigger || (
-          <Button type="button" variant="outline" size="sm" className="gap-2">
-            <ImageIcon className="h-4 w-4" /> Add Image
-          </Button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger render={trigger || (
+        <Button type="button" variant="outline" size="sm" className="gap-2">
+          <ImageIcon className="h-4 w-4" /> Add Image
+        </Button>
+      )} />
       <DialogContent className="sm:max-w-xl max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Insert Image</DialogTitle>
