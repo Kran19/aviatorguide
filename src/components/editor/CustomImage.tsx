@@ -164,7 +164,7 @@ export const CustomImage = Node.create({
     if (HTMLAttributes.caption) {
       return [
         'figure', 
-        { style: \`width: \${HTMLAttributes.width}\` }, 
+        { style: `width: ${HTMLAttributes.width}` }, 
         ['img', mergeAttributes(HTMLAttributes, { style: null, class: 'w-full' })],
         ['figcaption', { class: 'text-center text-sm text-muted-foreground mt-2 italic' }, HTMLAttributes.caption]
       ]
@@ -177,9 +177,10 @@ export const CustomImage = Node.create({
     return ReactNodeViewRenderer(ImageNodeView)
   },
 
+  // @ts-ignore
   addCommands() {
     return {
-      setImage: (options) => ({ commands }) => {
+      setImage: (options: { src: string, alt?: string, title?: string, caption?: string, width?: string }) => ({ commands }: any) => {
         return commands.insertContent({
           type: this.name,
           attrs: options,

@@ -203,7 +203,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
       <div className="w-px h-6 bg-border mx-1" />
 
       <MediaLibraryModal 
-        onInsert={(url) => editor.chain().focus().setImage({ src: url }).run()}
+        onInsert={(url) => (editor.chain().focus() as any).setImage({ src: url }).run()}
         trigger={
           <Button
             type="button"
@@ -273,7 +273,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     if (editor) {
       // @ts-ignore
       window.insertImageIntoEditor = (url: string) => {
-        editor.chain().focus().setImage({ src: url }).run()
+        (editor.chain().focus() as any).setImage({ src: url }).run()
       }
     }
   }, [editor])
