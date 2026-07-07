@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { deleteCategory } from "@/actions/category.actions"
-import NewCategoryModal from "./NewCategoryModal"
+import NewCategoryModal from "./new-category-modal"
 
 export default async function CategoriesPage() {
   const session = await auth()

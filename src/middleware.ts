@@ -6,15 +6,20 @@ export default auth((req) => {
   const isAdminRoute = req.nextUrl.pathname.startsWith('/admin')
   const isDashboardRoute = req.nextUrl.pathname.startsWith('/dashboard')
   
+  // Enforce login for all admin/dashboard routes
   if ((isAdminRoute || isDashboardRoute) && !req.nextUrl.pathname.startsWith('/admin/login')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/admin/login', req.nextUrl))
     }
   }
   
-  if (isAdminRoute && !req.nextUrl.pathname.startsWith('/admin/login')) {
+  // Restrict authors from super-admin only routes
+  const superAdminRoutes = ['/admin/categories', '/admin/users', '/admin/settings']
+  const isSuperAdminRoute = superAdminRoutes.some(route => req.nextUrl.pathname.startsWith(route))
+  
+  if (isSuperAdminRoute) {
     if (req.auth?.user?.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/', req.nextUrl))
+      return NextResponse.redirect(new URL('/admin', req.nextUrl))
     }
   }
   
