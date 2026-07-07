@@ -8,7 +8,7 @@ import { redirect } from "next/navigation"
 export async function createPost(formData: FormData) {
   const session = await auth()
   
-  if (!session?.user?.id || session.user.role !== "ADMIN") {
+  if (!session?.user?.id || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
     throw new Error("Unauthorized")
   }
 

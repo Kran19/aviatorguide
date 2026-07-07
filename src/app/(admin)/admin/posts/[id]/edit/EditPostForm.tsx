@@ -4,10 +4,9 @@ import * as React from "react"
 import { updatePost } from "@/app/actions/post"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowLeft, ImageIcon } from "lucide-react"
+import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
-import Image from "next/image"
 
 type Post = {
   id: string
@@ -140,7 +139,12 @@ export default function EditPostForm({ post, userRole }: { post: Post, userRole:
             )}
 
             <Button type="submit" size="lg" className="w-full rounded-xl text-md h-12 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 mt-4" disabled={isPending}>
-              {isPending ? "Saving..." : "Save Changes"}
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Saving...
+                </>
+              ) : "Save Changes"}
             </Button>
           </div>
 
@@ -152,7 +156,7 @@ export default function EditPostForm({ post, userRole }: { post: Post, userRole:
               
               {featuredImageUrl && (
                 <div className="relative w-full h-40 rounded-xl overflow-hidden border border-border bg-muted group">
-                  <Image src={featuredImageUrl} alt="Featured" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={featuredImageUrl} alt="Featured" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
               

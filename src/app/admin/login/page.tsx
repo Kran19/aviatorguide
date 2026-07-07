@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 
 export default function AdminLoginPage() {
   const [email, setEmail] = React.useState("")
@@ -88,7 +88,12 @@ export default function AdminLoginPage() {
           {error && <p className="text-sm text-destructive font-medium">{error}</p>}
           
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : "Sign in"}
           </Button>
         </form>
       </div>
