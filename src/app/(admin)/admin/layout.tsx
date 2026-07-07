@@ -3,6 +3,7 @@ import Link from "next/link"
 import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut, Image as ImageIcon } from "lucide-react"
 import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await auth()
@@ -16,8 +17,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     <div className="flex flex-col md:flex-row min-h-screen pb-20 md:pb-0">
       <aside className="hidden md:block w-64 border-r bg-muted/30">
         <div className="sticky top-16 p-4">
-          <div className="mb-8 px-4 font-bold text-sm tracking-widest text-muted-foreground uppercase">
-            {isAdmin ? "Super Admin" : "Author Panel"}
+          <div className="mb-8 px-4 flex justify-between items-center">
+            <span className="font-bold text-sm tracking-widest text-muted-foreground uppercase">
+              {isAdmin ? "Super Admin" : "Author Panel"}
+            </span>
+            <ThemeToggle />
           </div>
           <nav className="space-y-1">
             <Link href="/admin" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
@@ -106,6 +110,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <span className="text-[10px] font-medium">Logout</span>
           </button>
         </form>
+        <div className="p-2">
+          <ThemeToggle />
+        </div>
       </nav>
 
       <main className="flex-1 p-4 md:p-8 overflow-x-hidden">

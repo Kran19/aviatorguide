@@ -20,6 +20,7 @@ type Post = {
   metaTitle: string | null
   metaDescription: string | null
   focusKeyword: string | null
+  categories?: { name: string }[]
 }
 
 export default function EditPostForm({ post, userRole }: { post: Post, userRole: string }) {
@@ -76,6 +77,18 @@ export default function EditPostForm({ post, userRole }: { post: Post, userRole:
               name="excerpt"
               defaultValue={post.excerpt || ""}
               className="flex min-h-[100px] w-full rounded-xl border border-input bg-background/50 px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background resize-y"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-foreground/90" htmlFor="categories">Categories (comma separated)</label>
+            <input
+              id="categories"
+              name="categories"
+              type="text"
+              defaultValue={post.categories?.map(c => c.name).join(", ")}
+              placeholder="e.g. eSports, Reviews, Strategy"
+              className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background"
             />
           </div>
         </div>

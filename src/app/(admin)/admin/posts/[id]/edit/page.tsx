@@ -9,7 +9,8 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   const resolvedParams = await params;
   const session = await auth()
   const post = await prisma.post.findUnique({
-    where: { id: resolvedParams.id }
+    where: { id: resolvedParams.id },
+    include: { categories: true }
   })
 
   if (!post) {

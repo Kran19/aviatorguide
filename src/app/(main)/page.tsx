@@ -21,7 +21,7 @@ export default async function Home() {
   const latestPosts = await prisma.post.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { createdAt: "desc" },
-    take: 3,
+    take: 6,
     include: {
       categories: true,
       author: true
