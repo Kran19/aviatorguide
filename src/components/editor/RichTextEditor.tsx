@@ -5,8 +5,11 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import LinkExtension from '@tiptap/extension-link'
+import TextStyle from '@tiptap/extension-text-style'
+import { Color } from '@tiptap/extension-color'
+import Highlight from '@tiptap/extension-highlight'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 
 interface RichTextEditorProps {
@@ -140,6 +143,28 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
 
       <div className="w-px h-6 bg-border mx-1" />
 
+      <div className="flex items-center gap-1 relative">
+        <input
+          type="color"
+          onInput={(event) => editor.chain().focus().setColor((event.target as HTMLInputElement).value).run()}
+          value={editor.getAttributes('textStyle').color || '#000000'}
+          className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0"
+          title="Text Color"
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffcc00' }).run()}
+          className={editor.isActive('highlight') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+          title="Highlight Text"
+        >
+          <Highlighter className="h-4 w-4" />
+        </Button>
+      </div>
+
+      <div className="w-px h-6 bg-border mx-1" />
+
       <MediaLibraryModal 
         onInsert={(url) => editor.chain().focus().setImage({ src: url }).run()}
         trigger={
@@ -186,6 +211,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     extensions: [
       StarterKit,
       Image,
+      TextStyle,
+      Color,
+      Highlight.configure({ multicolor: true }),
       LinkExtension.configure({
         openOnClick: false,
         HTMLAttributes: {
