@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useEditor, EditorContent } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
 import StarterKit from '@tiptap/starter-kit'
 import { CustomImage } from './CustomImage'
 import LinkExtension from '@tiptap/extension-link'
@@ -37,7 +38,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
   }, [editor])
 
   return (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-border/50 bg-muted/95 backdrop-blur z-10 sticky top-0 rounded-t-xl items-center">
+    <div className="flex flex-wrap gap-1 p-2 border-b border-border/50 bg-muted/95 backdrop-blur z-40 sticky top-[64px] rounded-t-xl items-center shadow-sm">
       <Button
         type="button"
         variant="ghost"
@@ -281,6 +282,147 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   return (
     <div className="border border-border/60 rounded-xl bg-background shadow-sm hover:border-primary/30 transition-colors duration-300 relative w-full h-full flex flex-col">
       <MenuBar editor={editor} onImageClick={onImageClick} />
+      {editor && (
+        <BubbleMenu editor={editor} className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={editor.isActive('bold') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Bold"
+          >
+            <Bold className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={editor.isActive('italic') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Italic"
+          >
+            <Italic className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const previousUrl = editor.getAttributes('link').href
+              const url = window.prompt('URL', previousUrl)
+              if (url === null) return
+              if (url === '') {
+                editor.chain().focus().extendMarkRange('link').unsetLink().run()
+                return
+              }
+              editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+            }}
+            className={editor.isActive('link') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Link"
+          >
+            <LinkIcon className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().unsetLink().run()}
+            disabled={!editor.isActive('link')}
+            className="hover:bg-muted/80"
+            title="Remove Link"
+          >
+            <Unlink className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={editor.isActive('paragraph') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Paragraph"
+          >
+            <Pilcrow className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <Heading1 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <Heading2 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <Heading3 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <Heading4 className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={editor.isActive('bulletList') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleOrderedList().run()}
+            className={editor.isActive('orderedList') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <ListOrdered className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleBlockquote().run()}
+            className={editor.isActive('blockquote') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+          >
+            <Quote className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().toggleHighlight({ color: '#ffcc00' }).run()}
+            className={editor.isActive('highlight') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Highlight Text"
+          >
+            <Highlighter className="h-4 w-4" />
+          </Button>
+        </BubbleMenu>
+      )}
       <EditorContent editor={editor} className="flex-1 w-full" />
     </div>
   )

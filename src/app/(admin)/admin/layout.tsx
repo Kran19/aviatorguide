@@ -116,7 +116,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       </nav>
 
       <main className="flex-1 p-4 md:p-8 overflow-x-hidden">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-[1600px] w-full">
           {children}
         </div>
       </main>

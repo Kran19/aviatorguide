@@ -45,3 +45,42 @@ export async function deleteUser(id: string) {
   revalidatePath("/admin/users")
   return { success: true }
 }
+
+export async function updateUser(id: string, data: FormData) {
+  const session = await auth()
+  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized")
+
+  const name = data.get("name") as string
+  const email = data.get("email") as string
+  const password = data.get("password") as string
+  const role = data.get("role") as Role
+
+  if (!email || !name) throw new Error("Missing fields")
+
+  const existing = await prisma.user.findFirst({ 
+    where: { 
+      email,
+      NOT: { id }
+    } 
+  })
+  
+  if (existing) throw new Error("User with that email already exists")
+
+  const updateData: any = {
+    name,
+    email,
+    role: role || "AUTHOR",
+  }
+
+  if (password && password.trim() !== "") {
+    updateData.passwordHash = await bcrypt.hash(password, 10)
+  }
+
+  await prisma.user.update({
+    where: { id },
+    data: updateData
+  })
+
+  revalidatePath("/admin/users")
+  return { success: true }
+}

@@ -29,13 +29,12 @@ export default function NewCategoryModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* @ts-expect-error type-mismatch */}
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
           New Category
         </Button>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Category</DialogTitle>

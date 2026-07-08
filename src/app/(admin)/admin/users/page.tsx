@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { deleteUser } from "@/actions/user.actions"
 import NewUserModal from "./NewUserModal"
+import EditUserModal from "./EditUserModal"
 
 export default async function UsersPage() {
   const session = await auth()
@@ -56,18 +57,21 @@ export default async function UsersPage() {
                 </TableCell>
                 <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
-                  <form action={async () => {
-                    "use server"
-                    await deleteUser(user.id)
-                  }}>
-                    <Button 
-                      variant="destructive" 
-                      size="sm"
-                      disabled={session.user.id === user.id}
-                    >
-                      Delete
-                    </Button>
-                  </form>
+                  <div className="flex justify-end gap-2">
+                    <EditUserModal user={user} />
+                    <form action={async () => {
+                      "use server"
+                      await deleteUser(user.id)
+                    }}>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        disabled={session.user.id === user.id}
+                      >
+                        Delete
+                      </Button>
+                    </form>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

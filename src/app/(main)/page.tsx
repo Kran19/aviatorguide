@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { HeroGrid } from "@/components/ui/hero-grid"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
-import { ScrambleText } from "@/components/ui/scramble-text"
+
 import { Orbitron } from 'next/font/google'
 
 const orbitron = Orbitron({
@@ -42,9 +42,9 @@ export default async function Home() {
             Welcome to {siteName} 2.0
           </div>
           
-          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-top-12 duration-1000 ${orbitron.className}`}>
-            <ScrambleText text="Level Up Your" /> <br className="hidden md:block"/>
-            <ScrambleText text="Gaming Experience." className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x inline-block" />
+          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in zoom-in-95 duration-1000 ${orbitron.className}`}>
+            <span>Level Up Your</span> <br className="hidden md:block"/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x inline-block">Gaming Experience.</span>
           </h1>
           
           <p className="mt-8 text-xl text-muted-foreground md:text-2xl text-balance max-w-3xl mx-auto">

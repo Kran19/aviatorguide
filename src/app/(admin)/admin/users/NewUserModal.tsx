@@ -29,13 +29,12 @@ export default function NewUserModal() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* @ts-expect-error type-mismatch */}
-      <DialogTrigger asChild>
+      <DialogTrigger render={
         <Button className="gap-2">
           <UserPlus className="h-4 w-4" />
           New User
         </Button>
-      </DialogTrigger>
+      } />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New User</DialogTitle>
