@@ -11,6 +11,9 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "betsetgo.xyz - Premium Gaming Blog",
   description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+  verification: {
+    google: "GwBrIU3Un37BTLPfnQINBwTKAjWjO4zTcVVAqkvt3Dw",
+  },
 };
 
 export default function RootLayout({
