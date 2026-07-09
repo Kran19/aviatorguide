@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
 
           {post.featuredImage && (
-            <div className="w-full h-[400px] md:h-[500px] overflow-hidden rounded-2xl mb-12 bg-muted relative group shadow-2xl">
+            <div className="w-full max-w-4xl mx-auto h-[400px] md:h-[500px] overflow-hidden rounded-2xl mb-12 bg-muted relative group shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <img 
                 src={post.featuredImage} 
