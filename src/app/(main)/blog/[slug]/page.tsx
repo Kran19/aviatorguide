@@ -47,6 +47,38 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </Link>
         
         <article className="glass-card p-8 md:p-12 rounded-3xl border border-white/10 dark:border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-xl bg-background/60">
+          
+          {/* Game Widget */}
+          {post.featuredImage && (
+            <div className="flex flex-col items-center justify-center mb-12 max-w-sm mx-auto">
+              <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
+                <img 
+                  src={post.featuredImage} 
+                  alt={post.title} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex w-full gap-3">
+                <a 
+                  href="https://rocky11.club/?refercode=SEO" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-[#00D09C] hover:bg-[#00D09C]/90 text-black font-bold py-3 rounded-xl text-center transition-colors shadow-lg"
+                >
+                  Play Now
+                </a>
+                <a 
+                  href="https://rocky11.club/?refercode=SEO" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex-1 bg-transparent hover:bg-white/5 border border-white/20 text-white font-bold py-3 rounded-xl text-center transition-colors"
+                >
+                  Free Play
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className="mb-8 text-center">
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               {post.categories.map((cat: any) => (
