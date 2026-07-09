@@ -33,12 +33,7 @@ export function Header() {
         </div>
         <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              className="font-bold border-2 border-primary/50 hover:border-primary bg-gradient-to-r from-transparent via-primary/10 to-transparent animate-shimmer hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
-            >
-              Login
-            </Button>
+
             <Button 
               className="font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-blue-600 text-white border-0 animate-shimmer hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
             >
