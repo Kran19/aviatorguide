@@ -283,7 +283,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     <div className="border border-border/60 rounded-xl bg-background shadow-sm hover:border-primary/30 transition-colors duration-300 relative w-full h-full flex flex-col">
       <MenuBar editor={editor} onImageClick={onImageClick} />
       {editor && (
-        <BubbleMenu editor={editor} className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center">
+        <BubbleMenu editor={editor} className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50">
           <Button
             type="button"
             variant="ghost"
