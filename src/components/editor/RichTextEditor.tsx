@@ -255,14 +255,14 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       LinkExtension.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-primary underline underline-offset-4 cursor-pointer',
+          class: 'text-blue-500 cursor-pointer hover:text-blue-600 transition-colors',
         },
       }),
     ],
     content,
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-primary',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600',
       },
     },
     onUpdate: ({ editor }) => {
