@@ -45,6 +45,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
         <table className="w-full text-sm text-left">
           <thead className="bg-muted/50 text-muted-foreground border-b">
             <tr>
+              <th className="px-4 py-3 font-medium">Image</th>
               <th className="px-4 py-3 font-medium">Title</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Author</th>
@@ -55,13 +56,20 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
           <tbody>
             {posts.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">
+                <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
                   No posts found. Create one to get started.
                 </td>
               </tr>
             ) : (
               posts.map((post: any) => (
                 <tr key={post.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3">
+                    {post.featuredImage ? (
+                      <img src={post.featuredImage} alt={post.title} className="w-12 h-12 rounded object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">No img</div>
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-medium">{post.title}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
