@@ -35,9 +35,12 @@ export function Header() {
           <nav className="flex items-center space-x-2">
 
             <Button 
+              asChild
               className="font-bold bg-gradient-to-r from-blue-600 via-purple-500 to-blue-600 text-white border-0 animate-shimmer hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300"
             >
-              Join
+              <a href="https://rocky11.club/?refercode=SEO" target="_blank" rel="noopener noreferrer">
+                Join
+              </a>
             </Button>
             <ThemeToggle />
           </nav>
