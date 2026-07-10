@@ -83,13 +83,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {post.title}
             </h1>
             <div className="flex items-center justify-center gap-4 text-muted-foreground font-medium">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white shadow-lg">
-                  {post.author.name?.[0] || 'A'}
-                </div>
-                <span>{post.author.name || 'Anonymous'}</span>
-              </div>
-              <span>•</span>
               <span>{new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
             </div>
           </div>
@@ -109,6 +102,29 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             className="prose prose-lg dark:prose-invert max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl prose-img:shadow-xl prose-li:my-0 prose-ul:my-1 prose-ol:my-1"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+
+          {/* Author Details Box */}
+          <div className="mt-16 pt-8 border-t border-border/50">
+            <div className="flex flex-col sm:flex-row gap-6 items-start">
+              <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 bg-white border-2 border-border shadow-lg flex items-center justify-center p-2">
+                <img 
+                  src="/rocky-logo.png" 
+                  alt="rocky11.club" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold mb-1 text-foreground">rocky11.club</h3>
+                <p className="text-muted-foreground font-medium mb-3 text-sm">Official Author</p>
+                <p className="text-muted-foreground mb-3 leading-relaxed text-sm">
+                  Welcome to rocky11.club, the world's No.1 book. Stay updated with the latest insights, strategies, and guides to maximize your experience. Join our community and explore the best content curated just for you.
+                </p>
+                <a href="https://rocky11.club" target="_blank" rel="noopener noreferrer" className="text-primary font-bold text-sm hover:underline">
+                  Read full bio
+                </a>
+              </div>
+            </div>
+          </div>
         </article>
       </div>
     </div>
