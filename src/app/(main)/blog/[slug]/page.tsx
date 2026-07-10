@@ -67,14 +67,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 >
                   Play Now
                 </a>
-                <a 
-                  href="https://rocky11.club/?refercode=SEO" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex-1 bg-transparent hover:bg-white/5 border border-white/20 text-white font-bold py-3 rounded-xl text-center transition-colors"
-                >
-                  Free Play
-                </a>
               </div>
             </div>
           )}
