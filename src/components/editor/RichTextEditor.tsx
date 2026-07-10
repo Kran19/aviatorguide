@@ -331,26 +331,15 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
 
           <div className="w-px h-6 bg-border mx-1" />
 
-          <select 
-            className="h-8 rounded-md bg-transparent border-0 text-sm focus:ring-0 cursor-pointer w-[110px]"
-            onChange={(e) => {
-              if (e.target.value) {
-                editor.chain().focus().setFontSize(e.target.value).run()
-              } else {
-                editor.chain().focus().unsetFontSize().run()
-              }
-            }}
-            value={editor.getAttributes('textStyle').fontSize || ''}
-            title="Font Size"
-          >
-            <option value="">Normal Text</option>
-            <option value="12px">Small (12px)</option>
-            <option value="16px">Medium (16px)</option>
-            <option value="20px">Large (20px)</option>
-            <option value="24px">X-Large (24px)</option>
-            <option value="32px">Huge (32px)</option>
-            <option value="48px">Giant (48px)</option>
-          </select>
+          <div className="flex items-center gap-1 relative mx-1">
+            <input
+              type="color"
+              onInput={(event) => editor.chain().focus().setColor((event.target as HTMLInputElement).value).run()}
+              value={editor.getAttributes('textStyle').color || '#000000'}
+              className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0"
+              title="Text Color"
+            />
+          </div>
 
           <div className="w-px h-6 bg-border mx-1" />
           <Button
