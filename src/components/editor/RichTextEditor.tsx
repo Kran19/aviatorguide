@@ -264,35 +264,6 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600',
       },
-      transformPastedHTML: (html) => {
-        return html
-          // Strip all inline styles that might mess up margins/padding
-          .replace(/style="[^"]*"/gi, '')
-          // Remove empty paragraphs that Word/webpages often include
-          .replace(/<p><br><\/p>/gi, '')
-          .replace(/<p>&nbsp;<\/p>/gi, '')
-          .replace(/<p>\s*<\/p>/gi, '')
-          // Remove extra break lines
-          .replace(/(<br\s*\/?>\s*){2,}/gi, '<br>')
-      },
-      handlePaste: (view, event) => {
-        // If it contains files (images), let default behavior handle it
-        if (event.clipboardData?.files?.length) {
-          return false
-        }
-        
-        const text = event.clipboardData?.getData('text/plain')
-        const html = event.clipboardData?.getData('text/html')
-
-        // If pasting a single line of text without HTML (or we just want to paste simple inline text)
-        // This prevents the browser from copying a word's block container and splitting paragraphs
-        if (text && text.trim().length > 0 && !text.includes('\n') && !html) {
-          view.dispatch(view.state.tr.insertText(text))
-          return true
-        }
-
-        return false
-      }
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
