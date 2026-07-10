@@ -10,8 +10,9 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
+import { FontSize } from './FontSize'
 
 interface RichTextEditorProps {
   content: string
@@ -58,6 +59,29 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         <Italic className="h-4 w-4" />
       </Button>
       
+      <div className="w-px h-6 bg-border mx-1" />
+
+      <select 
+        className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm focus:ring-0 cursor-pointer"
+        onChange={(e) => {
+          if (e.target.value) {
+            editor.chain().focus().setFontSize(e.target.value).run()
+          } else {
+            editor.chain().focus().unsetFontSize().run()
+          }
+        }}
+        value={editor.getAttributes('textStyle').fontSize || ''}
+        title="Font Size"
+      >
+        <option value="">Normal Text</option>
+        <option value="12px">Small (12px)</option>
+        <option value="16px">Medium (16px)</option>
+        <option value="20px">Large (20px)</option>
+        <option value="24px">X-Large (24px)</option>
+        <option value="32px">Huge (32px)</option>
+        <option value="48px">Giant (48px)</option>
+      </select>
+
       <div className="w-px h-6 bg-border mx-1" />
 
       <Button
@@ -248,6 +272,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const editor = useEditor({
     extensions: [
       StarterKit,
+      FontSize,
       CustomImage,
       TextStyle,
       Color,
@@ -326,6 +351,30 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           >
             <Italic className="h-4 w-4" />
           </Button>
+
+          <div className="w-px h-6 bg-border mx-1" />
+
+          <select 
+            className="h-8 rounded-md bg-transparent border-0 text-sm focus:ring-0 cursor-pointer w-[110px]"
+            onChange={(e) => {
+              if (e.target.value) {
+                editor.chain().focus().setFontSize(e.target.value).run()
+              } else {
+                editor.chain().focus().unsetFontSize().run()
+              }
+            }}
+            value={editor.getAttributes('textStyle').fontSize || ''}
+            title="Font Size"
+          >
+            <option value="">Normal Text</option>
+            <option value="12px">Small (12px)</option>
+            <option value="16px">Medium (16px)</option>
+            <option value="20px">Large (20px)</option>
+            <option value="24px">X-Large (24px)</option>
+            <option value="32px">Huge (32px)</option>
+            <option value="48px">Giant (48px)</option>
+          </select>
+
           <div className="w-px h-6 bg-border mx-1" />
           <Button
             type="button"
