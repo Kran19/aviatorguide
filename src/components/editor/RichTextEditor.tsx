@@ -89,8 +89,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setParagraph().run()}
-        className={editor.isActive('paragraph') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setParagraph().unsetInlineHeading().run()}
+        className={editor.isActive('paragraph') && !editor.isActive('inlineHeading') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
         title="Paragraph"
       >
         <Pilcrow className="h-4 w-4" />
@@ -388,8 +388,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setParagraph().run()}
-            className={editor.isActive('paragraph') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setParagraph().unsetInlineHeading().run()}
+            className={editor.isActive('paragraph') && !editor.isActive('inlineHeading') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
             title="Paragraph"
           >
             <Pilcrow className="h-4 w-4" />
