@@ -196,13 +196,15 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background cursor-pointer"
               >
                 <option value="" disabled>Select a category...</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
+                <option value="Casino game">Casino game</option>
+                <option value="Crash game">Crash game</option>
+                <option value="Slot game">Slot game</option>
+                <option value="Sports game">Sports game</option>
+                <option value="Bonuses">Bonuses</option>
+                <option value="Payment">Payment</option>
+                <option value="Guides">Guides</option>
+                <option value="News">News</option>
               </select>
-              {categories.length === 0 && (
-                <p className="text-xs text-destructive">No categories found. Please create a category first.</p>
-              )}
             </div>
 
             <div className="space-y-3">

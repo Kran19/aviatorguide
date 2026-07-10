@@ -53,7 +53,10 @@ export async function createPost(formData: FormData) {
       focusKeyword: focusKeyword || null,
       authorId: session.user.id,
       categories: categoryId ? {
-        connect: { id: categoryId }
+        connectOrCreate: [{
+          where: { slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+          create: { name: categoryId, slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+        }]
       } : undefined,
       tags: {
         connectOrCreate: tagNames.map(name => ({
@@ -111,8 +114,12 @@ export async function updatePost(id: string, formData: FormData) {
     metaDescription: metaDescription || null,
     focusKeyword: focusKeyword || null,
     categories: categoryId ? {
-      set: [{ id: categoryId }]
-    } : undefined,
+      set: [],
+      connectOrCreate: [{
+        where: { slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+        create: { name: categoryId, slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+      }]
+    } : { set: [] },
     tags: {
       set: [], // Clear existing connections
       connectOrCreate: tagNames.map(name => ({
