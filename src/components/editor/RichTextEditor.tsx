@@ -12,7 +12,7 @@ import { Highlight } from '@tiptap/extension-highlight'
 import { Button } from '@/components/ui/button'
 import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
-import { FontSize } from './FontSize'
+import { InlineHeading } from './InlineHeading'
 
 interface RichTextEditorProps {
   content: string
@@ -61,29 +61,6 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
       
       <div className="w-px h-6 bg-border mx-1" />
 
-      <select 
-        className="h-8 rounded-md border border-input bg-background px-2 py-1 text-sm focus:ring-0 cursor-pointer"
-        onChange={(e) => {
-          if (e.target.value) {
-            editor.chain().focus().setFontSize(e.target.value).run()
-          } else {
-            editor.chain().focus().unsetFontSize().run()
-          }
-        }}
-        value={editor.getAttributes('textStyle').fontSize || ''}
-        title="Font Size"
-      >
-        <option value="">Normal Text</option>
-        <option value="12px">Small (12px)</option>
-        <option value="16px">Medium (16px)</option>
-        <option value="20px">Large (20px)</option>
-        <option value="24px">X-Large (24px)</option>
-        <option value="32px">Huge (32px)</option>
-        <option value="48px">Giant (48px)</option>
-      </select>
-
-      <div className="w-px h-6 bg-border mx-1" />
-
       <Button
         type="button"
         variant="ghost"
@@ -122,8 +99,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('36px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '36px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
+        className={editor.isActive('inlineHeading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading1 className="h-4 w-4" />
       </Button>
@@ -131,8 +108,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('24px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '24px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
+        className={editor.isActive('inlineHeading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading2 className="h-4 w-4" />
       </Button>
@@ -140,8 +117,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('20px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '20px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
+        className={editor.isActive('inlineHeading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading3 className="h-4 w-4" />
       </Button>
@@ -149,8 +126,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('18px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '18px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
+        className={editor.isActive('inlineHeading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading4 className="h-4 w-4" />
       </Button>
@@ -158,8 +135,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('16px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '16px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(5).run()}
+        className={editor.isActive('inlineHeading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading5 className="h-4 w-4" />
       </Button>
@@ -167,8 +144,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setFontSize('14px').setBold().run()}
-        className={editor.getAttributes('textStyle').fontSize === '14px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleInlineHeading(6).run()}
+        className={editor.isActive('inlineHeading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading6 className="h-4 w-4" />
       </Button>
@@ -272,7 +249,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const editor = useEditor({
     extensions: [
       StarterKit,
-      FontSize,
+      InlineHeading,
       CustomImage,
       TextStyle,
       Color,
@@ -421,8 +398,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setFontSize('36px').setBold().run()}
-            className={editor.getAttributes('textStyle').fontSize === '36px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
+            className={editor.isActive('inlineHeading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -430,8 +407,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setFontSize('24px').setBold().run()}
-            className={editor.getAttributes('textStyle').fontSize === '24px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
+            className={editor.isActive('inlineHeading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -439,8 +416,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setFontSize('20px').setBold().run()}
-            className={editor.getAttributes('textStyle').fontSize === '20px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
+            className={editor.isActive('inlineHeading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -448,8 +425,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setFontSize('18px').setBold().run()}
-            className={editor.getAttributes('textStyle').fontSize === '18px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
+            className={editor.isActive('inlineHeading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading4 className="h-4 w-4" />
           </Button>
