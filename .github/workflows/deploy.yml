@@ -22,5 +22,6 @@ jobs:
             git fetch --all
             git reset --hard origin/main
             docker compose up -d --build --force-recreate
+            sudo systemctl reload nginx || sudo nginx -s reload
             docker run --rm --network nextblog_app-network --env-file .env -v $(pwd):/app -w /app node:22-alpine sh -c "npm install -g pnpm@9 && pnpm install && npx prisma generate && npx prisma db push"
             docker image prune -f
