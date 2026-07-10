@@ -122,8 +122,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('36px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '36px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading1 className="h-4 w-4" />
       </Button>
@@ -131,8 +131,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('24px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '24px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading2 className="h-4 w-4" />
       </Button>
@@ -140,8 +140,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('20px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '20px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading3 className="h-4 w-4" />
       </Button>
@@ -149,8 +149,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-        className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('18px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '18px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading4 className="h-4 w-4" />
       </Button>
@@ -158,8 +158,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-        className={editor.isActive('heading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('16px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '16px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading5 className="h-4 w-4" />
       </Button>
@@ -167,8 +167,8 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
-        className={editor.isActive('heading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setFontSize('14px').setBold().run()}
+        className={editor.getAttributes('textStyle').fontSize === '14px' ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading6 className="h-4 w-4" />
       </Button>
@@ -421,8 +421,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-            className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setFontSize('36px').setBold().run()}
+            className={editor.getAttributes('textStyle').fontSize === '36px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -430,8 +430,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-            className={editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setFontSize('24px').setBold().run()}
+            className={editor.getAttributes('textStyle').fontSize === '24px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -439,8 +439,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setFontSize('20px').setBold().run()}
+            className={editor.getAttributes('textStyle').fontSize === '20px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -448,8 +448,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setFontSize('18px').setBold().run()}
+            className={editor.getAttributes('textStyle').fontSize === '18px' ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading4 className="h-4 w-4" />
           </Button>
