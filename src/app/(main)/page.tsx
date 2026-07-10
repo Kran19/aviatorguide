@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { HeroGrid } from "@/components/ui/hero-grid"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
+import { Gamepad2 } from 'lucide-react'
 
 import { Orbitron } from 'next/font/google'
 
@@ -134,6 +135,23 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* Floating Action Button */}
+      <a 
+        href="https://rocky11.club/?refercode=SEO" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 group flex flex-col items-center animate-[bounce_3s_infinite]"
+      >
+        <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-[#00D09C] to-[#00ffcc] shadow-[0_0_20px_rgba(0,208,156,0.5)] text-black mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(0,208,156,0.8)] overflow-hidden">
+          {/* Shine effect */}
+          <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover:animate-[shimmer_1.5s_infinite] skew-x-12" />
+          <Gamepad2 className="w-8 h-8 z-10" />
+        </div>
+        <span className="bg-background/90 backdrop-blur-sm border border-border/50 text-xs font-bold px-3 py-1.5 rounded-full shadow-lg text-foreground group-hover:text-[#00D09C] transition-colors whitespace-nowrap">
+          Join our games
+        </span>
+      </a>
     </div>
   )
 }
