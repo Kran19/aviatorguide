@@ -264,6 +264,28 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600',
       },
+      handlePaste: (view, event) => {
+        // Allow default behavior for images/files
+        if (event.clipboardData?.files?.length) {
+          return false;
+        }
+        
+        const text = event.clipboardData?.getData('text/plain');
+        if (text) {
+          // Normalize line endings
+          const normalized = text.replace(/\r\n/g, '\n');
+          
+          // If the pasted content is a single line, force it to be inserted as plain text.
+          // This prevents HTML block tags (like <p>) from splitting the current line and adding spaces.
+          if (!normalized.includes('\n')) {
+            event.preventDefault();
+            view.dispatch(view.state.tr.insertText(normalized));
+            return true;
+          }
+        }
+        
+        return false;
+      }
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
