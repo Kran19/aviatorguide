@@ -9,8 +9,9 @@ import LinkExtension from '@tiptap/extension-link'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
+import TextAlign from '@tiptap/extension-text-align'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { InlineHeading } from './InlineHeading'
 
@@ -57,6 +58,39 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         className={editor.isActive('italic') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Italic className="h-4 w-4" />
+      </Button>
+
+      <div className="w-px h-6 bg-border mx-1" />
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+        className={editor.isActive({ textAlign: 'left' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Align Left"
+      >
+        <AlignLeft className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+        className={editor.isActive({ textAlign: 'center' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Align Center"
+      >
+        <AlignCenter className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={() => editor.chain().focus().setTextAlign('right').run()}
+        className={editor.isActive({ textAlign: 'right' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Align Right"
+      >
+        <AlignRight className="h-4 w-4" />
       </Button>
       
       <div className="w-px h-6 bg-border mx-1" />
@@ -253,6 +287,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       CustomImage,
       TextStyle,
       Color,
+      TextAlign.configure({
+        types: ['heading', 'paragraph', 'inlineHeading', 'customImage'],
+      }),
       Highlight.configure({ multicolor: true }),
       LinkExtension.configure({
         openOnClick: false,
@@ -327,6 +364,39 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             title="Italic"
           >
             <Italic className="h-4 w-4" />
+          </Button>
+
+          <div className="w-px h-6 bg-border mx-1" />
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('left').run()}
+            className={editor.isActive({ textAlign: 'left' }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Align Left"
+          >
+            <AlignLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('center').run()}
+            className={editor.isActive({ textAlign: 'center' }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Align Center"
+          >
+            <AlignCenter className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => editor.chain().focus().setTextAlign('right').run()}
+            className={editor.isActive({ textAlign: 'right' }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Align Right"
+          >
+            <AlignRight className="h-4 w-4" />
           </Button>
 
           <div className="w-px h-6 bg-border mx-1" />

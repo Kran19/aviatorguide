@@ -43,10 +43,10 @@ const ImageNodeView = (props: any) => {
 
   return (
     <NodeViewWrapper 
-      className={`relative inline-block my-4 ${selected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-      style={{ width: currentWidth, maxWidth: '100%' }}
+      className={`relative flex my-4 ${selected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+      style={{ width: '100%', justifyContent: node.attrs.textAlign === 'center' ? 'center' : node.attrs.textAlign === 'right' ? 'flex-end' : 'flex-start' }}
     >
-      <div className="relative group inline-block w-full">
+      <div className="relative group inline-block" style={{ width: currentWidth, maxWidth: '100%' }}>
         <img 
           src={src} 
           alt={alt || ''} 
@@ -161,16 +161,27 @@ export const CustomImage = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const textAlign = HTMLAttributes.style?.includes('text-align: center') ? 'center' 
+      : HTMLAttributes.style?.includes('text-align: right') ? 'right' : 'left'
+      
+    const wrapperStyle = `display: flex; justify-content: ${textAlign === 'center' ? 'center' : textAlign === 'right' ? 'flex-end' : 'flex-start'}; width: 100%;`
+
     if (HTMLAttributes.caption) {
       return [
         'figure', 
-        { style: `width: ${HTMLAttributes.width}` }, 
-        ['img', mergeAttributes(HTMLAttributes, { style: null, class: 'w-full' })],
-        ['figcaption', { class: 'text-center text-sm text-muted-foreground mt-2 italic' }, HTMLAttributes.caption]
+        { style: wrapperStyle, class: 'my-4' },
+        ['div', { style: `width: ${HTMLAttributes.width}` },
+          ['img', mergeAttributes(HTMLAttributes, { style: null, class: 'w-full' })],
+          ['figcaption', { class: 'text-center text-sm text-muted-foreground mt-2 italic' }, HTMLAttributes.caption]
+        ]
       ]
     }
 
-    return ['img', mergeAttributes(HTMLAttributes)]
+    return [
+      'figure',
+      { style: wrapperStyle, class: 'my-4 m-0' },
+      ['img', mergeAttributes(HTMLAttributes, { class: 'max-w-full' })]
+    ]
   },
 
   addNodeView() {
