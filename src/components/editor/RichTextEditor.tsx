@@ -100,7 +100,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
-        className={editor.isActive('inlineHeading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 1 }) || editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading1 className="h-4 w-4" />
       </Button>
@@ -109,7 +109,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
-        className={editor.isActive('inlineHeading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 2 }) || editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading2 className="h-4 w-4" />
       </Button>
@@ -118,7 +118,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
-        className={editor.isActive('inlineHeading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 3 }) || editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading3 className="h-4 w-4" />
       </Button>
@@ -127,7 +127,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
-        className={editor.isActive('inlineHeading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 4 }) || editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading4 className="h-4 w-4" />
       </Button>
@@ -136,7 +136,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(5).run()}
-        className={editor.isActive('inlineHeading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 5 }) || editor.isActive('heading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading5 className="h-4 w-4" />
       </Button>
@@ -145,7 +145,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         variant="ghost"
         size="sm"
         onClick={() => editor.chain().focus().toggleInlineHeading(6).run()}
-        className={editor.isActive('inlineHeading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        className={editor.isActive('inlineHeading', { level: 6 }) || editor.isActive('heading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
       >
         <Heading6 className="h-4 w-4" />
       </Button>
@@ -388,7 +388,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
-            className={editor.isActive('inlineHeading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            className={editor.isActive('inlineHeading', { level: 1 }) || editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -397,7 +397,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
-            className={editor.isActive('inlineHeading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            className={editor.isActive('inlineHeading', { level: 2 }) || editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -406,7 +406,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
-            className={editor.isActive('inlineHeading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            className={editor.isActive('inlineHeading', { level: 3 }) || editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -415,7 +415,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
-            className={editor.isActive('inlineHeading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            className={editor.isActive('inlineHeading', { level: 4 }) || editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
           >
             <Heading4 className="h-4 w-4" />
           </Button>
