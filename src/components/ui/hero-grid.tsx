@@ -112,7 +112,7 @@ export function HeroGrid() {
               key={blockIdx}
               className="grid"
               style={{
-                gridTemplateColumns: \`repeat(\${COLS}, 56px)\`,
+                gridTemplateColumns: `repeat(${COLS}, 56px)`,
                 gridAutoRows: '56px',
                 gap: '4px', // 56 + 4 = 60px stride
               }}
@@ -120,7 +120,7 @@ export function HeroGrid() {
               {gridRows.map((row, r) => (
                 row.map((src, c) => (
                   <div 
-                    key={\`\${blockIdx}-\${r}-\${c}\`}
+                    key={`${blockIdx}-${r}-${c}`}
                     className="relative w-full h-full rounded-[6px] overflow-hidden border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.3)] bg-black"
                   >
                     {/* Dark Overlay */}
