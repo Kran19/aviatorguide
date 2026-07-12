@@ -126,12 +126,12 @@ export function HeroGrid() {
                     {/* Dark Overlay */}
                     <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none" />
                     
-                    {/* Next Image for optimization */}
+                    {/* unoptimized is used because these are local public images and we have 600+ of them, avoiding Next.js image optimizer limits */}
                     <Image 
                       src={src} 
                       alt="Game Artwork" 
                       fill 
-                      unoptimized // Since these are local public images and we have 600+ of them, unoptimized avoids hitting the Next.js image optimizer too hard
+                      unoptimized
                       className="object-cover filter blur-[0.5px] brightness-75 saturate-[0.85]"
                     />
                   </div>
