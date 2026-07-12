@@ -10,7 +10,8 @@ export function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <span className="inline-block font-bold text-xl tracking-tight">betsetgo.xyz</span>
           </Link>
-          <nav className="hidden md:flex gap-6">
+          <nav className="hidden md:flex gap-6 items-center">
+            <span className="font-bold text-lg">hi</span>
             <Link
               href="/blog"
               className="flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
