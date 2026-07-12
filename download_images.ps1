@@ -1,0 +1,36 @@
+$urls = @(
+    "https://cdn.mac88.com/mac88/chickensubway.webp",
+    "https://cdn.dreamdelhi.com/mac88/colorgame.webp",
+    "https://cdn.dreamdelhi.com/dc2/avt_aviator.webp",
+    "https://cdn.dreamcasino.live/jili/Jili_Bombing_Fishing.webp",
+    "https://cdn.dreamdelhi.com/dc2/cqc_lucky_fishing.webp",
+    "https://cdn.dreamcasino.live/gap_casino/awc_aesexy/aes_dragon_tiger.webp",
+    "https://cdn.dreamdelhi.com/awc/extra_sicbo.webp",
+    "https://cdn.dreamdelhi.com/ag/2_card_teenpatti.webp",
+    "https://cdn.dreamdelhi.com/betgames/plinko.webp",
+    "https://cdn.dreamdelhi.com/dc2/iog_wheel.webp",
+    "https://cdn.dreamdelhi.com/dc2/win_agent_spinity.webp",
+    "https://cdn.dreamcasino.live/evo_extrachilliepicspins.webp",
+    "https://cdn.dreamcasino.live/rg_2card_tp.webp",
+    "https://cdn.dreamcasino.live/jili/Jili_AK47.webp",
+    "https://cdn.dreamdelhi.com/rich88/bingo.webp",
+    "https://cdn.dreamdelhi.com/dc2/mgg_amazingpharoah.webp",
+    "https://cdn.dreamdelhi.com/rich88/baccarat.webp"
+)
+
+$outDir = "d:\blog\nextblog\public\games"
+if (!(Test-Path -Path $outDir)) {
+    New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+}
+
+foreach ($url in $urls) {
+    $filename = $url.Substring($url.LastIndexOf('/') + 1)
+    $outFile = Join-Path -Path $outDir -ChildPath $filename
+    Write-Host "Downloading $filename..."
+    try {
+        Invoke-WebRequest -Uri $url -OutFile $outFile
+    } catch {
+        Write-Host "Failed to download $filename"
+    }
+}
+Write-Host "Done!"
