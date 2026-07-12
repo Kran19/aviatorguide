@@ -113,10 +113,10 @@ export default async function Home() {
                     
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                          {post.author?.name?.[0] || "A"}
+                        <div className="w-8 h-8 rounded-full bg-white overflow-hidden flex items-center justify-center p-[2px] border border-border shadow-sm">
+                          <img src="/rocky-logo.png" alt="rocky11.club" className="w-full h-full object-contain rounded-full" />
                         </div>
-                        <span className="text-sm font-medium text-foreground">{post.author?.name || "Anonymous"}</span>
+                        <span className="text-sm font-bold text-foreground">rocky11.club</span>
                       </div>
                       <time className="text-xs text-muted-foreground font-medium">
                         {new Date(post.createdAt).toLocaleDateString()}
