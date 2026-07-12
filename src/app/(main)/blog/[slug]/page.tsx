@@ -41,9 +41,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full -z-10" />
       <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full -z-10" />
       
-      <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 py-12">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors mb-8 bg-primary/10 px-4 py-2 rounded-full font-medium hover:shadow-[0_0_15px_rgba(var(--primary),0.3)] duration-300">
-          <ArrowLeft className="w-4 h-4" /> Back to blog
+      <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+        <Link href="/blog" className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors mb-4 bg-primary/10 px-3 py-1.5 rounded-full text-sm font-medium hover:shadow-[0_0_15px_rgba(var(--primary),0.3)] duration-300">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to blog
         </Link>
         
         <article className="glass-card p-8 md:p-12 rounded-3xl border border-white/10 dark:border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-xl bg-background/60">
