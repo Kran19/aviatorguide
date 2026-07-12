@@ -126,7 +126,7 @@ export function HeroGrid() {
                     className="relative w-full h-full rounded-[6px] overflow-hidden border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.3)] bg-black"
                   >
                     {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-black/60 z-10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
                     
                     {/* unoptimized is used because these are local public images and we have 600+ of them, avoiding Next.js image optimizer limits */}
                     <Image 
@@ -134,7 +134,8 @@ export function HeroGrid() {
                       alt="Game Artwork" 
                       fill 
                       unoptimized
-                      className="object-cover filter blur-[0.5px] brightness-75 saturate-[0.85]"
+                      style={{ imageRendering: 'auto' }}
+                      className="object-cover filter brightness-75 contrast-[1.08] saturate-[1.05]"
                     />
                   </div>
                 ))
