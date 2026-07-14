@@ -52,24 +52,33 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               </div>
             )}
             
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  id="featuredImage"
+                  name="featuredImage"
+                  type="text"
+                  placeholder="Image URL or upload via Media Library..."
+                  value={featuredImageUrl}
+                  onChange={(e) => setFeaturedImageUrl(e.target.value)}
+                  className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                />
+                <MediaLibraryModal 
+                  onInsert={(url) => setFeaturedImageUrl(url)}
+                  trigger={
+                    <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      Upload Image
+                    </Button>
+                  }
+                />
+              </div>
               <input
-                id="featuredImage"
-                name="featuredImage"
+                id="featuredImageAlt"
+                name="featuredImageAlt"
                 type="text"
-                placeholder="Image URL or upload via Media Library..."
-                value={featuredImageUrl}
-                onChange={(e) => setFeaturedImageUrl(e.target.value)}
+                placeholder="Alt text (describe the featured image)..."
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              />
-              <MediaLibraryModal 
-                onInsert={(url) => setFeaturedImageUrl(url)}
-                trigger={
-                  <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
-                    <ImageIcon className="h-4 w-4" />
-                    Upload Image
-                  </Button>
-                }
               />
             </div>
           </div>
@@ -91,24 +100,33 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               </div>
             )}
             
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  id="playImage"
+                  name="playImage"
+                  type="text"
+                  placeholder="Image URL or upload via Media Library..."
+                  value={playImageUrl}
+                  onChange={(e) => setPlayImageUrl(e.target.value)}
+                  className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                />
+                <MediaLibraryModal 
+                  onInsert={(url) => setPlayImageUrl(url)}
+                  trigger={
+                    <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      Upload Image
+                    </Button>
+                  }
+                />
+              </div>
               <input
-                id="playImage"
-                name="playImage"
+                id="playImageAlt"
+                name="playImageAlt"
                 type="text"
-                placeholder="Image URL or upload via Media Library..."
-                value={playImageUrl}
-                onChange={(e) => setPlayImageUrl(e.target.value)}
+                placeholder="Alt text (describe the play image)..."
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              />
-              <MediaLibraryModal 
-                onInsert={(url) => setPlayImageUrl(url)}
-                trigger={
-                  <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
-                    <ImageIcon className="h-4 w-4" />
-                    Upload Image
-                  </Button>
-                }
               />
             </div>
           </div>

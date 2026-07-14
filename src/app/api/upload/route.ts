@@ -29,10 +29,11 @@ export async function POST(req: NextRequest) {
       await mkdir(uploadDir, { recursive: true })
     }
 
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    // Generate unique filename preserving original name
     const ext = file.name.split('.').pop() || 'png'
-    const filename = `${uniqueSuffix}.${ext}`
+    const originalName = file.name.replace(/\.[^/.]+$/, "").replace(/[^a-zA-Z0-9_-]/g, '') || 'image'
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E3)
+    const filename = `${originalName}-${uniqueSuffix}.${ext}`
     
     const filepath = join(uploadDir, filename)
 

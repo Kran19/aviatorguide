@@ -17,7 +17,9 @@ export async function createPost(formData: FormData) {
   const excerpt = formData.get("excerpt") as string
   const content = formData.get("content") as string
   const featuredImage = formData.get("featuredImage") as string
+  const featuredImageAlt = formData.get("featuredImageAlt") as string
   const playImage = formData.get("playImage") as string
+  const playImageAlt = formData.get("playImageAlt") as string
   const metaTitle = formData.get("metaTitle") as string
   const metaDescription = formData.get("metaDescription") as string
   const focusKeyword = formData.get("focusKeyword") as string
@@ -48,7 +50,9 @@ export async function createPost(formData: FormData) {
       excerpt,
       content,
       featuredImage: featuredImage || null,
+      featuredImageAlt: featuredImageAlt || null,
       playImage: playImage || null,
+      playImageAlt: playImageAlt || null,
       status: status as any,
       metaTitle: metaTitle || null,
       metaDescription: metaDescription || null,
@@ -93,7 +97,9 @@ export async function updatePost(id: string, formData: FormData) {
   const excerpt = formData.get("excerpt") as string
   const content = formData.get("content") as string
   const featuredImage = formData.get("featuredImage") as string
+  const featuredImageAlt = formData.get("featuredImageAlt") as string
   const playImage = formData.get("playImage") as string
+  const playImageAlt = formData.get("playImageAlt") as string
   const metaTitle = formData.get("metaTitle") as string
   const metaDescription = formData.get("metaDescription") as string
   const focusKeyword = formData.get("focusKeyword") as string
@@ -113,7 +119,9 @@ export async function updatePost(id: string, formData: FormData) {
     excerpt,
     content,
     featuredImage: featuredImage || null,
+    featuredImageAlt: featuredImageAlt || null,
     playImage: playImage || null,
+    playImageAlt: playImageAlt || null,
     metaTitle: metaTitle || null,
     metaDescription: metaDescription || null,
     focusKeyword: focusKeyword || null,

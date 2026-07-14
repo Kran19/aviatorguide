@@ -54,7 +54,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
                 <img 
                   src={post.playImage} 
-                  alt={post.title} 
+                  alt={post.playImageAlt || post.title} 
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -92,7 +92,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <img 
                 src={post.featuredImage} 
-                alt={post.title} 
+                alt={post.featuredImageAlt || post.title} 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
