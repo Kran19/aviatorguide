@@ -46,7 +46,7 @@ const ImageNodeView = (props: any) => {
   React.useEffect(() => {
     if (!showSettings) return
     const handleClickOutside = (e: MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as EventTarget & globalThis.Node)) {
         setShowSettings(false)
       }
     }
