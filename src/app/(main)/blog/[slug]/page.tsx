@@ -100,7 +100,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
           <div
             className="prose prose-lg dark:prose-invert max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 prose-a:text-blue-600 hover:prose-a:text-blue-700 dark:prose-a:text-blue-400 dark:hover:prose-a:text-blue-300 prose-img:rounded-xl prose-img:shadow-xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ 
+              __html: post.content.replace(/<(h[1-6])([^>]*)>(.*?)<\/\1>/gi, '<$1$2><strong>$3</strong></$1>') 
+            }}
           />
 
           {/* Author Details Box */}
