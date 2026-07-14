@@ -279,7 +279,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
   )
 }
 
-export function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
+export default function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null)
   const [imageAlt, setImageAlt] = React.useState('')
   const [imageCaption, setImageCaption] = React.useState('')
