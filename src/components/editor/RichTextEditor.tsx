@@ -380,8 +380,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ state }) => {
-            return !state.selection.empty || selectedImage !== null
+          shouldShow={({ editor, state }) => {
+            return editor.isFocused || selectedImage !== null || !state.selection.empty
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
