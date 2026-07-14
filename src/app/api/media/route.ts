@@ -27,7 +27,7 @@ export async function GET() {
           const stats = await stat(filepath)
           return {
             name: filename,
-            url: `/api/media/${filename}`,
+            url: `/media/${filename}`,
             size: stats.size,
             createdAt: stats.birthtime, // birthtime works on most OS, fallback to mtime if needed
           }
