@@ -9,6 +9,19 @@ const ImageNodeView = (props: any) => {
   const [isResizing, setIsResizing] = React.useState(false)
   const [currentWidth, setCurrentWidth] = React.useState(width || '100%')
 
+  /* ── Notify the editor toolbar when this image is selected/deselected ── */
+  React.useEffect(() => {
+    if (selected) {
+      document.dispatchEvent(new CustomEvent('tiptap:imageSelected', {
+        detail: { src, alt: alt || '', caption: caption || '' },
+        bubbles: true,
+      }))
+    } else {
+      document.dispatchEvent(new CustomEvent('tiptap:imageDeselected', { bubbles: true }))
+    }
+  }, [selected, src, alt, caption])
+
+  /* ── Resize logic ── */
   const handleResizeMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -17,8 +30,7 @@ const ImageNodeView = (props: any) => {
     const startWidth = e.currentTarget.parentElement?.getBoundingClientRect().width || 0
 
     const onMove = (mv: MouseEvent) => {
-      const newWidth = Math.max(100, startWidth + (mv.pageX - startX))
-      setCurrentWidth(`${newWidth}px`)
+      setCurrentWidth(`${Math.max(100, startWidth + (mv.pageX - startX))}px`)
     }
     const onUp = () => {
       setIsResizing(false)
@@ -45,10 +57,7 @@ const ImageNodeView = (props: any) => {
       className={`my-4 ${selected ? 'ring-2 ring-primary ring-offset-2 rounded-xl' : ''}`}
       style={{ width: '100%', display: 'flex', justifyContent: outerJustify }}
     >
-      <div
-        className="relative group"
-        style={{ width: currentWidth, maxWidth: '100%' }}
-      >
+      <div className="relative group" style={{ width: currentWidth, maxWidth: '100%' }}>
         <img
           src={src}
           alt={alt || ''}
@@ -56,14 +65,12 @@ const ImageNodeView = (props: any) => {
           draggable={false}
         />
 
-        {/* "Click image to edit" hint */}
         {selected && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs px-2.5 py-1 rounded-full pointer-events-none whitespace-nowrap shadow">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/75 text-white text-xs px-2.5 py-1 rounded-full pointer-events-none whitespace-nowrap shadow">
             ✏️ Edit in toolbar above
           </div>
         )}
 
-        {/* Resize handle */}
         {selected && (
           <div
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-10 bg-primary rounded-full cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center shadow"

@@ -333,21 +333,27 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
-      // Keep image settings bar in sync
-      if (editor.isActive('customImage')) {
-        const attrs = editor.getAttributes('customImage')
-        setSelectedImage({ alt: attrs.alt || '', caption: attrs.caption || '' })
-      }
-    },
-    onSelectionUpdate: ({ editor }) => {
-      if (editor.isActive('customImage')) {
-        const attrs = editor.getAttributes('customImage')
-        setSelectedImage({ alt: attrs.alt || '', caption: attrs.caption || '' })
-      } else {
-        setSelectedImage(null)
-      }
     },
   })
+
+  // Listen for custom events from CustomImage since NodeView selections 
+  // don't always trigger editor.isActive() reliably
+  React.useEffect(() => {
+    const handleImageSelected = (e: any) => {
+      setSelectedImage(e.detail)
+    }
+    const handleImageDeselected = () => {
+      setSelectedImage(null)
+    }
+
+    document.addEventListener('tiptap:imageSelected', handleImageSelected)
+    document.addEventListener('tiptap:imageDeselected', handleImageDeselected)
+
+    return () => {
+      document.removeEventListener('tiptap:imageSelected', handleImageSelected)
+      document.removeEventListener('tiptap:imageDeselected', handleImageDeselected)
+    }
+  }, [])
 
   React.useEffect(() => {
     if (editor) {
@@ -414,7 +420,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ editor }) => !editor.isActive('customImage')}
+          shouldShow={({ editor }) => selectedImage === null}
           className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
           <Button
