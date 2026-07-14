@@ -65,11 +65,7 @@ const ImageNodeView = (props: any) => {
           draggable={false}
         />
 
-        {selected && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/75 text-white text-xs px-2.5 py-1 rounded-full pointer-events-none whitespace-nowrap shadow">
-            ✏️ Edit in toolbar above
-          </div>
-        )}
+
 
         {selected && (
           <div
