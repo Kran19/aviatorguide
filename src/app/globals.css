@@ -130,6 +130,15 @@
   }
 }
 
+/* Ensure empty paragraphs from the editor retain their height on the frontend */
+.prose p:empty {
+  min-height: 1.5rem;
+}
+.prose p:empty::after {
+  content: "\00A0";
+  visibility: hidden;
+}
+
 /* View Transitions API overrides for Theme Toggle */
 ::view-transition-old(root),
 ::view-transition-new(root) {
