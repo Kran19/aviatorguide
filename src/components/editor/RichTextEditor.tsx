@@ -11,7 +11,7 @@ import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight, Check } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { InlineHeading } from './InlineHeading'
 
@@ -392,9 +392,13 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
                   type="text"
                   className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   value={imageAlt}
-                  onChange={(e) => {
-                    setImageAlt(e.target.value)
-                    editor.chain().focus().updateAttributes('customImage', { alt: e.target.value }).run()
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
+                    }
                   }}
                   placeholder="Alt Text..."
                   title="Alt Text (SEO)"
@@ -403,13 +407,29 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
                   type="text"
                   className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   value={imageCaption}
-                  onChange={(e) => {
-                    setImageCaption(e.target.value)
-                    editor.chain().focus().updateAttributes('customImage', { caption: e.target.value }).run()
+                  onChange={(e) => setImageCaption(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
+                    }
                   }}
                   placeholder="Caption..."
                   title="Image Caption"
                 />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={() => {
+                    editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
+                  }}
+                  title="Apply Changes"
+                >
+                  <Check className="h-4 w-4 text-green-600" />
+                </Button>
               </div>
           )}
           <Button

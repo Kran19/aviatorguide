@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      url: `/api/media/${filename}` 
+      url: `/media/${filename}` 
     })
 
   } catch (error: any) {
