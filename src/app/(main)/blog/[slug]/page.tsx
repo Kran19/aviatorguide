@@ -40,28 +40,28 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* 3D ambient backgrounds */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full -z-10" />
       <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full -z-10" />
-      
+
       <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 pt-4 pb-12">
         <Link href="/blog" className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors mb-4 bg-primary/10 px-3 py-1.5 rounded-full text-sm font-medium hover:shadow-[0_0_15px_rgba(var(--primary),0.3)] duration-300">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to blog
         </Link>
-        
+
         <article className="glass-card p-8 md:p-12 rounded-3xl border border-white/10 dark:border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-xl bg-background/60">
-          
+
           {/* Game Widget */}
           {post.playImage && (
             <div className="flex flex-col items-center justify-center mb-12 max-w-sm mx-auto">
               <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
-                <img 
-                  src={post.playImage} 
-                  alt={post.playImageAlt || post.title} 
+                <img
+                  src={post.playImage}
+                  alt={post.playImageAlt || post.title}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex w-full gap-3">
-                <a 
-                  href="https://rocky11.club/?refercode=SEO" 
-                  target="_blank" 
+                <a
+                  href="https://rocky11.club/?refercode=SEO"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 bg-[#00D09C] hover:bg-[#00D09C]/90 text-black font-bold py-3 rounded-xl text-center transition-colors shadow-lg"
                 >
@@ -90,15 +90,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {post.featuredImage && (
             <div className="w-full max-w-4xl mx-auto h-[400px] md:h-[500px] overflow-hidden rounded-2xl mb-12 bg-muted relative group shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <img 
-                src={post.featuredImage} 
-                alt={post.featuredImageAlt || post.title} 
+              <img
+                src={post.featuredImage}
+                alt={post.featuredImageAlt || post.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
           )}
 
-          <div 
+          <div
             className="prose prose-lg dark:prose-invert max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-li:my-0 prose-ul:my-1 prose-ol:my-1 prose-a:text-primary hover:prose-a:text-primary/80 prose-img:rounded-xl prose-img:shadow-xl"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
@@ -107,9 +107,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="mt-16 pt-8 border-t border-border/50">
             <div className="flex flex-col sm:flex-row gap-6 items-start">
               <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 bg-white border-2 border-border shadow-lg flex items-center justify-center p-2">
-                <img 
-                  src="/rocky-logo.png" 
-                  alt="rocky11.club" 
+                <img
+                  src="/rocky-logo.png"
+                  alt="rocky11.club"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -119,7 +119,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <p className="text-muted-foreground mb-3 leading-relaxed text-sm">
                   Welcome to rocky11.club, the world's No.1 book. Stay updated with the latest insights, strategies, and guides to maximize your experience. Join our community and explore the best content curated just for you.
                 </p>
-                <a href="https://rocky11.club" target="_blank" rel="noopener noreferrer" className="text-primary font-bold text-sm hover:underline">
+                <a href="#" target="_blank" rel="noopener noreferrer" className="text-primary font-bold text-sm hover:underline">
                   Read full bio
                 </a>
               </div>
