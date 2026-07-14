@@ -280,6 +280,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
 }
 
 export default function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
+  // Track selected image attrs for the Image Settings bar
+  const [selectedImage, setSelectedImage] = React.useState<{ alt: string; caption: string } | null>(null)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -330,6 +333,19 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
+      // Keep image settings bar in sync
+      if (editor.isActive('customImage')) {
+        const attrs = editor.getAttributes('customImage')
+        setSelectedImage({ alt: attrs.alt || '', caption: attrs.caption || '' })
+      }
+    },
+    onSelectionUpdate: ({ editor }) => {
+      if (editor.isActive('customImage')) {
+        const attrs = editor.getAttributes('customImage')
+        setSelectedImage({ alt: attrs.alt || '', caption: attrs.caption || '' })
+      } else {
+        setSelectedImage(null)
+      }
     },
   })
 
@@ -345,8 +361,62 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   return (
     <div className="border border-border/60 rounded-xl bg-background shadow-sm hover:border-primary/30 transition-colors duration-300 relative w-full h-full flex flex-col">
       <MenuBar editor={editor} onImageClick={onImageClick} />
+
+      {/* ── Image Settings Bar — appears below main toolbar when an image is selected ── */}
+      {editor && selectedImage !== null && (
+        <div className="flex flex-wrap items-center gap-3 px-4 py-2.5 border-b border-border bg-muted/40 backdrop-blur sticky top-[112px] z-30">
+          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0">🖼 Image</span>
+          <div className="w-px h-5 bg-border" />
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <label className="text-xs font-semibold whitespace-nowrap shrink-0">
+              Alt Text
+              <span className="ml-1 text-[10px] font-normal bg-primary/10 text-primary px-1.5 py-0.5 rounded">SEO</span>
+            </label>
+            <input
+              type="text"
+              className="h-7 flex-1 min-w-[160px] max-w-xs rounded-md border border-input bg-background px-2.5 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              value={selectedImage.alt}
+              onChange={(e) => {
+                const val = e.target.value
+                setSelectedImage(s => s ? { ...s, alt: val } : s)
+                editor.commands.updateAttributes('customImage', { alt: val })
+              }}
+              placeholder="Describe the image…"
+            />
+          </div>
+          <div className="w-px h-5 bg-border" />
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            <label className="text-xs font-semibold whitespace-nowrap shrink-0">Caption</label>
+            <input
+              type="text"
+              className="h-7 flex-1 min-w-[140px] max-w-xs rounded-md border border-input bg-background px-2.5 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              value={selectedImage.caption}
+              onChange={(e) => {
+                const val = e.target.value
+                setSelectedImage(s => s ? { ...s, caption: val } : s)
+                editor.commands.updateAttributes('customImage', { caption: val })
+              }}
+              placeholder="Optional caption…"
+            />
+          </div>
+          <div className="w-px h-5 bg-border" />
+          <button
+            type="button"
+            onClick={() => setSelectedImage(null)}
+            className="text-muted-foreground hover:text-foreground text-base leading-none w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors shrink-0"
+            title="Close"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {editor && (
-        <BubbleMenu editor={editor} className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50">
+        <BubbleMenu
+          editor={editor}
+          shouldShow={({ editor }) => !editor.isActive('customImage')}
+          className="flex flex-wrap max-w-sm bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
+        >
           <Button
             type="button"
             variant="ghost"
