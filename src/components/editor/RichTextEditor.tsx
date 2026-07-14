@@ -281,7 +281,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
 
 export default function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
   // Track selected image attrs for the Image Settings bar
-  const [selectedImage, setSelectedImage] = React.useState<{ alt: string; caption: string } | null>(null)
+  const [isClient, setIsClient] = React.useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -336,25 +336,6 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     },
   })
 
-  // Listen for custom events from CustomImage since NodeView selections 
-  // don't always trigger editor.isActive() reliably
-  React.useEffect(() => {
-    const handleImageSelected = (e: any) => {
-      setSelectedImage(e.detail)
-    }
-    const handleImageDeselected = () => {
-      setSelectedImage(null)
-    }
-
-    document.addEventListener('tiptap:imageSelected', handleImageSelected)
-    document.addEventListener('tiptap:imageDeselected', handleImageDeselected)
-
-    return () => {
-      document.removeEventListener('tiptap:imageSelected', handleImageSelected)
-      document.removeEventListener('tiptap:imageDeselected', handleImageDeselected)
-    }
-  }, [])
-
   React.useEffect(() => {
     if (editor) {
       // @ts-ignore
@@ -373,22 +354,20 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ state }) => {
-            return !state.selection.empty || selectedImage !== null
+          shouldShow={({ editor, state }) => {
+            return !state.selection.empty || editor.isActive('customImage')
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
-          {selectedImage !== null && (
+          {editor.isActive('customImage') && (
             <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
               <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼</span>
               <input
                 type="text"
                 className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                value={selectedImage.alt}
+                value={editor.getAttributes('customImage').alt || ''}
                 onChange={(e) => {
-                  const val = e.target.value
-                  setSelectedImage(s => s ? { ...s, alt: val } : s)
-                  editor.commands.updateAttributes('customImage', { alt: val })
+                  editor.chain().focus().updateAttributes('customImage', { alt: e.target.value }).run()
                 }}
                 placeholder="Alt Text..."
                 title="Alt Text (SEO)"
@@ -396,11 +375,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
               <input
                 type="text"
                 className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                value={selectedImage.caption}
+                value={editor.getAttributes('customImage').caption || ''}
                 onChange={(e) => {
-                  const val = e.target.value
-                  setSelectedImage(s => s ? { ...s, caption: val } : s)
-                  editor.commands.updateAttributes('customImage', { caption: val })
+                  editor.chain().focus().updateAttributes('customImage', { caption: e.target.value }).run()
                 }}
                 placeholder="Caption..."
                 title="Image Caption"
