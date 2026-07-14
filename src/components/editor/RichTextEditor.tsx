@@ -354,36 +354,44 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ editor, state }) => {
-            return !state.selection.empty || editor.isActive('customImage')
+          shouldShow={({ state }) => {
+            const isImage = 'node' in state.selection && (state.selection as any).node?.type.name === 'customImage'
+            return !state.selection.empty || isImage
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
-          {editor.isActive('customImage') && (
-            <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
-              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼</span>
-              <input
-                type="text"
-                className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                value={editor.getAttributes('customImage').alt || ''}
-                onChange={(e) => {
-                  editor.chain().focus().updateAttributes('customImage', { alt: e.target.value }).run()
-                }}
-                placeholder="Alt Text..."
-                title="Alt Text (SEO)"
-              />
-              <input
-                type="text"
-                className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                value={editor.getAttributes('customImage').caption || ''}
-                onChange={(e) => {
-                  editor.chain().focus().updateAttributes('customImage', { caption: e.target.value }).run()
-                }}
-                placeholder="Caption..."
-                title="Image Caption"
-              />
-            </div>
-          )}
+          {(() => {
+            const { state } = editor
+            const isImage = 'node' in state.selection && (state.selection as any).node?.type.name === 'customImage'
+            if (!isImage) return null
+            const attrs = (state.selection as any).node.attrs
+
+            return (
+              <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼</span>
+                <input
+                  type="text"
+                  className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={attrs.alt || ''}
+                  onChange={(e) => {
+                    editor.chain().focus().updateAttributes('customImage', { alt: e.target.value }).run()
+                  }}
+                  placeholder="Alt Text..."
+                  title="Alt Text (SEO)"
+                />
+                <input
+                  type="text"
+                  className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={attrs.caption || ''}
+                  onChange={(e) => {
+                    editor.chain().focus().updateAttributes('customImage', { caption: e.target.value }).run()
+                  }}
+                  placeholder="Caption..."
+                  title="Image Caption"
+                />
+              </div>
+            )
+          })()}
           <Button
             type="button"
             variant="ghost"
