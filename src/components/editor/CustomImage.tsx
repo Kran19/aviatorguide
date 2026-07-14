@@ -57,31 +57,31 @@ const ImageNodeView = (props: any) => {
       className={`my-4 ${selected ? 'ring-2 ring-primary ring-offset-2 rounded-xl' : ''}`}
       style={{ width: '100%', display: 'flex', justifyContent: outerJustify }}
     >
-      <div className="relative group" style={{ width: currentWidth, maxWidth: '100%' }}>
-        <img
-          src={src}
-          alt={alt || ''}
-          className="rounded-xl object-contain w-full h-auto select-none"
-          draggable={false}
-        />
+      <div style={{ width: currentWidth, maxWidth: '100%' }}>
+        <div className="relative group">
+          <img
+            src={src}
+            alt={alt || ''}
+            className="rounded-xl object-contain w-full h-auto select-none"
+            draggable={false}
+          />
 
+          {selected && (
+            <div
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-10 bg-primary rounded-full cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center shadow"
+              onMouseDown={handleResizeMouseDown}
+            >
+              <div className="w-0.5 h-5 bg-primary-foreground rounded-full" />
+            </div>
+          )}
+        </div>
 
-
-        {selected && (
-          <div
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-10 bg-primary rounded-full cursor-ew-resize opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center shadow"
-            onMouseDown={handleResizeMouseDown}
-          >
-            <div className="w-0.5 h-5 bg-primary-foreground rounded-full" />
-          </div>
+        {caption && (
+          <figcaption className="text-center text-sm text-muted-foreground mt-2 italic w-full">
+            {caption}
+          </figcaption>
         )}
       </div>
-
-      {caption && (
-        <figcaption className="text-center text-sm text-muted-foreground mt-2 italic w-full">
-          {caption}
-        </figcaption>
-      )}
     </NodeViewWrapper>
   )
 }
