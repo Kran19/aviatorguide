@@ -282,7 +282,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
 export default function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false, // disabled — we register LinkExtension below with custom options
+      }),
       InlineHeading,
       CustomImage,
       TextStyle,
