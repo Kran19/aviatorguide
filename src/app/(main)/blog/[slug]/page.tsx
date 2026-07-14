@@ -117,7 +117,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <h3 className="text-xl font-bold mb-1 text-foreground">rocky11.club</h3>
                 <p className="text-muted-foreground font-medium mb-3 text-sm">Official Author</p>
                 <p className="text-muted-foreground mb-3 leading-relaxed text-sm">
-                  About BetSetGo
                   BetSetGo is a trusted real money gaming platform dedicated to delivering a fair, secure, and enjoyable gaming experience. Our content team combines years of expertise in online gaming, sports analysis, and platform mechanics to bring you accurate guides, game reviews, and responsible gaming information. Every article is researched and reviewed to ensure you get reliable, up-to-date information — helping you play smart and stay informed.
                 </p>
                 <a href="#" target="_blank" rel="noopener noreferrer" className="text-primary font-bold text-sm hover:underline">
