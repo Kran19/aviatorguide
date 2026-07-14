@@ -52,13 +52,15 @@ export default async function BlogPage() {
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
                       <img 
                         src={post.featuredImage} 
-                        alt={post.title} 
+                        alt={post.featuredImageAlt || post.title} 
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>
                   ) : (
-                    <div className="w-full h-56 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                      <span className="text-muted-foreground font-semibold">No Image</span>
+                    <div className="w-full h-56 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center p-4 text-center">
+                      <span className="text-muted-foreground font-semibold line-clamp-3">
+                        {post.featuredImageAlt || "No Image"}
+                      </span>
                     </div>
                   )}
                   

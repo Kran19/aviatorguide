@@ -87,12 +87,16 @@ export default async function Home() {
                     {post.featuredImage ? (
                       <Image
                         src={post.featuredImage}
-                        alt={post.title}
+                        alt={post.featuredImageAlt || post.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-500/20" />
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center p-4 text-center">
+                        <span className="text-muted-foreground font-semibold line-clamp-3">
+                          {post.featuredImageAlt || "No Image"}
+                        </span>
+                      </div>
                     )}
                     {post.categories[0] && (
                       <div className="absolute top-4 left-4 z-20">
