@@ -85,6 +85,7 @@ model Post {
   content         String      @db.Text
   excerpt         String?     @db.Text
   featuredImage   String?
+  playImage       String?
   status          PostStatus  @default(DRAFT)
   adminRemarks    String?     @db.Text
   metaTitle       String?

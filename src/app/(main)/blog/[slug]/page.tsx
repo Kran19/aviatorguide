@@ -49,11 +49,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <article className="glass-card p-8 md:p-12 rounded-3xl border border-white/10 dark:border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-xl bg-background/60">
           
           {/* Game Widget */}
-          {post.featuredImage && (
+          {post.playImage && (
             <div className="flex flex-col items-center justify-center mb-12 max-w-sm mx-auto">
               <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
                 <img 
-                  src={post.featuredImage} 
+                  src={post.playImage} 
                   alt={post.title} 
                   className="w-full h-full object-cover"
                 />

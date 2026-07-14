@@ -12,6 +12,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
   const [isPending, startTransition] = React.useTransition()
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
+  const [playImageUrl, setPlayImageUrl] = React.useState("")
 
   return (
     <div className="space-y-8 w-full max-w-none mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -28,6 +29,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
       <form action={(formData) => {
         formData.set("content", content)
         formData.set("featuredImage", featuredImageUrl)
+        formData.set("playImage", playImageUrl)
         startTransition(() => createPost(formData))
       }} className="grid gap-8 md:grid-cols-[2fr_1fr]">
         
@@ -62,6 +64,45 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               />
               <MediaLibraryModal 
                 onInsert={(url) => setFeaturedImageUrl(url)}
+                trigger={
+                  <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
+                    <ImageIcon className="h-4 w-4" />
+                    Upload Image
+                  </Button>
+                }
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-semibold" htmlFor="playImage">Play Image (Top Thumbnail)</label>
+            
+            {playImageUrl ? (
+              <div className="relative w-full h-64 rounded-xl overflow-hidden border border-border bg-muted group">
+                <img src={playImageUrl} alt="Play" className="w-full h-full object-cover transition-transform duration-500" />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Button type="button" variant="destructive" size="sm" onClick={() => setPlayImageUrl("")}>Remove Image</Button>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 bg-muted/20">
+                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">No play image selected</p>
+              </div>
+            )}
+            
+            <div className="flex gap-2">
+              <input
+                id="playImage"
+                name="playImage"
+                type="text"
+                placeholder="Image URL or upload via Media Library..."
+                value={playImageUrl}
+                onChange={(e) => setPlayImageUrl(e.target.value)}
+                className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              />
+              <MediaLibraryModal 
+                onInsert={(url) => setPlayImageUrl(url)}
                 trigger={
                   <Button type="button" variant="secondary" className="h-11 rounded-xl shrink-0 gap-2">
                     <ImageIcon className="h-4 w-4" />
