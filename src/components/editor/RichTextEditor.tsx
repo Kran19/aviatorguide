@@ -354,17 +354,17 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ state }) => {
-            const isImage = 'node' in state.selection && (state.selection as any).node?.type.name === 'customImage'
-            return !state.selection.empty || isImage
+          shouldShow={({ editor, state }) => {
+            const hasImage = !!editor.getAttributes('customImage').src
+            return !state.selection.empty || hasImage
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
           {(() => {
-            const { state } = editor
-            const isImage = 'node' in state.selection && (state.selection as any).node?.type.name === 'customImage'
+            const attrs = editor.getAttributes('customImage')
+            const isImage = !!attrs.src
+            
             if (!isImage) return null
-            const attrs = (state.selection as any).node.attrs
 
             return (
               <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
