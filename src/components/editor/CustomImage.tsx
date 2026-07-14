@@ -9,6 +9,7 @@ const ImageNodeView = (props: any) => {
   const [isResizing, setIsResizing] = React.useState(false)
   const [currentWidth, setCurrentWidth] = React.useState(width || '100%')
   const [showSettings, setShowSettings] = React.useState(false)
+  const settingsRef = React.useRef<HTMLDivElement>(null)
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -41,10 +42,27 @@ const ImageNodeView = (props: any) => {
     }
   }, [isResizing, currentWidth, width, updateAttributes])
 
+  // Close settings when clicking outside
+  React.useEffect(() => {
+    if (!showSettings) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setShowSettings(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showSettings])
+
+  // Close settings when image is deselected
+  React.useEffect(() => {
+    if (!selected) setShowSettings(false)
+  }, [selected])
+
   return (
     <NodeViewWrapper 
-      className={`relative flex my-4 ${selected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-      style={{ width: '100%', justifyContent: node.attrs.textAlign === 'center' ? 'center' : node.attrs.textAlign === 'right' ? 'flex-end' : 'flex-start' }}
+      className={`relative flex flex-col my-4 ${selected ? 'ring-2 ring-primary ring-offset-2 rounded-lg' : ''}`}
+      style={{ width: '100%', alignItems: node.attrs.textAlign === 'center' ? 'center' : node.attrs.textAlign === 'right' ? 'flex-end' : 'flex-start' }}
     >
       <div className="relative group inline-block" style={{ width: currentWidth, maxWidth: '100%' }}>
         <img 
@@ -54,6 +72,13 @@ const ImageNodeView = (props: any) => {
           onClick={() => setShowSettings(!showSettings)}
         />
         
+        {/* Click-to-edit hint badge */}
+        {selected && !showSettings && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded-full pointer-events-none">
+            Click to edit alt text
+          </div>
+        )}
+
         {/* Resize Handle */}
         {selected && (
           <div 
@@ -71,10 +96,27 @@ const ImageNodeView = (props: any) => {
         </figcaption>
       )}
 
+      {/* Settings panel — rendered in normal flow, BELOW the image, never overlapping */}
       {showSettings && selected && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-popover text-popover-foreground border shadow-xl rounded-lg p-4 w-[300px] z-50 flex flex-col gap-3">
+        <div 
+          ref={settingsRef}
+          className="w-full max-w-sm mt-3 bg-popover text-popover-foreground border border-border shadow-lg rounded-xl p-4 flex flex-col gap-3"
+          style={{ alignSelf: 'flex-start' }}
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Image Settings</span>
+            <button
+              type="button"
+              onClick={() => setShowSettings(false)}
+              className="text-muted-foreground hover:text-foreground text-lg leading-none"
+              title="Close"
+            >
+              ×
+            </button>
+          </div>
           <div className="space-y-1 flex flex-col items-start">
-            <label htmlFor="alt-text" className="text-xs font-semibold">Alt Text (SEO)</label>
+            <label htmlFor="alt-text" className="text-xs font-semibold">Alt Text <span className="text-muted-foreground font-normal">(SEO)</span></label>
             <input 
               id="alt-text"
               type="text"
@@ -82,6 +124,7 @@ const ImageNodeView = (props: any) => {
               value={alt || ''} 
               onChange={(e) => updateAttributes({ alt: e.target.value })}
               placeholder="Describe the image..."
+              autoFocus
             />
           </div>
           <div className="space-y-1 flex flex-col items-start">
