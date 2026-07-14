@@ -1,6 +1,4 @@
 User-agent: *
-Disallow: 
 Disallow: /cgi-bin/
-Disallow: https://betsetgo.xyz/admin
-Disallow: https://betsetgo.xyz/admin/login
+Disallow: /admin/
 Sitemap: https://betsetgo.xyz/sitemap.xml
