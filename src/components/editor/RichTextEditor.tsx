@@ -279,9 +279,35 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
   )
 }
 
-export default function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
-  // Track selected image attrs for the Image Settings bar
-  const [isClient, setIsClient] = React.useState(false)
+export function RichTextEditor({ content, onChange, onImageClick }: RichTextEditorProps) {
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null)
+  const [imageAlt, setImageAlt] = React.useState('')
+  const [imageCaption, setImageCaption] = React.useState('')
+
+  React.useEffect(() => {
+    const handleImageSelect = (e: any) => {
+      setSelectedImage(e.detail.src)
+      setImageAlt(e.detail.alt)
+      setImageCaption(e.detail.caption)
+    }
+    const handleImageDeselect = () => {
+      // Small delay to prevent race conditions when clicking from one image directly to another
+      setTimeout(() => {
+        setSelectedImage((current) => {
+          // Only clear if the active element isn't still an image
+          return current ? null : null;
+        })
+      }, 50)
+    }
+    
+    document.addEventListener('tiptap:imageSelected', handleImageSelect)
+    document.addEventListener('tiptap:imageDeselected', handleImageDeselect)
+
+    return () => {
+      document.removeEventListener('tiptap:imageSelected', handleImageSelect)
+      document.removeEventListener('tiptap:imageDeselected', handleImageDeselect)
+    }
+  }, [])
 
   const editor = useEditor({
     extensions: [
@@ -354,26 +380,20 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       {editor && (
         <BubbleMenu
           editor={editor}
-          shouldShow={({ editor, state }) => {
-            const hasImage = !!editor.getAttributes('customImage').src
-            return !state.selection.empty || hasImage
+          shouldShow={({ state }) => {
+            return !state.selection.empty || selectedImage !== null
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
-          {(() => {
-            const attrs = editor.getAttributes('customImage')
-            const isImage = !!attrs.src
-            
-            if (!isImage) return null
-
-            return (
+          {selectedImage !== null && (
               <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
                 <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼</span>
                 <input
                   type="text"
                   className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={attrs.alt || ''}
+                  value={imageAlt}
                   onChange={(e) => {
+                    setImageAlt(e.target.value)
                     editor.chain().focus().updateAttributes('customImage', { alt: e.target.value }).run()
                   }}
                   placeholder="Alt Text..."
@@ -382,16 +402,16 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
                 <input
                   type="text"
                   className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={attrs.caption || ''}
+                  value={imageCaption}
                   onChange={(e) => {
+                    setImageCaption(e.target.value)
                     editor.chain().focus().updateAttributes('customImage', { caption: e.target.value }).run()
                   }}
                   placeholder="Caption..."
                   title="Image Caption"
                 />
               </div>
-            )
-          })()}
+          )}
           <Button
             type="button"
             variant="ghost"
