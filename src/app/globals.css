@@ -156,18 +156,3 @@
   0% { background-position: 200% center; }
   100% { background-position: -200% center; }
 }
-
-/* ── Blog post content: preserve blank lines from editor ── */
-/* TipTap outputs empty <p></p> or <p><br></p> for Enter-key blank lines.
-   Without this, browsers collapse them to zero height. */
-.prose p:empty,
-.prose p > br:only-child {
-  min-height: 1em;
-  display: block;
-}
-
-/* Ensure all paragraphs in prose have consistent, visible spacing */
-.prose p {
-  margin-top: 0.75em;
-  margin-bottom: 0.75em;
-}
