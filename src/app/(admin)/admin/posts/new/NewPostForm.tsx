@@ -13,6 +13,7 @@ import { toast } from "sonner"
 export default function NewPostForm({ userRole, categories }: { userRole: string, categories: any[] }) {
   const [isPending, startTransition] = React.useTransition()
   const router = useRouter()
+  const [isLoaded, setIsLoaded] = React.useState(false)
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
   const [playImageUrl, setPlayImageUrl] = React.useState("")
@@ -41,6 +42,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         if (parsed.formDataState) setFormDataState(parsed.formDataState)
       } catch (e) {}
     }
+    setIsLoaded(true)
   }, [])
 
   React.useEffect(() => {
@@ -57,6 +59,14 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormDataState(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center w-full">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
