@@ -3,23 +3,45 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = 'force-dynamic';
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-
 import { auth } from "@/lib/auth"
+import { PostActions } from "./PostActions"
+import { AdminFilters } from "./AdminFilters"
 
-export default async function AdminPostsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+export default async function AdminPostsPage({ searchParams }: { searchParams: Promise<{ page?: string, search?: string, sort?: string }> }) {
   const resolvedParams = await searchParams;
   const session = await auth()
   
   const page = Number(resolvedParams.page) || 1
   const limit = 10
   const skip = (page - 1) * limit
+  const search = resolvedParams.search || ""
+  const sort = resolvedParams.sort || "newest"
 
-  const whereCondition = session?.user?.role === "AUTHOR" ? { authorId: session.user.id } : undefined
+  const isAdmin = session?.user?.role === "ADMIN"
+
+  const whereCondition: any = {
+    ...(session?.user?.role === "AUTHOR" ? { authorId: session.user.id } : {}),
+  }
+
+  if (search) {
+    whereCondition.title = { contains: search, mode: 'insensitive' }
+  }
+
+  if (sort === "status_published") {
+    whereCondition.status = "PUBLISHED"
+  } else if (sort === "status_pending") {
+    whereCondition.status = "PENDING_APPROVAL"
+  }
+
+  let orderBy: any = { createdAt: 'desc' }
+  if (sort === "oldest") {
+    orderBy = { createdAt: 'asc' }
+  }
 
   const [posts, totalCount] = await Promise.all([
     prisma.post.findMany({
       where: whereCondition,
-      orderBy: { createdAt: 'desc' },
+      orderBy,
       include: { author: true },
       skip,
       take: limit
@@ -27,7 +49,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
     prisma.post.count({ where: whereCondition })
   ])
   
-  const totalPages = Math.ceil(totalCount / limit)
+  const totalPages = Math.ceil(totalCount / limit) || 1
 
   return (
     <div className="space-y-6">
@@ -41,7 +63,9 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
         </Button>
       </div>
 
-      <div className="rounded-md border bg-card">
+      <AdminFilters />
+
+      <div className="rounded-md border bg-card overflow-x-auto">
         <table className="w-full text-sm text-left">
           <thead className="bg-muted/50 text-muted-foreground border-b">
             <tr>
@@ -57,7 +81,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
             {posts.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
-                  No posts found. Create one to get started.
+                  No posts found matching your criteria.
                 </td>
               </tr>
             ) : (
@@ -70,9 +94,11 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
                       <div className="w-12 h-12 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">No img</div>
                     )}
                   </td>
-                  <td className="px-4 py-3 font-medium">{post.title}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <span className="line-clamp-2">{post.title}</span>
+                  </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap
                       ${post.status === 'PUBLISHED' ? 'bg-primary/10 text-primary' : 
                         post.status === 'PENDING_APPROVAL' ? 'bg-yellow-500/10 text-yellow-500' :
                         post.status === 'REJECTED' ? 'bg-destructive/10 text-destructive' :
@@ -80,12 +106,15 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
                       {post.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{post.author?.name || 'Unknown'}</td>
-                  <td className="px-4 py-3 text-muted-foreground">{new Date(post.createdAt).toLocaleDateString()}</td>
-                  <td className="px-4 py-3 text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/posts/${post.id}/edit`}>Edit</Link>
-                    </Button>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{post.author?.name || 'Unknown'}</td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{new Date(post.createdAt).toLocaleDateString()}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/posts/${post.id}/edit`}>Edit</Link>
+                      </Button>
+                      <PostActions postId={post.id} status={post.status} isAdmin={isAdmin} />
+                    </div>
                   </td>
                 </tr>
               ))
@@ -93,19 +122,22 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
           </tbody>
         </table>
       </div>
-      <div className="flex justify-between items-center pt-4">
-        <p className="text-sm text-muted-foreground">
-          Showing {skip + 1} to {Math.min(skip + limit, totalCount)} of {totalCount} posts
-        </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled={page <= 1} asChild={page > 1}>
-            {page > 1 ? <Link href={`/admin/posts?page=${page - 1}`}>Previous</Link> : <span>Previous</span>}
-          </Button>
-          <Button variant="outline" size="sm" disabled={page >= totalPages} asChild={page < totalPages}>
-            {page < totalPages ? <Link href={`/admin/posts?page=${page + 1}`}>Next</Link> : <span>Next</span>}
-          </Button>
+      
+      {totalCount > 0 && (
+        <div className="flex justify-between items-center pt-4">
+          <p className="text-sm text-muted-foreground">
+            Showing {skip + 1} to {Math.min(skip + limit, totalCount)} of {totalCount} posts
+          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled={page <= 1} asChild={page > 1}>
+              {page > 1 ? <Link href={`/admin/posts?page=${page - 1}&search=${search}&sort=${sort}`}>Previous</Link> : <span>Previous</span>}
+            </Button>
+            <Button variant="outline" size="sm" disabled={page >= totalPages} asChild={page < totalPages}>
+              {page < totalPages ? <Link href={`/admin/posts?page=${page + 1}&search=${search}&sort=${sort}`}>Next</Link> : <span>Next</span>}
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

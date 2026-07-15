@@ -7,6 +7,7 @@ import Link from "next/link"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
+import { toast } from "sonner"
 
 export default function NewPostForm({ userRole, categories }: { userRole: string, categories: any[] }) {
   const [isPending, startTransition] = React.useTransition()
@@ -30,7 +31,14 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         formData.set("content", content)
         formData.set("featuredImage", featuredImageUrl)
         formData.set("playImage", playImageUrl)
-        startTransition(() => createPost(formData))
+        startTransition(async () => {
+          try {
+            await createPost(formData)
+            toast.success("Post created successfully!")
+          } catch (error: any) {
+            toast.error(error.message || "Failed to create post.")
+          }
+        })
       }} className="grid gap-8 md:grid-cols-[2fr_1fr]">
         
         {/* Main Content Area */}

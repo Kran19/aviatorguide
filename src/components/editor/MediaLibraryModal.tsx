@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button"
 import { Upload, Link as LinkIcon, Image as ImageIcon, Loader2 } from "lucide-react"
 import Image from "next/image"
+import { toast } from "sonner"
 
 interface MediaLibraryModalProps {
   onInsert: (url: string) => void
@@ -65,16 +66,26 @@ export function MediaLibraryModal({ onInsert, trigger }: MediaLibraryModalProps)
         body: formData,
       })
       
+      if (!res.ok) {
+        if (res.status === 413) {
+          throw new Error("Image is too large. Please select a smaller image.")
+        }
+        throw new Error(`Upload failed with status ${res.status}`)
+      }
+      
       const data = await res.json()
       if (data.url) {
         onInsert(data.url)
         setIsOpen(false)
+        toast.success("Image uploaded successfully.")
       } else {
-        setError(data.error || "Upload failed")
+        throw new Error(data.error || "Upload failed")
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      setError("An error occurred during upload")
+      const errorMsg = err.message || "An error occurred during upload"
+      setError(errorMsg)
+      toast.error(errorMsg)
     } finally {
       setIsUploading(false)
     }

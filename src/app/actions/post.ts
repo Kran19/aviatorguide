@@ -181,3 +181,19 @@ export async function deletePost(id: string) {
   revalidatePath("/admin/posts")
   revalidatePath("/")
 }
+
+export async function quickApprovePost(id: string) {
+  const session = await auth()
+  
+  if (!session?.user?.id || session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized")
+  }
+
+  await prisma.post.update({
+    where: { id },
+    data: { status: "PUBLISHED" }
+  })
+
+  revalidatePath("/admin/posts")
+  revalidatePath("/")
+}

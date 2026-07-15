@@ -15,7 +15,7 @@ import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight, Check } from 'lucide-react'
+import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight, Check, ArrowUp } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { InlineHeading } from './InlineHeading'
 
@@ -287,12 +287,18 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null)
   const [imageAlt, setImageAlt] = React.useState('')
   const [imageCaption, setImageCaption] = React.useState('')
+  const [imageWidth, setImageWidth] = React.useState('100%')
+  const [imageHeight, setImageHeight] = React.useState('auto')
+  const [imageFloat, setImageFloat] = React.useState('none')
 
   React.useEffect(() => {
     const handleImageSelect = (e: any) => {
       setSelectedImage(e.detail.src)
       setImageAlt(e.detail.alt)
       setImageCaption(e.detail.caption)
+      setImageWidth(e.detail.width || '100%')
+      setImageHeight(e.detail.height || 'auto')
+      setImageFloat(e.detail.float || 'none')
     }
     const handleImageDeselect = () => {
       // Small delay to prevent race conditions when clicking from one image directly to another
@@ -411,50 +417,108 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
           {selectedImage !== null && (
-              <div className="flex items-center gap-1.5 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
-                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼</span>
-                <input
-                  type="text"
-                  className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={imageAlt}
-                  onChange={(e) => setImageAlt(e.target.value)}
-                  onKeyDown={(e) => {
-                    e.stopPropagation()
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
-                    }
-                  }}
-                  placeholder="Alt Text..."
-                  title="Alt Text (SEO)"
-                />
-                <input
-                  type="text"
-                  className="h-7 w-24 md:w-32 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={imageCaption}
-                  onChange={(e) => setImageCaption(e.target.value)}
-                  onKeyDown={(e) => {
-                    e.stopPropagation()
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
-                    }
-                  }}
-                  placeholder="Caption..."
-                  title="Image Caption"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 w-7 p-0"
-                  onClick={() => {
-                    editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption }).run()
-                  }}
-                  title="Apply Changes"
-                >
-                  <Check className="h-4 w-4 text-green-600" />
-                </Button>
+              <div className="flex flex-col gap-2 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼 META</span>
+                  <input
+                    type="text"
+                    className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={imageAlt}
+                    onChange={(e) => setImageAlt(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation()
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                      }
+                    }}
+                    placeholder="Alt Text..."
+                    title="Alt Text (SEO)"
+                  />
+                  <input
+                    type="text"
+                    className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={imageCaption}
+                    onChange={(e) => setImageCaption(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation()
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                      }
+                    }}
+                    placeholder="Caption..."
+                    title="Image Caption"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">📏 SIZE</span>
+                  <input
+                    type="text"
+                    className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={imageWidth}
+                    onChange={(e) => setImageWidth(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation()
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                      }
+                    }}
+                    placeholder="Width"
+                    title="Width (e.g. 100%, 300px)"
+                  />
+                  <input
+                    type="text"
+                    className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    value={imageHeight}
+                    onChange={(e) => setImageHeight(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation()
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                      }
+                    }}
+                    placeholder="Height"
+                    title="Height (e.g. auto, 300px)"
+                  />
+                  <div className="w-px h-5 bg-border mx-1" />
+                  <Button
+                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'left' ? 'bg-primary/20 text-primary' : ''}`}
+                    onClick={() => { setImageFloat('left'); editor.chain().focus().updateAttributes('customImage', { float: 'left' }).run() }}
+                    title="Wrap Text Right (Float Left)"
+                  >
+                    Left
+                  </Button>
+                  <Button
+                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'none' ? 'bg-primary/20 text-primary' : ''}`}
+                    onClick={() => { setImageFloat('none'); editor.chain().focus().updateAttributes('customImage', { float: 'none' }).run() }}
+                    title="Inline (No Float)"
+                  >
+                    Center
+                  </Button>
+                  <Button
+                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'right' ? 'bg-primary/20 text-primary' : ''}`}
+                    onClick={() => { setImageFloat('right'); editor.chain().focus().updateAttributes('customImage', { float: 'right' }).run() }}
+                    title="Wrap Text Left (Float Right)"
+                  >
+                    Right
+                  </Button>
+                  <div className="flex-1" />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 ml-1"
+                    onClick={() => {
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                    }}
+                    title="Apply Changes"
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                </div>
               </div>
           )}
           <Button
@@ -630,6 +694,20 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             <Quote className="h-4 w-4" />
           </Button>
           <div className="w-px h-6 bg-border mx-1" />
+          <MediaLibraryModal 
+            onInsert={(url) => (editor.chain().focus() as any).setImage({ src: url }).run()}
+            trigger={
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="hover:bg-muted/80 hover:text-primary transition-colors"
+                title="Insert Image"
+              >
+                <ImageIcon className="h-4 w-4" />
+              </Button>
+            }
+          />
           <Button
             type="button"
             variant="ghost"
@@ -643,6 +721,16 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         </BubbleMenu>
       )}
       <EditorContent editor={editor} className="flex-1 w-full" />
+      <Button
+        type="button"
+        variant="default"
+        size="icon"
+        className="fixed bottom-6 right-6 h-12 w-12 rounded-full shadow-2xl z-50 transition-transform hover:scale-110 hover:-translate-y-1 bg-primary text-primary-foreground"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        title="Scroll to Top"
+      >
+        <ArrowUp className="h-6 w-6" />
+      </Button>
     </div>
   )
 }

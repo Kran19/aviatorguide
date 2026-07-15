@@ -7,6 +7,7 @@ import Link from "next/link"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
+import { toast } from "sonner"
 
 type Post = {
   id: string
@@ -50,7 +51,14 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
         formData.set("content", content)
         formData.set("featuredImage", featuredImageUrl)
         formData.set("playImage", playImageUrl)
-        startTransition(() => updatePostWithId(formData))
+        startTransition(async () => {
+          try {
+            await updatePostWithId(formData)
+            toast.success("Post updated successfully!")
+          } catch (error: any) {
+            toast.error(error.message || "Failed to update post.")
+          }
+        })
       }} className="grid gap-8 md:grid-cols-[2fr_1fr]">
         
         {/* Main Content Area */}
