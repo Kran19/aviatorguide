@@ -4,6 +4,9 @@ import { Target, TrendingUp, ShieldCheck, Gamepad2 } from 'lucide-react';
 export const metadata = {
   title: 'About - betsetgo.xyz',
   description: 'Learn more about betsetgo.xyz and our mission for ethical, strategic gaming.',
+  alternates: {
+    canonical: '/about',
+  },
 };
 
 export default function AboutPage() {

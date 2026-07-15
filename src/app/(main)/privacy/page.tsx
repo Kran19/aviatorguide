@@ -1,6 +1,9 @@
 export const metadata = {
   title: 'Privacy Policy | betsetgo.xyz',
   description: 'Privacy Policy and Terms for betsetgo.xyz',
+  alternates: {
+    canonical: '/privacy',
+  },
 }
 
 export default function PrivacyPage() {

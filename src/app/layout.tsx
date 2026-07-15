@@ -9,8 +9,25 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://betsetgo.xyz"),
   title: "betsetgo.xyz - Premium Gaming Blog",
   description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "betsetgo.xyz - Premium Gaming Blog",
+    description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+    url: "/",
+    siteName: "betsetgo.xyz",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "betsetgo.xyz - Premium Gaming Blog",
+    description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+  },
   verification: {
     google: "GwBrIU3Un37BTLPfnQINBwTKAjWjO4zTcVVAqkvt3Dw",
   },

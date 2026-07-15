@@ -14,10 +14,32 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!post) return { title: 'Post Not Found' };
 
+  const title = post.metaTitle || `${post.title} - betsetgo.xyz`;
+  const description = post.metaDescription || post.excerpt || post.title;
+  const url = `/blog/${post.slug}`;
+
   return {
-    title: post.metaTitle || `${post.title} - betsetgo.xyz`,
-    description: post.metaDescription || post.excerpt || post.title,
+    title,
+    description,
     keywords: post.focusKeyword ? [post.focusKeyword] : [],
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      authors: ["rocky11.club"],
+      images: post.featuredImage ? [{ url: post.featuredImage }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: post.featuredImage ? [post.featuredImage] : [],
+    },
   };
 }
 
@@ -35,8 +57,27 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt || post.metaDescription || post.title,
+    image: post.featuredImage ? [post.featuredImage] : [],
+    datePublished: post.createdAt.toISOString(),
+    dateModified: post.updatedAt ? post.updatedAt.toISOString() : post.createdAt.toISOString(),
+    author: [{
+      "@type": "Organization",
+      "name": "rocky11.club",
+      "url": "https://betsetgo.xyz"
+    }]
+  };
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* 3D ambient backgrounds */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full -z-10" />
       <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full -z-10" />
@@ -49,12 +90,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <article className="glass-card p-8 md:p-12 rounded-3xl border border-white/10 dark:border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-xl bg-background/60">
 
           {/* Game Widget */}
-          {post.playImage && (
+          {(post as any).playImage && (
             <div className="flex flex-col items-center justify-center mb-12 max-w-sm mx-auto">
               <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
                 <img
-                  src={post.playImage}
-                  alt={post.playImageAlt || post.title}
+                  src={(post as any).playImage}
+                  alt={(post as any).playImageAlt || post.title}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -92,7 +133,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <img
                 src={post.featuredImage}
-                alt={post.featuredImageAlt || post.title}
+                alt={(post as any).featuredImageAlt || post.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>

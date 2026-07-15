@@ -8,6 +8,9 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Categories | betsetgo.xyz',
   description: 'Browse gaming blog posts by category.',
+  alternates: {
+    canonical: '/categories',
+  },
 };
 
 export default async function CategoriesPage() {
