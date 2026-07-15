@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { HeroGrid } from "@/components/ui/hero-grid"
+import { Hero } from "@/components/home/Hero"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { Gamepad2 } from 'lucide-react'
@@ -34,34 +34,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-      {/* Hero Section with 3D/Glassmorphism Vibe */}
-      <section className="relative overflow-hidden w-full pt-24 pb-32">
-        <HeroGrid />
-        
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="animate-in fade-in slide-in-from-top-4 duration-700 delay-100 inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8 backdrop-blur-md">
-            Welcome to {siteName} 2.0
-          </div>
-          
-          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-balance leading-tight drop-shadow-2xl animate-in fade-in zoom-in-95 duration-1000 ${orbitron.className}`}>
-            <span>Level Up Your</span> <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-blue-500 animate-gradient-x inline-block">Gaming Experience.</span>
-          </h1>
-          
-          <p className="mt-8 text-xl text-muted-foreground md:text-2xl text-balance max-w-3xl mx-auto">
-            {siteDesc}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 mt-12 justify-center items-center">
-            <Button size="lg" className="rounded-full px-10 text-lg h-14 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-[0_0_30px_-5px_rgba(var(--primary),0.5)] hover:shadow-[0_0_40px_-5px_rgba(var(--primary),0.7)] transition-all hover:-translate-y-1 border-none" asChild>
-              <Link href="/blog">Read Latest Posts</Link>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-10 text-lg h-14 backdrop-blur-sm bg-background/50 border-white/10 hover:bg-white/10 transition-all hover:-translate-y-1" asChild>
-              <Link href="/categories">Browse Categories</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section with 3D Cinematic Vibe */}
+      <Hero siteName={siteName} siteDesc={siteDesc} />
 
       {/* Latest Posts Section */}
       <section className="py-24 bg-muted/30 border-t border-border/50 relative z-10">
