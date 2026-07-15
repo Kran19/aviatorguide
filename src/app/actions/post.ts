@@ -9,7 +9,7 @@ export async function createPost(formData: FormData) {
   const session = await auth()
   
   if (!session?.user?.id || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
-    throw new Error("Unauthorized")
+    return { success: false, error: "Unauthorized" }
   }
 
   const title = formData.get("title") as string
@@ -40,7 +40,7 @@ export async function createPost(formData: FormData) {
   }
 
   if (!title || !slug || !content) {
-    throw new Error("Missing required fields")
+    return { success: false, error: "Missing required fields" }
   }
 
   await prisma.post.create({
@@ -82,13 +82,13 @@ export async function updatePost(id: string, formData: FormData) {
   const session = await auth()
   
   if (!session?.user?.id || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
-    throw new Error("Unauthorized")
+    return { success: false, error: "Unauthorized" }
   }
 
   if (session.user.role === "AUTHOR") {
     const existingPost = await prisma.post.findUnique({ where: { id } })
     if (existingPost?.authorId !== session.user.id) {
-      throw new Error("Unauthorized: You can only edit your own posts.")
+      return { success: false, error: "Unauthorized: You can only edit your own posts." }
     }
   }
 
@@ -154,7 +154,7 @@ export async function updatePost(id: string, formData: FormData) {
   }
 
   if (!title || !slug || !content) {
-    throw new Error("Missing required fields")
+    return { success: false, error: "Missing required fields" }
   }
 
   await prisma.post.update({

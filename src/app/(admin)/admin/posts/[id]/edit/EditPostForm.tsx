@@ -59,6 +59,8 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
             if (res?.success) {
               toast.success("Post updated successfully!")
               router.push("/admin/posts")
+            } else {
+              toast.error(res?.error || "Failed to update post.")
             }
           } catch (error: any) {
             toast.error(error.message || "Failed to update post.")

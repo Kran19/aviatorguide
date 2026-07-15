@@ -25,6 +25,17 @@ interface RichTextEditorProps {
   onImageClick?: () => void
 }
 
+const rgbToHex = (color: string) => {
+  if (!color) return '#000000';
+  if (color.startsWith('#')) return color;
+  const match = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (!match) return '#000000';
+  const r = parseInt(match[1]).toString(16).padStart(2, '0');
+  const g = parseInt(match[2]).toString(16).padStart(2, '0');
+  const b = parseInt(match[3]).toString(16).padStart(2, '0');
+  return `#${r}${g}${b}`;
+};
+
 const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => void }) => {
   if (!editor) {
     return null
@@ -224,7 +235,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         <input
           type="color"
           onInput={(event) => editor.chain().focus().setColor((event.target as HTMLInputElement).value).run()}
-          value={editor.getAttributes('textStyle').color || '#000000'}
+          value={rgbToHex(editor.getAttributes('textStyle').color)}
           className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0"
           title="Text Color"
         />
@@ -581,7 +592,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             <input
               type="color"
               onInput={(event) => editor.chain().focus().setColor((event.target as HTMLInputElement).value).run()}
-              value={editor.getAttributes('textStyle').color || '#000000'}
+              value={rgbToHex(editor.getAttributes('textStyle').color)}
               className="w-6 h-6 p-0 border-0 rounded cursor-pointer shrink-0"
               title="Text Color"
             />

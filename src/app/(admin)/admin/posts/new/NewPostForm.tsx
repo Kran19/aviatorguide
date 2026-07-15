@@ -16,6 +16,48 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
   const [playImageUrl, setPlayImageUrl] = React.useState("")
+  
+  const [formDataState, setFormDataState] = React.useState({
+    title: "",
+    slug: "",
+    metaTitle: "",
+    metaDescription: "",
+    excerpt: "",
+    categoryId: "",
+    tags: "",
+    focusKeyword: "",
+    featuredImageAlt: "",
+    playImageAlt: ""
+  })
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem("newPostDraft")
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (parsed.content) setContent(parsed.content)
+        if (parsed.featuredImageUrl) setFeaturedImageUrl(parsed.featuredImageUrl)
+        if (parsed.playImageUrl) setPlayImageUrl(parsed.playImageUrl)
+        if (parsed.formDataState) setFormDataState(parsed.formDataState)
+      } catch (e) {}
+    }
+  }, [])
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      localStorage.setItem("newPostDraft", JSON.stringify({
+        content,
+        featuredImageUrl,
+        playImageUrl,
+        formDataState
+      }))
+    }, 1000)
+    return () => clearTimeout(timeout)
+  }, [content, featuredImageUrl, playImageUrl, formDataState])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormDataState(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
   return (
     <div className="space-y-8 w-full max-w-none mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -37,8 +79,11 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
           try {
             const res = await createPost(formData)
             if (res?.success) {
+              localStorage.removeItem("newPostDraft")
               toast.success("Post created successfully!")
               router.push("/admin/posts")
+            } else {
+              toast.error(res?.error || "Failed to create post.")
             }
           } catch (error: any) {
             toast.error(error.message || "Failed to create post.")
@@ -90,6 +135,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="featuredImageAlt"
                 name="featuredImageAlt"
                 type="text"
+                value={formDataState.featuredImageAlt}
+                onChange={handleChange}
                 placeholder="Alt text (describe the featured image)..."
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
@@ -138,6 +185,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="playImageAlt"
                 name="playImageAlt"
                 type="text"
+                value={formDataState.playImageAlt}
+                onChange={handleChange}
                 placeholder="Alt text (describe the play image)..."
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
@@ -150,6 +199,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               id="title"
               name="title"
               type="text"
+              value={formDataState.title}
+              onChange={handleChange}
               placeholder="e.g. The Future of eSports..."
               className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-lg font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background"
               required
@@ -222,6 +273,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="slug"
                 name="slug"
                 type="text"
+                value={formDataState.slug}
+                onChange={handleChange}
                 placeholder="my-awesome-post"
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 required
@@ -234,6 +287,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="metaTitle"
                 name="metaTitle"
                 type="text"
+                value={formDataState.metaTitle}
+                onChange={handleChange}
                 placeholder="Custom SEO Title..."
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
@@ -244,6 +299,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               <textarea
                 id="metaDescription"
                 name="metaDescription"
+                value={formDataState.metaDescription}
+                onChange={handleChange}
                 placeholder="Custom SEO Description..."
                 className="flex min-h-[80px] w-full rounded-xl border border-input bg-background/50 px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary resize-y"
               />
@@ -254,6 +311,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               <textarea
                 id="excerpt"
                 name="excerpt"
+                value={formDataState.excerpt}
+                onChange={handleChange}
                 className="flex min-h-[100px] w-full rounded-xl border border-input bg-background/50 px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background resize-y"
               />
             </div>
@@ -264,7 +323,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="categoryId"
                 name="categoryId"
                 required
-                defaultValue=""
+                value={formDataState.categoryId}
+                onChange={handleChange}
                 className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background cursor-pointer"
               >
                 <option value="" disabled>Select a category...</option>
@@ -285,6 +345,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="tags"
                 name="tags"
                 type="text"
+                value={formDataState.tags}
+                onChange={handleChange}
                 placeholder="e.g. eSports, Reviews, Strategy"
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
@@ -296,6 +358,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
                 id="focusKeyword"
                 name="focusKeyword"
                 type="text"
+                value={formDataState.focusKeyword}
+                onChange={handleChange}
                 placeholder="e.g. esports, review"
                 className="flex h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               />
