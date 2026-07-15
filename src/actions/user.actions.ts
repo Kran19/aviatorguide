@@ -14,6 +14,8 @@ export async function createUser(data: FormData) {
   const email = data.get("email") as string
   const password = data.get("password") as string
   const role = data.get("role") as Role
+  const status = data.get("status") as "ACTIVE" | "BLOCKED" || "ACTIVE"
+  const permissions = data.getAll("permissions") as string[]
 
   if (!email || !password || !name) throw new Error("Missing fields")
 
@@ -28,6 +30,8 @@ export async function createUser(data: FormData) {
       email,
       passwordHash: hashedPassword,
       role: role || "AUTHOR",
+      status,
+      permissions
     }
   })
 
@@ -54,6 +58,8 @@ export async function updateUser(id: string, data: FormData) {
   const email = data.get("email") as string
   const password = data.get("password") as string
   const role = data.get("role") as Role
+  const status = data.get("status") as "ACTIVE" | "BLOCKED" || "ACTIVE"
+  const permissions = data.getAll("permissions") as string[]
 
   if (!email || !name) throw new Error("Missing fields")
 
@@ -70,6 +76,8 @@ export async function updateUser(id: string, data: FormData) {
     name,
     email,
     role: role || "AUTHOR",
+    status,
+    permissions
   }
 
   if (password && password.trim() !== "") {

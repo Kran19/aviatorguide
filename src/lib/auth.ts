@@ -26,6 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         })
 
         if (!user || !user.passwordHash) return null
+        if (user.status === "BLOCKED") throw new Error("Your account has been blocked.")
 
         const passwordsMatch = await bcrypt.compare(
           credentials.password as string,
@@ -38,6 +39,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: user.email,
             name: user.name,
             role: user.role,
+            status: user.status,
+            permissions: user.permissions,
             image: user.image
           }
         }
@@ -51,13 +54,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.role = user.role
         token.id = user.id as string
+        token.status = user.status as string
+        token.permissions = user.permissions as string[]
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role
+        session.user.role = token.role as string
         session.user.id = token.id as string
+        session.user.status = token.status as string
+        session.user.permissions = token.permissions as string[]
       }
       return session
     }

@@ -10,7 +10,7 @@ import NewCategoryModal from "./new-category-modal"
 export default async function CategoriesPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const resolvedParams = await searchParams;
   const session = await auth()
-  if (session?.user?.role !== "ADMIN") {
+  if (session?.user?.role !== "ADMIN" && !session?.user?.permissions?.includes("CAN_MANAGE_CATEGORIES")) {
     redirect("/admin")
   }
 

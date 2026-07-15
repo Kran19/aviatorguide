@@ -32,10 +32,10 @@ export async function createPost(formData: FormData) {
   
   // Handle status/approval logic
   let status = "DRAFT"
-  if (session.user.role === "ADMIN") {
+  if (session.user.role === "ADMIN" || session.user.permissions?.includes("CAN_PUBLISH_POSTS")) {
     status = formData.get("status") as string || "DRAFT"
   } else {
-    // Authors can only submit drafts or pending
+    // Standard authors can only submit drafts or pending
     status = formData.get("submitForApproval") === "true" ? "PENDING_APPROVAL" : "DRAFT"
   }
 
@@ -43,35 +43,43 @@ export async function createPost(formData: FormData) {
     return { success: false, error: "Missing required fields" }
   }
 
-  await prisma.post.create({
-    data: {
-      title,
-      slug,
-      excerpt,
-      content,
-      featuredImage: featuredImage || null,
-      featuredImageAlt: featuredImageAlt || null,
-      playImage: playImage || null,
-      playImageAlt: playImageAlt || null,
-      status: status as any,
-      metaTitle: metaTitle || null,
-      metaDescription: metaDescription || null,
-      focusKeyword: focusKeyword || null,
-      authorId: session.user.id,
-      categories: categoryId ? {
-        connectOrCreate: [{
-          where: { slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
-          create: { name: categoryId, slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
-        }]
-      } : undefined,
-      tags: {
-        connectOrCreate: tagNames.map(name => ({
-          where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
-          create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
-        }))
-      }
-    },
-  })
+  try {
+    await prisma.post.create({
+      data: {
+        title,
+        slug,
+        excerpt,
+        content,
+        featuredImage: featuredImage || null,
+        featuredImageAlt: featuredImageAlt || null,
+        playImage: playImage || null,
+        playImageAlt: playImageAlt || null,
+        status: status as any,
+        metaTitle: metaTitle || null,
+        metaDescription: metaDescription || null,
+        focusKeyword: focusKeyword || null,
+        authorId: session.user.id,
+        categories: categoryId ? {
+          connectOrCreate: [{
+            where: { slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+            create: { name: categoryId, slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+          }]
+        } : undefined,
+        tags: {
+          connectOrCreate: tagNames.map(name => ({
+            where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
+            create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
+          }))
+        }
+      },
+    })
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return { success: false, error: "A post with this URL slug already exists. Please choose a different one." }
+    }
+    console.error("Failed to create post:", error)
+    return { success: false, error: "An unexpected error occurred while creating the post." }
+  }
 
   revalidatePath("/admin/posts")
   revalidatePath("/")
@@ -141,14 +149,14 @@ export async function updatePost(id: string, formData: FormData) {
     }
   }
 
-  if (session.user.role === "ADMIN") {
+  if (session.user.role === "ADMIN" || session.user.permissions?.includes("CAN_PUBLISH_POSTS")) {
     status = formData.get("status") as string || "DRAFT"
     dataToUpdate.status = status as any
-    if (adminRemarks !== undefined) {
+    if (session.user.role === "ADMIN" && adminRemarks !== undefined) {
       dataToUpdate.adminRemarks = adminRemarks
     }
   } else {
-    // Authors can only submit drafts or pending, and can't edit adminRemarks
+    // Standard authors can only submit drafts or pending, and can't edit adminRemarks
     status = formData.get("submitForApproval") === "true" ? "PENDING_APPROVAL" : "DRAFT"
     dataToUpdate.status = status as any
   }
@@ -157,10 +165,18 @@ export async function updatePost(id: string, formData: FormData) {
     return { success: false, error: "Missing required fields" }
   }
 
-  await prisma.post.update({
-    where: { id },
-    data: dataToUpdate,
-  })
+  try {
+    await prisma.post.update({
+      where: { id },
+      data: dataToUpdate,
+    })
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      return { success: false, error: "A post with this URL slug already exists. Please choose a different one." }
+    }
+    console.error("Failed to update post:", error)
+    return { success: false, error: "An unexpected error occurred while updating the post." }
+  }
 
   revalidatePath("/admin/posts")
   revalidatePath("/")

@@ -6,7 +6,9 @@ import { auth } from "@/lib/auth"
 
 export async function createCategory(data: FormData) {
   const session = await auth()
-  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized")
+  if (session?.user?.role !== "ADMIN" && !session?.user?.permissions?.includes("CAN_MANAGE_CATEGORIES")) {
+    throw new Error("Unauthorized")
+  }
 
   const name = data.get("name") as string
   const slug = data.get("slug") as string
@@ -31,7 +33,9 @@ export async function createCategory(data: FormData) {
 
 export async function deleteCategory(id: string) {
   const session = await auth()
-  if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized")
+  if (session?.user?.role !== "ADMIN" && !session?.user?.permissions?.includes("CAN_MANAGE_CATEGORIES")) {
+    throw new Error("Unauthorized")
+  }
 
   await prisma.category.delete({ where: { id } })
   revalidatePath("/admin/categories")

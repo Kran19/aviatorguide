@@ -53,9 +53,23 @@ export default function EditUserModal({ user }: { user: any }) {
             <Label htmlFor="email">Email</Label>
             <Input id="email" name="email" type="email" required defaultValue={user.email} placeholder="john@example.com" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password (Leave blank to keep current)</Label>
-            <Input id="password" name="password" type="password" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="password">Password (Leave blank to keep current)</Label>
+              <Input id="password" name="password" type="password" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select name="status" defaultValue={user.status || "ACTIVE"}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="BLOCKED">Blocked</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
@@ -68,6 +82,24 @@ export default function EditUserModal({ user }: { user: any }) {
                 <SelectItem value="ADMIN">Admin (Full access)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <Label>Permissions (For Authors)</Label>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" id="perm_publish" name="permissions" value="CAN_PUBLISH_POSTS" defaultChecked={user.permissions?.includes("CAN_PUBLISH_POSTS")} className="rounded border-gray-300" />
+                <label htmlFor="perm_publish" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Can Publish Posts Directly
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" id="perm_category" name="permissions" value="CAN_MANAGE_CATEGORIES" defaultChecked={user.permissions?.includes("CAN_MANAGE_CATEGORIES")} className="rounded border-gray-300" />
+                <label htmlFor="perm_category" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Can Manage Categories
+                </label>
+              </div>
+            </div>
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
