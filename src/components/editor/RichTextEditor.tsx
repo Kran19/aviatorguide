@@ -10,6 +10,10 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
+import Table from '@tiptap/extension-table'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
 import { Button } from '@/components/ui/button'
 import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight, Check } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
@@ -322,6 +326,27 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         types: ['heading', 'paragraph', 'inlineHeading', 'customImage'],
       }),
       Highlight.configure({ multicolor: true }),
+      Table.configure({
+        resizable: true,
+        HTMLAttributes: {
+          class: 'border-collapse table-auto w-full border border-border',
+        },
+      }),
+      TableRow.configure({
+        HTMLAttributes: {
+          class: 'border-b border-border',
+        },
+      }),
+      TableHeader.configure({
+        HTMLAttributes: {
+          class: 'border border-border p-2 font-bold bg-muted/50 text-left',
+        },
+      }),
+      TableCell.configure({
+        HTMLAttributes: {
+          class: 'border border-border p-2',
+        },
+      }),
       LinkExtension.configure({
         openOnClick: false,
         HTMLAttributes: {
