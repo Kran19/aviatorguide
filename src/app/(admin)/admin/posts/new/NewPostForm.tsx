@@ -4,6 +4,7 @@ import * as React from "react"
 import { createPost } from "@/app/actions/post"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
@@ -11,6 +12,7 @@ import { toast } from "sonner"
 
 export default function NewPostForm({ userRole, categories }: { userRole: string, categories: any[] }) {
   const [isPending, startTransition] = React.useTransition()
+  const router = useRouter()
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
   const [playImageUrl, setPlayImageUrl] = React.useState("")
@@ -33,8 +35,11 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         formData.set("playImage", playImageUrl)
         startTransition(async () => {
           try {
-            await createPost(formData)
-            toast.success("Post created successfully!")
+            const res = await createPost(formData)
+            if (res?.success) {
+              toast.success("Post created successfully!")
+              router.push("/admin/posts")
+            }
           } catch (error: any) {
             toast.error(error.message || "Failed to create post.")
           }

@@ -75,7 +75,7 @@ export async function createPost(formData: FormData) {
 
   revalidatePath("/admin/posts")
   revalidatePath("/")
-  redirect("/admin/posts")
+  return { success: true }
 }
 
 export async function updatePost(id: string, formData: FormData) {
@@ -164,7 +164,7 @@ export async function updatePost(id: string, formData: FormData) {
 
   revalidatePath("/admin/posts")
   revalidatePath("/")
-  redirect("/admin/posts")
+  return { success: true }
 }
 
 export async function deletePost(id: string) {
@@ -192,6 +192,22 @@ export async function quickApprovePost(id: string) {
   await prisma.post.update({
     where: { id },
     data: { status: "PUBLISHED" }
+  })
+
+  revalidatePath("/admin/posts")
+  revalidatePath("/")
+}
+
+export async function rejectPost(id: string) {
+  const session = await auth()
+  
+  if (!session?.user?.id || session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized")
+  }
+
+  await prisma.post.update({
+    where: { id },
+    data: { status: "REJECTED" }
   })
 
   revalidatePath("/admin/posts")

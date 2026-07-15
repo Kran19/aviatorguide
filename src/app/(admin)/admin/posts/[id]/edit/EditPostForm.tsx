@@ -4,6 +4,7 @@ import * as React from "react"
 import { updatePost } from "@/app/actions/post"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
@@ -29,6 +30,7 @@ type Post = {
 
 export default function EditPostForm({ post, userRole, categories }: { post: any, userRole: string, categories: any[] }) {
   const [isPending, startTransition] = React.useTransition()
+  const router = useRouter()
   const [content, setContent] = React.useState(post.content)
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState(post.featuredImage || "")
   const [playImageUrl, setPlayImageUrl] = React.useState(post.playImage || "")
@@ -53,8 +55,11 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
         formData.set("playImage", playImageUrl)
         startTransition(async () => {
           try {
-            await updatePostWithId(formData)
-            toast.success("Post updated successfully!")
+            const res = await updatePostWithId(formData)
+            if (res?.success) {
+              toast.success("Post updated successfully!")
+              router.push("/admin/posts")
+            }
           } catch (error: any) {
             toast.error(error.message || "Failed to update post.")
           }
