@@ -1,73 +1,56 @@
-import { MetadataRoute } from 'next';
-import { prisma } from '@/lib/prisma';
+import { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Regenerate every hour
+
+const BASE_URL = "https://betsetgo.xyz";
+
+// Fixed last modified date for static pages
+const STATIC_LASTMOD = new Date("2026-07-15T00:00:00.000Z");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://betsetgo.xyz';
-
-  // Base static routes
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
+      url: BASE_URL,
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "daily",
+      priority: 1,
     },
     {
-      url: `${baseUrl}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
+      url: `${BASE_URL}/blog`,
+      lastModified: STATIC_LASTMOD,
+      changeFrequency: "daily",
       priority: 0.9,
-    },
-
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.4,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/terms`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
     },
   ];
 
   try {
-    // Fetch dynamic blog posts
     const posts = await prisma.post.findMany({
-      where: { status: 'PUBLISHED' },
+      where: {
+        status: "PUBLISHED",
+      },
       select: {
         slug: true,
         updatedAt: true,
         createdAt: true,
       },
+      orderBy: {
+        updatedAt: "desc",
+      },
     });
 
     const dynamicRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
-      lastModified: post.updatedAt || post.createdAt,
-      changeFrequency: 'weekly',
+      url: `${BASE_URL}/blog/${post.slug}`,
+      lastModified: post.updatedAt ?? post.createdAt,
+      changeFrequency: "weekly",
       priority: 0.8,
     }));
 
     return [...staticRoutes, ...dynamicRoutes];
   } catch (error) {
-    console.error('Failed to generate sitemap', error);
+    console.error("Sitemap generation failed:", error);
+
+    // Always return static sitemap if DB is unavailable
     return staticRoutes;
   }
 }
