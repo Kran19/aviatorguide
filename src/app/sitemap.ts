@@ -34,10 +34,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         updatedAt: true,
         createdAt: true,
       },
-      orderBy: {
-        updatedAt: "desc",
-      },
     });
+
+    console.log("Published posts:", posts.length);
+    console.log(posts);
 
     const dynamicRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${BASE_URL}/blog/${post.slug}`,
@@ -48,9 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticRoutes, ...dynamicRoutes];
   } catch (error) {
-    console.error("Sitemap generation failed:", error);
-
-    // Always return static sitemap if DB is unavailable
+    console.error("Sitemap Error:", error);
     return staticRoutes;
   }
 }
