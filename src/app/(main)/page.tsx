@@ -10,7 +10,7 @@ export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
 
 export default async function Home() {
   let settings = null;
-  let latestPosts = [];
+  let latestPosts: any[] = [];
 
   try {
     settings = await prisma.globalSettings.findUnique({
