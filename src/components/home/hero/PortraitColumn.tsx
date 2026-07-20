@@ -17,9 +17,9 @@ export function PortraitColumn({ images, direction, speed = 25, className }: Por
   const duplicatedImages = [...images, ...images]
 
   return (
-    <div className={cn("relative h-[150vh] w-full overflow-hidden flex flex-col gap-[10px]", className)}>
+    <div className={cn("relative h-screen w-full overflow-hidden flex flex-col", className)}>
       <motion.div
-        className="flex flex-col gap-[10px] absolute w-full"
+        className="flex flex-col absolute w-full"
         animate={{
           y: direction === "up" ? ["0%", "-50%"] : ["-50%", "0%"],
         }}
@@ -32,7 +32,7 @@ export function PortraitColumn({ images, direction, speed = 25, className }: Por
         {duplicatedImages.map((src, idx) => (
           <div 
             key={`${src}-${idx}`} 
-            className="relative w-full aspect-[9/16] rounded-2xl overflow-hidden group cursor-pointer"
+            className="relative w-full h-screen overflow-hidden group"
           >
             {/* The Image */}
             <Image
@@ -40,11 +40,12 @@ export function PortraitColumn({ images, direction, speed = 25, className }: Por
               alt={`Hero showcase ${idx}`}
               fill
               sizes="25vw"
-              className="object-cover scale-110 brightness-80 contrast-110 blur-[1px] transition-all duration-700 ease-out group-hover:scale-[1.15] group-hover:brightness-100 group-hover:blur-none"
+              className="object-cover"
+              priority={idx < 2} // prioritize first few images
             />
-            {/* Dark Gradient Overlay */}
+            {/* Very Subtle Dark Gradient Overlay */}
             <div className="absolute inset-0 pointer-events-none" style={{
-              background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.75) 100%)'
+              background: 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%)'
             }} />
           </div>
         ))}
