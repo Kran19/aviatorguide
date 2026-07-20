@@ -4,8 +4,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+import Image from 'next/image';
 
+export const revalidate = 60; // ISR
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   const post = await prisma.post.findUnique({
@@ -93,10 +94,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {(post as any).playImage && (
             <div className="flex flex-col items-center justify-center mb-12 max-w-sm mx-auto">
               <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-muted relative shadow-lg">
-                <img
+                <Image
                   src={(post as any).playImage}
                   alt={(post as any).playImageAlt || post.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div className="flex w-full gap-3">
@@ -131,10 +133,13 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           {post.featuredImage && (
             <div className="w-full max-w-4xl mx-auto h-[400px] md:h-[500px] overflow-hidden rounded-2xl mb-12 bg-muted relative group shadow-2xl">
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <img
+              <Image
                 src={post.featuredImage}
                 alt={(post as any).featuredImageAlt || post.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                priority
+                sizes="(max-width: 1200px) 100vw, 1200px"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             </div>
           )}
@@ -150,9 +155,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <div className="mt-16 pt-8 border-t border-border/50">
             <div className="flex flex-col sm:flex-row gap-6 items-start">
               <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 bg-white border-2 border-border shadow-lg flex items-center justify-center p-2">
-                <img
+                <Image
                   src="/rocky-logo.png"
                   alt="rocky11.club"
+                  width={64}
+                  height={64}
                   className="w-full h-full object-contain"
                 />
               </div>

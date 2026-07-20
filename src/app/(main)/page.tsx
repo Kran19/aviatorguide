@@ -5,14 +5,8 @@ import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { Gamepad2 } from 'lucide-react'
 
-import { Orbitron } from 'next/font/google'
 
-const orbitron = Orbitron({
-  subsets: ['latin'],
-  weight: ['900'],
-})
-
-export const dynamic = 'force-dynamic';
+export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
 
 export default async function Home() {
   const settings = await prisma.globalSettings.findUnique({
@@ -63,6 +57,7 @@ export default async function Home() {
                         src={post.featuredImage}
                         alt={(post as any).featuredImageAlt || post.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
@@ -92,7 +87,7 @@ export default async function Home() {
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-full bg-white overflow-hidden flex items-center justify-center p-[2px] border border-border shadow-sm">
-                          <img src="/rocky-logo.png" alt="rocky11.club" className="w-full h-full object-contain rounded-full" />
+                          <Image src="/rocky-logo.png" alt="rocky11.club" width={32} height={32} className="w-full h-full object-contain rounded-full" />
                         </div>
                         <span className="text-sm font-bold text-foreground">rocky11.club</span>
                       </div>

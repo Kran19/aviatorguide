@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 86400; // Cache sitemap for 1 day
 const BASE_URL = "https://betsetgo.xyz";
 
 // Fixed last modified date for static pages

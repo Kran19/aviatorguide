@@ -2,8 +2,9 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+import Image from 'next/image';
 
+export const revalidate = 60; // ISR
 export const metadata = {
   title: 'Blog - betsetgo.xyz',
   description: 'Read our latest gaming blog posts.',
@@ -53,10 +54,12 @@ export default async function BlogPage() {
                   {post.featuredImage ? (
                     <div className="w-full h-56 overflow-hidden bg-muted relative">
                       <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                      <img 
-                        src={post.featuredImage} 
-                        alt={(post as any).featuredImageAlt || post.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      <Image
+                        src={post.featuredImage}
+                        alt={(post as any).featuredImageAlt || post.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>
                   ) : (

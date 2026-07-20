@@ -195,7 +195,6 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
           <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm space-y-5">
             <h3 className="font-bold text-xl border-b pb-2">Publishing</h3>
             
-            {userRole === "ADMIN" ? (
               <div className="space-y-3">
                 <label className="text-sm font-semibold" htmlFor="status">Status</label>
                 <select 
@@ -210,23 +209,6 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
                   <option value="REJECTED">Rejected</option>
                 </select>
               </div>
-            ) : (
-              <div className="space-y-3 bg-muted/50 p-4 rounded-xl">
-                <p className="text-sm text-muted-foreground">Current Status: <span className="font-bold text-foreground">{post.status.replace("_", " ")}</span></p>
-                <div className="flex items-center space-x-3 pt-2">
-                  <input
-                    type="checkbox"
-                    id="submitForApproval"
-                    name="submitForApproval"
-                    defaultChecked={post.status === "PENDING_APPROVAL"}
-                    className="h-5 w-5 rounded border-input text-primary focus:ring-primary cursor-pointer transition-colors"
-                  />
-                  <label htmlFor="submitForApproval" className="text-sm font-semibold cursor-pointer select-none">
-                    Submit for Approval
-                  </label>
-                </div>
-              </div>
-            )}
             
             {userRole === "ADMIN" && (
               <div className="space-y-3 pt-2">

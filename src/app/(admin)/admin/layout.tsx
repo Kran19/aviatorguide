@@ -36,12 +36,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <ImageIcon className="h-4 w-4" />
               Media
             </Link>
+            <Link href="/admin/categories" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
+              <Tags className="h-4 w-4" />
+              Categories
+            </Link>
             {isAdmin && (
               <>
-                <Link href="/admin/categories" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
-                  <Tags className="h-4 w-4" />
-                  Categories
-                </Link>
                 <Link href="/admin/users" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
                   <Users className="h-4 w-4" />
                   Users
@@ -85,12 +85,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <ImageIcon className="h-5 w-5" />
           <span className="text-[10px] font-medium">Media</span>
         </Link>
+        <Link href="/admin/categories" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
+          <Tags className="h-5 w-5" />
+          <span className="text-[10px] font-medium">Categories</span>
+        </Link>
         {isAdmin && (
           <>
-            <Link href="/admin/categories" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
-              <Tags className="h-5 w-5" />
-              <span className="text-[10px] font-medium">Categories</span>
-            </Link>
             <Link href="/admin/settings" className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors">
               <Settings className="h-5 w-5" />
               <span className="text-[10px] font-medium">Settings</span>
