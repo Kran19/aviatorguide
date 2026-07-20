@@ -14,11 +14,16 @@ export const metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = await prisma.post.findMany({
-    where: { status: 'PUBLISHED' },
-    orderBy: { createdAt: 'desc' },
-    include: { categories: true },
-  });
+  let posts = [];
+  try {
+    posts = await prisma.post.findMany({
+      where: { status: 'PUBLISHED' },
+      orderBy: { createdAt: 'desc' },
+      include: { categories: true },
+    });
+  } catch (e) {
+    console.warn("Database unreachable during build time for blog page.", e);
+  }
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">

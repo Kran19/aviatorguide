@@ -9,9 +9,12 @@ import Image from 'next/image';
 export const revalidate = 60; // ISR
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const post = await prisma.post.findUnique({
-    where: { slug: resolvedParams.slug },
-  });
+  let post = null;
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug: resolvedParams.slug },
+    });
+  } catch (e) {}
 
   if (!post) return { title: 'Post Not Found' };
 
@@ -46,13 +49,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const post = await prisma.post.findUnique({
-    where: { slug: resolvedParams.slug, status: 'PUBLISHED' },
-    include: {
-      categories: true,
-      author: true,
-    },
-  });
+  let post = null;
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug: resolvedParams.slug, status: 'PUBLISHED' },
+      include: {
+        categories: true,
+        author: true,
+      },
+    });
+  } catch (e) {
+    console.warn("Database unreachable during build time for blog post.", e);
+  }
 
   if (!post) {
     notFound();

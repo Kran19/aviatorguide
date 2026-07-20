@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Hero } from "@/components/home/Hero"
+import { Hero } from "@/components/home/hero/Hero"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { Gamepad2 } from 'lucide-react'
@@ -9,27 +9,31 @@ import { Gamepad2 } from 'lucide-react'
 export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
 
 export default async function Home() {
-  const settings = await prisma.globalSettings.findUnique({
-    where: { id: "global" }
-  })
-  
-  const latestPosts = await prisma.post.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { createdAt: "desc" },
-    take: 6,
-    include: {
-      categories: true,
-      author: true
-    }
-  })
+  let settings = null;
+  let latestPosts = [];
 
-  const siteName = settings?.siteName || "betsetgo.xyz"
-  const siteDesc = settings?.seoDescription || "Reviews, guides, eSports news, and deep dives into the modern gaming world."
+  try {
+    settings = await prisma.globalSettings.findUnique({
+      where: { id: "global" }
+    })
+    
+    latestPosts = await prisma.post.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      include: {
+        categories: true,
+        author: true
+      }
+    })
+  } catch (error) {
+    console.warn("Database unreachable during build time. Falling back to empty state for prerendering.", error);
+  }
 
   return (
     <div className="flex flex-col w-full min-h-screen">
       {/* Hero Section with 3D Cinematic Vibe */}
-      <Hero siteName={siteName} siteDesc={siteDesc} />
+      <Hero />
 
       {/* Latest Posts Section */}
       <section className="py-24 bg-muted/30 border-t border-border/50 relative z-10">
