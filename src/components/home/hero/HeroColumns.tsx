@@ -5,31 +5,31 @@ import { PortraitColumn } from "./PortraitColumn"
 
 export function HeroColumns() {
   const imagesCol1 = [
-    "/games/aes_dragon_tiger.webp",
-    "/games/baccarat.webp",
-    "/games/bingo.webp",
-    "/games/chickensubway.webp",
+    "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1622322300063-e5e80629ec24?q=80&w=800&auto=format&fit=crop"
   ]
   
   const imagesCol2 = [
-    "/games/colorgame.webp",
-    "/games/cqc_lucky_fishing.webp",
-    "/games/evo_extrachilliepicspins.webp",
-    "/games/extra_sicbo.webp",
+    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1621571439247-41804ff69b2d?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1596041697334-0985da0d859b?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800&auto=format&fit=crop"
   ]
 
   const imagesCol3 = [
-    "/games/iog_wheel.webp",
-    "/games/mgg_amazingpharoah.webp",
-    "/games/plinko.webp",
-    "/games/rg_2card_tp.webp",
+    "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800&auto=format&fit=crop"
   ]
 
   const imagesCol4 = [
-    "/games/win_agent_spinity.webp",
-    "/games/2_card_teenpatti.webp",
-    "/games/Jili_AK47.webp",
-    "/games/Jili_Bombing_Fishing.webp",
+    "https://images.unsplash.com/photo-1621571439247-41804ff69b2d?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1622322300063-e5e80629ec24?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1596041697334-0985da0d859b?q=80&w=800&auto=format&fit=crop"
   ]
 
   return (
