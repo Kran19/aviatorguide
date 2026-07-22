@@ -46,6 +46,9 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 
+# Ensure sharp is installed for next/image optimization in standalone mode
+RUN npm install sharp
+
 # Ensure public/uploads exists and belongs to nextjs
 RUN mkdir -p public/uploads
 RUN chown -R nextjs:nodejs public/uploads
