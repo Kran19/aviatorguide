@@ -4,21 +4,12 @@ import React, { useEffect, useRef } from "react"
 import { PortraitColumn } from "./PortraitColumn"
 
 export function HeroColumns() {
-  const baseImages = [
-    "https://plus.unsplash.com/premium_photo-1694004710209-d0e769a280a3?w=600&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1603378596501-8bbfc7059d5e?w=600&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1594316663037-23fffae0d4e7?w=600&auto=format&fit=crop&q=60",
-    "https://plus.unsplash.com/premium_photo-1679456904325-19ca215974a7?w=600&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1616645004064-aebe96923cbb?w=600&auto=format&fit=crop&q=60",
-    "https://plus.unsplash.com/premium_photo-1698525789065-8188a9ac9504?w=600&auto=format&fit=crop&q=60",
-    "https://plus.unsplash.com/premium_photo-1698525803937-0ceeedd047cf?w=600&auto=format&fit=crop&q=60",
-    "https://images.unsplash.com/photo-1627831389670-d20f5a01c536?w=600&auto=format&fit=crop&q=60",
-  ]
+  const baseImages = Array.from({ length: 30 }, (_, i) => `/images/hero/${String(i + 1).padStart(2, '0')}.webp`)
 
-  const imagesCol1 = [0, 1, 2, 3, 4, 5, 6, 7].map(i => baseImages[i])
-  const imagesCol2 = [2, 3, 4, 5, 6, 7, 0, 1].map(i => baseImages[i])
-  const imagesCol3 = [4, 5, 6, 7, 0, 1, 2, 3].map(i => baseImages[i])
-  const imagesCol4 = [6, 7, 0, 1, 2, 3, 4, 5].map(i => baseImages[i])
+  const imagesCol1 = baseImages.slice(0, 8)
+  const imagesCol2 = baseImages.slice(8, 16)
+  const imagesCol3 = baseImages.slice(16, 23)
+  const imagesCol4 = baseImages.slice(23, 30)
 
   return (
     <>
