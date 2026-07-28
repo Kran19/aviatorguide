@@ -1,8 +1,7 @@
 import React from 'react';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
-
-import Image from 'next/image';
+import { SafeImage } from '@/components/ui/SafeImage';
 
 export const revalidate = 60; // ISR
 export const metadata = {
@@ -56,24 +55,17 @@ export default async function BlogPage() {
                   {/* Hover glow effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                  {post.featuredImage ? (
-                    <div className="w-full h-56 overflow-hidden bg-muted relative">
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
-                      <Image
-                        src={post.featuredImage}
-                        alt={(post as any).featuredImageAlt || post.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-56 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center p-4 text-center">
-                        <span className="text-muted-foreground font-semibold line-clamp-3">
-                          {(post as any).featuredImageAlt || "No Image"}
-                        </span>
-                    </div>
-                  )}
+                  <div className="w-full h-56 overflow-hidden bg-muted relative">
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500 z-10" />
+                    <SafeImage
+                      src={post.featuredImage}
+                      alt={(post as any).featuredImageAlt || post.title}
+                      fallbackText={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
                   
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex flex-wrap gap-2 mb-4">

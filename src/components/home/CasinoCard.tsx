@@ -1,4 +1,4 @@
-import Image from "next/image"
+import { SafeImage } from "@/components/ui/SafeImage"
 
 interface CasinoCardProps {
   src: string
@@ -18,12 +18,12 @@ export function CasinoCard({ src, alt = "Casino Game" }: CasinoCardProps) {
         {/* Glow behind image on hover */}
         <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-purple-500/30 blur-2xl transition-opacity duration-500" />
         
-        <Image 
+        <SafeImage 
           src={src} 
           alt={alt}
           fill
           unoptimized
-          className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+          className="object-contain sm:object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
         />
         
         {/* Glassmorphism reflection (moves slightly on hover via scale) */}

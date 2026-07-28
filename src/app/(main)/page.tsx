@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Hero } from "@/components/home/hero/Hero"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
+import { SafeImage } from "@/components/ui/SafeImage"
 import { Gamepad2 } from 'lucide-react'
 
 
@@ -56,21 +57,14 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
                   
                   <div className="relative h-56 w-full overflow-hidden bg-muted">
-                    {post.featuredImage ? (
-                      <Image
-                        src={post.featuredImage}
-                        alt={(post as any).featuredImageAlt || post.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center p-4 text-center">
-                        <span className="text-muted-foreground font-semibold line-clamp-3">
-                          {(post as any).featuredImageAlt || "No Image"}
-                        </span>
-                      </div>
-                    )}
+                    <SafeImage
+                      src={post.featuredImage}
+                      alt={(post as any).featuredImageAlt || post.title}
+                      fallbackText={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
                     {post.categories[0] && (
                       <div className="absolute top-4 left-4 z-20">
                         <span className="bg-background/80 backdrop-blur-md border border-white/10 px-3 py-1 text-xs font-semibold rounded-full shadow-lg text-foreground">

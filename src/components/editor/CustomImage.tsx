@@ -4,7 +4,7 @@ import * as React from 'react'
 
 const ImageNodeView = (props: any) => {
   const { node, updateAttributes, selected } = props
-  const { src, alt, caption, width, height, float } = node.attrs
+  const { src, alt, caption, width, height, float, textAlign } = node.attrs
 
   const [isResizing, setIsResizing] = React.useState(false)
   const [currentWidth, setCurrentWidth] = React.useState(width || '100%')
@@ -13,13 +13,21 @@ const ImageNodeView = (props: any) => {
   React.useEffect(() => {
     if (selected) {
       document.dispatchEvent(new CustomEvent('tiptap:imageSelected', {
-        detail: { src, alt: alt || '', caption: caption || '', width: currentWidth, height: height || 'auto', float: float || 'none' },
+        detail: { 
+          src, 
+          alt: alt || '', 
+          caption: caption || '', 
+          width: currentWidth, 
+          height: height || 'auto', 
+          float: float || 'none',
+          textAlign: textAlign || 'left'
+        },
         bubbles: true,
       }))
     } else {
       document.dispatchEvent(new CustomEvent('tiptap:imageDeselected', { bubbles: true }))
     }
-  }, [selected, src, alt, caption, currentWidth, height, float])
+  }, [selected, src, alt, caption, currentWidth, height, float, textAlign])
 
   /* ── Resize logic ── */
   const handleResizeMouseDown = (e: React.MouseEvent) => {
@@ -48,16 +56,14 @@ const ImageNodeView = (props: any) => {
     }
   }, [isResizing, currentWidth, width, updateAttributes])
 
-  const textAlign = node.attrs.textAlign
-  const outerJustify =
-    textAlign === 'center' ? 'center' : textAlign === 'right' ? 'flex-end' : 'flex-start'
-    
+  const align = textAlign || 'left'
+  const outerJustify = align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
   const floatValue = float || 'none'
   const isFloating = floatValue !== 'none'
 
   return (
     <NodeViewWrapper
-      className={`my-4 ${selected ? 'ring-2 ring-primary ring-offset-2 rounded-xl' : ''}`}
+      className={`my-6 ${selected ? 'ring-2 ring-primary ring-offset-2 rounded-xl' : ''}`}
       style={{ 
         width: isFloating ? 'auto' : '100%', 
         display: isFloating ? 'block' : 'flex', 
@@ -65,8 +71,9 @@ const ImageNodeView = (props: any) => {
         float: isFloating ? floatValue : undefined,
         margin: floatValue === 'left' ? '0 1.5rem 1rem 0' : floatValue === 'right' ? '0 0 1rem 1.5rem' : undefined,
       }}
+      data-align={align}
     >
-      <div style={{ width: currentWidth, maxWidth: '100%' }}>
+      <div style={{ width: currentWidth, maxWidth: '100%', marginLeft: align === 'center' || align === 'right' ? 'auto' : undefined, marginRight: align === 'center' ? 'auto' : undefined }}>
         <div className="relative group inline-block w-full">
           <img
             src={src}
@@ -104,13 +111,14 @@ export const CustomImage = Node.create({
 
   addAttributes() {
     return {
-      src:     { default: null },
-      alt:     { default: null },
-      title:   { default: null },
-      width:   { default: '100%' },
-      height:  { default: 'auto' },
-      float:   { default: 'none' },
-      caption: { default: null },
+      src:       { default: null },
+      alt:       { default: null },
+      title:     { default: null },
+      width:     { default: '100%' },
+      height:    { default: 'auto' },
+      float:     { default: 'none' },
+      caption:   { default: null },
+      textAlign: { default: 'left' },
     }
   },
 
@@ -119,41 +127,54 @@ export const CustomImage = Node.create({
       {
         tag: 'figure',
         getAttrs: (node) => {
-          const img = (node as HTMLElement).querySelector('img')
+          const el = node as HTMLElement
+          const img = el.querySelector('img')
           if (!img) return false
           
-          let floatVal = 'none'
-          if ((node as HTMLElement).style.float) {
-            floatVal = (node as HTMLElement).style.float
+          let floatVal = el.style.float || 'none'
+          let alignVal = el.getAttribute('data-align') || 'left'
+          
+          if (!alignVal || alignVal === 'left') {
+            if (el.style.justifyContent === 'center' || el.style.textAlign === 'center' || el.classList.contains('align-center')) {
+              alignVal = 'center'
+            } else if (el.style.justifyContent === 'flex-end' || el.style.textAlign === 'right' || el.classList.contains('align-right')) {
+              alignVal = 'right'
+            }
           }
           
           return {
-            src:     img.getAttribute('src'),
-            alt:     img.getAttribute('alt'),
-            title:   img.getAttribute('title'),
-            width:   img.style.width || '100%',
-            height:  img.style.height || 'auto',
-            float:   floatVal,
-            caption: (node as HTMLElement).querySelector('figcaption')?.innerText || null,
+            src:       img.getAttribute('src'),
+            alt:       img.getAttribute('alt'),
+            title:     img.getAttribute('title'),
+            width:     img.style.width || el.style.width || '100%',
+            height:    img.style.height || 'auto',
+            float:     floatVal,
+            caption:   el.querySelector('figcaption')?.innerText || null,
+            textAlign: alignVal,
           }
         },
       },
       {
         tag: 'img[src]',
         getAttrs: (node) => {
-          let floatVal = 'none'
-          if ((node as HTMLElement).style.float) {
-            floatVal = (node as HTMLElement).style.float
+          const el = node as HTMLElement
+          let floatVal = el.style.float || 'none'
+          let alignVal = el.getAttribute('data-align') || 'left'
+          if (el.style.textAlign === 'center' || el.classList.contains('align-center')) {
+            alignVal = 'center'
+          } else if (el.style.textAlign === 'right' || el.classList.contains('align-right')) {
+            alignVal = 'right'
           }
           
           return {
-            src:     (node as HTMLElement).getAttribute('src'),
-            alt:     (node as HTMLElement).getAttribute('alt'),
-            title:   (node as HTMLElement).getAttribute('title'),
-            width:   (node as HTMLElement).style.width || '100%',
-            height:  (node as HTMLElement).style.height || 'auto',
-            float:   floatVal,
-            caption: null,
+            src:       el.getAttribute('src'),
+            alt:       el.getAttribute('alt'),
+            title:     el.getAttribute('title'),
+            width:     el.style.width || '100%',
+            height:    el.style.height || 'auto',
+            float:     floatVal,
+            caption:   null,
+            textAlign: alignVal,
           }
         }
       },
@@ -161,12 +182,7 @@ export const CustomImage = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    const textAlign = HTMLAttributes.style?.includes('text-align: center')
-      ? 'center'
-      : HTMLAttributes.style?.includes('text-align: right')
-      ? 'right'
-      : 'left'
-
+    const align = HTMLAttributes.textAlign || 'left'
     const floatValue = HTMLAttributes.float || 'none'
     const isFloating = floatValue !== 'none'
     
@@ -174,16 +190,23 @@ export const CustomImage = Node.create({
     if (isFloating) {
       wrapperStyle += `display:block;float:${floatValue};margin:${floatValue === 'left' ? '0 1.5rem 1rem 0' : '0 0 1rem 1.5rem'};`
     } else {
-      wrapperStyle += `display:flex;justify-content:${textAlign === 'center' ? 'center' : textAlign === 'right' ? 'flex-end' : 'flex-start'};`
+      const justify = align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
+      const margin = align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0'
+      wrapperStyle += `display:flex;justify-content:${justify};text-align:${align};margin:${margin};`
     }
 
     const imgStyle = `height:${HTMLAttributes.height || 'auto'};object-fit:contain;`
+    const alignClass = `align-${align}`
 
     if (HTMLAttributes.caption) {
       return [
         'figure',
-        { style: wrapperStyle, class: 'my-4' },
-        ['div', { style: `width:${HTMLAttributes.width}` },
+        { 
+          style: wrapperStyle, 
+          class: `my-6 ${alignClass}`,
+          'data-align': align 
+        },
+        ['div', { style: `width:${HTMLAttributes.width};max-width:100%;margin:${align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0'};` },
           ['img', mergeAttributes(HTMLAttributes, { style: imgStyle, class: 'w-full rounded-xl' })],
           ['figcaption', { class: 'text-center text-sm text-muted-foreground mt-2 italic' }, HTMLAttributes.caption],
         ],
@@ -192,8 +215,12 @@ export const CustomImage = Node.create({
 
     return [
       'figure',
-      { style: wrapperStyle, class: 'my-4' },
-      ['div', { style: `width:${HTMLAttributes.width}` },
+      { 
+        style: wrapperStyle, 
+        class: `my-6 ${alignClass}`,
+        'data-align': align 
+      },
+      ['div', { style: `width:${HTMLAttributes.width};max-width:100%;margin:${align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0'};` },
         ['img', mergeAttributes(HTMLAttributes, { style: imgStyle, class: 'w-full rounded-xl' })],
       ]
     ]
@@ -207,7 +234,7 @@ export const CustomImage = Node.create({
   addCommands() {
     return {
       setImage:
-        (options: { src: string; alt?: string; title?: string; caption?: string; width?: string, height?: string, float?: string }) =>
+        (options: { src: string; alt?: string; title?: string; caption?: string; width?: string, height?: string, float?: string, textAlign?: string }) =>
         ({ commands }: any) =>
           commands.insertContent({ type: this.name, attrs: options }),
     }

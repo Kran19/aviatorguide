@@ -81,8 +81,14 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setTextAlign('left').run()}
-        className={editor.isActive({ textAlign: 'left' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => {
+          if (editor.isActive('customImage')) {
+            editor.chain().focus().updateAttributes('customImage', { textAlign: 'left', float: 'none' }).run()
+          } else {
+            editor.chain().focus().setTextAlign('left').run()
+          }
+        }}
+        className={editor.isActive({ textAlign: 'left' }) || editor.isActive('customImage', { textAlign: 'left' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
         title="Align Left"
       >
         <AlignLeft className="h-4 w-4" />
@@ -91,8 +97,14 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setTextAlign('center').run()}
-        className={editor.isActive({ textAlign: 'center' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => {
+          if (editor.isActive('customImage')) {
+            editor.chain().focus().updateAttributes('customImage', { textAlign: 'center', float: 'none' }).run()
+          } else {
+            editor.chain().focus().setTextAlign('center').run()
+          }
+        }}
+        className={editor.isActive({ textAlign: 'center' }) || editor.isActive('customImage', { textAlign: 'center' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
         title="Align Center"
       >
         <AlignCenter className="h-4 w-4" />
@@ -101,8 +113,14 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setTextAlign('right').run()}
-        className={editor.isActive({ textAlign: 'right' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => {
+          if (editor.isActive('customImage')) {
+            editor.chain().focus().updateAttributes('customImage', { textAlign: 'right', float: 'none' }).run()
+          } else {
+            editor.chain().focus().setTextAlign('right').run()
+          }
+        }}
+        className={editor.isActive({ textAlign: 'right' }) || editor.isActive('customImage', { textAlign: 'right' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
         title="Align Right"
       >
         <AlignRight className="h-4 w-4" />

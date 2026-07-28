@@ -139,6 +139,37 @@
   visibility: hidden;
 }
 
+/* Figure and Image Alignment rules for Blog Content */
+.prose figure.align-center,
+.prose figure[data-align="center"] {
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.prose figure.align-center > div,
+.prose figure[data-align="center"] > div {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.prose figure.align-left,
+.prose figure[data-align="left"] {
+  display: flex !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.prose figure.align-right,
+.prose figure[data-align="right"] {
+  display: flex !important;
+  justify-content: flex-end !important;
+  text-align: right !important;
+  margin-left: auto !important;
+}
+
 /* View Transitions API overrides for Theme Toggle */
 ::view-transition-old(root),
 ::view-transition-new(root) {

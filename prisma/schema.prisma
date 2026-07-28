@@ -32,6 +32,12 @@ model User {
   role          Role       @default(USER)
   status        UserStatus @default(ACTIVE)
   permissions   String[]
+  slug          String?    @unique
+  bio           String?    @db.Text
+  designation   String?
+  coverImage    String?
+  socialLinks   Json?
+  expertise     String[]   @default([])
   accounts      Account[]
   sessions      Session[]
   posts         Post[]

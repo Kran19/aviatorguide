@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react"
 import { motion, useAnimate } from "framer-motion"
-import Image from "next/image"
+import { SafeImage } from "@/components/ui/SafeImage"
 import { cn } from "@/lib/utils"
 
 interface PortraitColumnProps {
@@ -85,12 +85,12 @@ export function PortraitColumn({ images, direction, className }: PortraitColumnP
             className="relative w-full h-screen overflow-hidden group"
           >
             {/* The Image */}
-            <Image
+            <SafeImage
               src={src}
               alt={`Slot Image ${idx}`}
               fill
-              sizes="25vw"
-              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 25vw"
+              className="object-cover md:object-cover sm:object-cover"
               priority={idx < 10} // Preload first few
             />
             {/* Very Subtle Dark Gradient Overlay */}
