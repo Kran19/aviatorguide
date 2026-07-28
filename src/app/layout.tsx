@@ -8,6 +8,7 @@ import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${outfit.variable} antialiased`}>
-      <body className="min-h-screen flex flex-col bg-background font-sans">
+      <body className={`${outfit.className} min-h-screen flex flex-col bg-background font-sans`}>
         <GoogleAnalytics />
         <ThemeProvider
           attribute="class"

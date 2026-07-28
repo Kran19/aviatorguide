@@ -68,10 +68,6 @@ export function Hero() {
       <div ref={columnsWrapperRef} className="absolute inset-0 w-full h-full z-0">
         <HeroColumns />
       </div>
-
-      <div ref={contentWrapperRef} className="absolute inset-0 z-20 pointer-events-none">
-        <HeroContent />
-      </div>
       
       {/* Bottom gradient fade */}
       <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent z-30 pointer-events-none" />
