@@ -32,7 +32,7 @@ model User {
   role          Role       @default(USER)
   status        UserStatus @default(ACTIVE)
   permissions   String[]
-  slug          String?    @unique
+  slug          String?
   bio           String?    @db.Text
   designation   String?
   coverImage    String?
