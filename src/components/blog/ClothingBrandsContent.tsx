@@ -119,19 +119,9 @@ export function ClothingBrandsContent({ post }: ClothingBrandsContentProps) {
 
         {/* Meta Bar */}
         <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-slate-800 text-sm text-slate-400">
-          <div className="flex items-center space-x-4">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-emerald-500/30">
-              <Image
-                src={post.author.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"}
-                alt={post.author.name || "Editor"}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <p className="text-white font-semibold text-sm">{post.author.name || "Fashion Editorial Team"}</p>
-              <p className="text-xs text-slate-400">{post.author.designation || "Senior Style Analyst"}</p>
-            </div>
+          <div className="flex items-center space-x-2 text-emerald-400 font-semibold">
+            <Sparkles className="w-4 h-4" />
+            <span>Featured Editorial Analysis</span>
           </div>
 
           <div className="flex items-center space-x-6">
@@ -361,25 +351,6 @@ export function ClothingBrandsContent({ post }: ClothingBrandsContentProps) {
 
         {/* Sidebar */}
         <aside className="lg:col-span-4 space-y-8">
-          {/* Author Card */}
-          <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-center">
-            <div className="relative w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-emerald-500">
-              <Image
-                src={post.author.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"}
-                alt={post.author.name || "Author"}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h4 className="text-lg font-bold text-white">{post.author.name || "Fashion Editorial Team"}</h4>
-              <p className="text-xs text-emerald-400 font-medium">{post.author.designation || "Senior Style Analyst"}</p>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Curating authoritative fashion analysis, luxury apparel reviews, and sustainable textile innovation insights.
-            </p>
-          </div>
-
           {/* Social Share Box */}
           <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
             <h4 className="font-bold text-white text-base flex items-center space-x-2">

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { SafeImage } from "@/components/ui/SafeImage"
 import { Gamepad2 } from 'lucide-react'
+import { PostCardItem } from "@/components/blog/PostCardItem"
 
 
 export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
@@ -51,51 +52,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {latestPosts.map((post: any) => (
-              <Link href={`/blog/${post.slug}`} key={post.id} className="group h-full">
-                <article className="flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border/50 shadow-lg hover:shadow-2xl transition-all duration-300 transform perspective-1000 hover:rotate-y-2 hover:-translate-y-2 group-hover:border-primary/50 relative">
-                  {/* Glassmorphism shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
-                  
-                  <div className="relative h-56 w-full overflow-hidden bg-muted">
-                    <SafeImage
-                      src={post.featuredImage}
-                      alt={(post as any).featuredImageAlt || post.title}
-                      fallbackText={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    {post.categories[0] && (
-                      <div className="absolute top-4 left-4 z-20">
-                        <span className="bg-background/80 backdrop-blur-md border border-white/10 px-3 py-1 text-xs font-semibold rounded-full shadow-lg text-foreground">
-                          {post.categories[0].name}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-6 flex flex-col flex-1 relative z-20">
-                    <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                      {post.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm line-clamp-3 mb-6 flex-1">
-                      {post.excerpt || "Click to read more about this topic..."}
-                    </p>
-                    
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/50">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-white overflow-hidden flex items-center justify-center p-[2px] border border-border shadow-sm">
-                          <Image src="/rocky-logo.png" alt="rocky11.club" width={32} height={32} className="w-full h-full object-contain rounded-full" />
-                        </div>
-                        <span className="text-sm font-bold text-foreground">rocky11.club</span>
-                      </div>
-                      <time className="text-xs text-muted-foreground font-medium">
-                        {new Date(post.createdAt).toLocaleDateString()}
-                      </time>
-                    </div>
-                  </div>
-                </article>
-              </Link>
+              <PostCardItem key={post.id} post={post} />
             ))}
           </div>
           

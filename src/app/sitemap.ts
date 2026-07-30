@@ -61,13 +61,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true },
     });
 
-    const authors = await prisma.user.findMany({
-      where: {
-        posts: { some: { status: "PUBLISHED" } }
-      },
-      select: { slug: true, name: true },
-    });
-
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${BASE_URL}/blog/${post.slug}`,
       lastModified: post.updatedAt ?? post.createdAt,
@@ -82,27 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-    const authorRoutes: MetadataRoute.Sitemap = authors.map((author) => {
-      const slug = author.slug || (author.name ? author.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'rocky11-club')
-      return {
-        url: `${BASE_URL}/author/${slug}`,
-        lastModified: STATIC_LASTMOD,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      }
-    });
-
-    // Default rocky11 author fallback if not in database query
-    if (!authorRoutes.some(r => r.url.includes('rocky11-club'))) {
-      authorRoutes.push({
-        url: `${BASE_URL}/author/rocky11-club`,
-        lastModified: STATIC_LASTMOD,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      })
-    }
-
-    return [...staticRoutes, ...postRoutes, ...categoryRoutes, ...authorRoutes];
+    return [...staticRoutes, ...postRoutes, ...categoryRoutes];
   } catch (error) {
     console.error("Sitemap Error:", error);
     return staticRoutes;
