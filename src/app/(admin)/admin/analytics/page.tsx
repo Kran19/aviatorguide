@@ -99,6 +99,7 @@ export default async function AnalyticsPage() {
   const browserRaw = await prisma.blogVisitor.groupBy({
     by: ["browser"],
     _count: { id: true },
+    orderBy: { _count: { id: "desc" } },
     take: 5,
   })
 
