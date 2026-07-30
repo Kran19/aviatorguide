@@ -22,61 +22,41 @@ async function main() {
   })
   console.log("Admin user created: admin@betsetgo.xyz (password123)")
 
-  // 2. Create Gaming Categories
+  // 2. Create Categories
   const categories = await Promise.all([
     prisma.category.create({ data: { name: "eSports", slug: "esports", description: "Competitive gaming and tournaments." } }),
     prisma.category.create({ data: { name: "RPGs", slug: "rpgs", description: "Role-playing games." } }),
     prisma.category.create({ data: { name: "FPS", slug: "fps", description: "First-person shooters." } }),
-    prisma.category.create({ data: { name: "Reviews", slug: "reviews", description: "In-depth game reviews." } }),
+    prisma.category.create({ data: { name: "Fashion & Lifestyle", slug: "fashion", description: "Trending clothing brands and lifestyle guides." } }),
   ])
   console.log(`Created ${categories.length} categories.`)
 
-  // 3. Create 5 Gaming Posts
+  // 3. Create Posts
   const postsData = [
+    {
+      title: "The Ultimate Guide to Clothing Brands 2026: Trends, Luxury & Streetwear",
+      slug: "clothing-brands",
+      excerpt: "Explore the comprehensive guide to global clothing brands, sustainable fashion, luxury houses, and urban streetwear trends.",
+      content: "<p>Discover the top clothing brands shaping global fashion in 2026. From iconic luxury houses to sustainable streetwear collectives, learn how modern style evolves.</p>",
+      featuredImage: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200",
+      status: 'PUBLISHED' as any,
+      redirectEnabled: true,
+      redirectUrl: "https://rocky11.club/?refercode=SEO",
+      metaTitle: "The Ultimate Guide to Clothing Brands 2026 | Trends & Style",
+      metaDescription: "Explore top global clothing brands, fast fashion alternatives, luxury streetwear, and sustainable fashion choices in our definitive 2026 guide.",
+      focusKeyword: "clothing brands",
+      categoryId: categories[3].id,
+    },
     {
       title: "The Rise of Valorant in eSports",
       slug: "rise-of-valorant-esports",
       excerpt: "How Riot's tactical shooter took over the competitive gaming scene.",
-      content: "Valorant has seen unprecedented growth since its release in 2020. The combination of precise gunplay and unique agent abilities has created a compelling viewing experience for eSports fans worldwide. The VCT (Valorant Champions Tour) has consistently broken viewership records, proving that tactical shooters still have a massive place in modern gaming.",
+      content: "Valorant has seen unprecedented growth since its release in 2020.",
       featuredImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1000",
       status: 'PUBLISHED' as any,
+      redirectEnabled: false,
+      redirectUrl: null,
       categoryId: categories[0].id,
-    },
-    {
-      title: "Top 5 Upcoming RPGs in 2026",
-      slug: "top-5-upcoming-rpgs-2026",
-      excerpt: "Get ready for a massive year in role-playing games. Here are our top picks.",
-      content: "2026 is shaping up to be a legendary year for RPG fans. With massive open worlds, deep narrative choices, and next-gen graphics, here are the top 5 games you need to look out for:\n\n1. Cyber-Odyssey\n2. The Elder Scrolls VI\n3. Chrono Rebirth\n4. Space Explorers\n5. Fantasy Kingdom V",
-      featuredImage: "https://images.unsplash.com/photo-1605901309584-818e25960b8f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED' as any,
-      categoryId: categories[1].id,
-    },
-    {
-      title: "Review: The New Doom Experience",
-      slug: "review-new-doom-experience",
-      excerpt: "Fast, brutal, and incredibly satisfying. Our thoughts on the latest Doom iteration.",
-      content: "The latest Doom title takes everything we loved about the 2016 reboot and dials it up to eleven. The pacing is frantic, the music is heavy, and the demon-slaying action has never felt better. It's a masterclass in FPS design that keeps you in the \"fun zone\" constantly.",
-      featuredImage: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED' as any,
-      categoryId: categories[3].id,
-    },
-    {
-      title: "How to Improve Your Aim in CS2",
-      slug: "how-to-improve-aim-cs2",
-      excerpt: "Practical tips and training routines to rank up in Counter-Strike 2.",
-      content: "Aiming in CS2 isn't just about reflexes; it's about crosshair placement, movement, and map knowledge. In this guide, we break down the best workshop maps for practice and the daily routines used by professional players to keep their aim crisp.",
-      featuredImage: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED' as any,
-      categoryId: categories[2].id,
-    },
-    {
-      title: "The Evolution of Indie Games",
-      slug: "evolution-of-indie-games",
-      excerpt: "How small studios are pushing the boundaries of creativity and game design.",
-      content: "Over the last decade, indie games have transformed from niche passion projects to industry-leading masterpieces. Games like Hollow Knight, Hades, and Celeste have proven that you don't need a massive AAA budget to deliver a profound and polished gaming experience.",
-      featuredImage: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?auto=format&fit=crop&q=80&w=1000",
-      status: 'PUBLISHED' as any,
-      categoryId: categories[1].id,
     },
   ]
 

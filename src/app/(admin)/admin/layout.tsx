@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import Link from "next/link"
-import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut, Image as ImageIcon } from "lucide-react"
+import { FileText, LayoutDashboard, Tags, Users, Settings, User, LogOut, Image as ImageIcon, BarChart2, ShieldCheck } from "lucide-react"
 import { auth, signOut } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -28,6 +28,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <LayoutDashboard className="h-4 w-4" />
               Overview
             </Link>
+            <Link href="/admin/blogs" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors text-emerald-400">
+              <FileText className="h-4 w-4" />
+              Blogs & Redirects
+            </Link>
+            <Link href="/admin/analytics" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors text-sky-400">
+              <BarChart2 className="h-4 w-4" />
+              Analytics & Realtime
+            </Link>
             <Link href="/admin/posts" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
               <FileText className="h-4 w-4" />
               Posts
@@ -42,6 +50,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             </Link>
             {isAdmin && (
               <>
+                <Link href="/admin/audit-logs" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors text-purple-400">
+                  <ShieldCheck className="h-4 w-4" />
+                  Audit Logs
+                </Link>
                 <Link href="/admin/users" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors">
                   <Users className="h-4 w-4" />
                   Users

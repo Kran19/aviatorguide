@@ -106,6 +106,8 @@ model Post {
   metaTitle       String?
   metaDescription String?
   focusKeyword    String?
+  redirectEnabled Boolean    @default(false)
+  redirectUrl     String?
   scheduledAt     DateTime?
   viewCount       Int         @default(0)
   authorId        String
@@ -115,6 +117,10 @@ model Post {
   comments        Comment[]
   likes           Like[]
   bookmarks       Bookmark[]
+  visitors        BlogVisitor[]
+  clicks          BlogClick[]
+  redirectLogs    BlogRedirectLog[]
+  auditLogs       BlogAuditLog[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -204,3 +210,108 @@ model GlobalSettings {
   seoKeywords     String?
   updatedAt       DateTime @updatedAt
 }
+
+model BlogVisitor {
+  id               String   @id @default(cuid())
+  postId           String
+  post             Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  visitorId        String
+  ipAddress        String?
+  country          String?
+  state            String?
+  city             String?
+  browser          String?
+  os               String?
+  device           String?
+  screenResolution String?
+  language         String?
+  timezone         String?
+  userAgent        String?  @db.Text
+  referrer         String?  @db.Text
+  landingPage      String?
+  visitedAt        DateTime @default(now())
+  exitTime         DateTime?
+  sessionDuration  Int      @default(0) // seconds
+  sessionId        String
+  isUnique         Boolean  @default(true)
+  isReturning      Boolean  @default(false)
+  userId           String?
+
+  @@index([postId, visitedAt])
+  @@index([sessionId])
+  @@index([visitorId])
+}
+
+model BlogClick {
+  id           String   @id @default(cuid())
+  postId       String
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  blogTitle    String
+  clickedUrl   String   @db.Text
+  clickedAt    DateTime @default(now())
+  ipAddress    String?
+  country      String?
+  state        String?
+  city         String?
+  browser      String?
+  os           String?
+  device       String?
+  userAgent    String?  @db.Text
+  referrer     String?  @db.Text
+  sessionId    String?
+  visitorId    String?
+  userId       String?
+  ctaButton    String?
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmTerm      String?
+  utmContent   String?
+
+  @@index([postId, clickedAt])
+  @@index([sessionId])
+}
+
+model BlogSession {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  visitorId   String
+  startTime   DateTime @default(now())
+  endTime     DateTime?
+  duration    Int      @default(0) // in seconds
+  landingPage String?
+  exitPage    String?
+
+  @@index([sessionId])
+  @@index([visitorId])
+}
+
+model BlogRedirectLog {
+  id           String   @id @default(cuid())
+  postId       String
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  clickedUrl   String   @db.Text
+  redirectedTo String   @db.Text
+  isSuccessful Boolean  @default(true)
+  timestamp    DateTime @default(now())
+  ipAddress    String?
+  userAgent    String?  @db.Text
+
+  @@index([postId, timestamp])
+}
+
+model BlogAuditLog {
+  id        String   @id @default(cuid())
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  action    String
+  userId    String
+  userEmail String
+  oldValue  String?  @db.Text
+  newValue  String?  @db.Text
+  timestamp DateTime @default(now())
+  ipAddress String?
+
+  @@index([timestamp])
+}
+
