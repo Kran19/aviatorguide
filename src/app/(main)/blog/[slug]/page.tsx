@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { ClothingBrandsContent } from "@/components/blog/ClothingBrandsContent"
 import { TimedRedirectBanner } from "@/components/blog/TimedRedirectBanner"
+import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
 import { SafeImage } from "@/components/ui/SafeImage"
 import { MetaPixel } from "@/components/analytics/MetaPixel"
 import Link from "next/link"
@@ -196,7 +197,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       </header>
 
       {/* Featured Banner with Fallback & CLS Fix */}
-      <div className="max-w-4xl mx-auto mb-12 relative h-[350px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/50 shadow-xl bg-muted">
+      <div className="max-w-4xl mx-auto mb-8 relative h-[350px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/50 shadow-xl bg-muted">
         <SafeImage
           src={post.featuredImage}
           fallbackSrc="/images/default-blog-banner.svg"
@@ -208,8 +209,19 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         />
       </div>
 
+      {/* Play Now CTA Callout Banner */}
+      <div className="max-w-4xl mx-auto mb-8">
+        <PlayNowBanner
+          postId={post.id}
+          slug={post.slug}
+          title={post.title}
+          image={post.playImage || post.featuredImage}
+          redirectUrl={post.redirectUrl}
+        />
+      </div>
+
       {/* Article Content Body */}
-      <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90 space-y-6">
+      <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </main>
 

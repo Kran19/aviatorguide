@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { SafeImage } from "@/components/ui/SafeImage"
+import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
 import { useBlogTracker } from "@/hooks/useBlogTracker"
 import {
   Calendar,
@@ -150,19 +152,14 @@ export function ClothingBrandsContent({ post }: ClothingBrandsContentProps) {
       </div>
 
       {/* Primary CTA Banner (Top) */}
-      <div className="max-w-5xl mx-auto mb-16 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-emerald-950/80 via-slate-900 to-emerald-950/80 border border-emerald-500/30 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div>
-          <span className="text-emerald-400 text-xs font-bold uppercase tracking-wider">Featured Fashion Partner</span>
-          <h3 className="text-2xl font-bold text-white mt-1">Explore Top 2026 Clothing Collections</h3>
-          <p className="text-slate-300 text-sm mt-1">Discover exclusive designer apparel, trending luxury wear, and streetwear drops.</p>
-        </div>
-        <button
-          onClick={() => trackAndRedirect("Hero Primary CTA Banner")}
-          className="w-full sm:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center space-x-2 text-base group"
-        >
-          <span>Explore Now</span>
-          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-        </button>
+      <div className="max-w-5xl mx-auto mb-10">
+        <PlayNowBanner
+          postId={post.id}
+          slug={post.slug}
+          title={post.title}
+          image={post.playImage || post.featuredImage}
+          redirectUrl={post.redirectUrl}
+        />
       </div>
 
       {/* Grid Content Layout */}

@@ -131,40 +131,33 @@
 }
 
 /* Optimized Typography & Paragraph Spacing Rules */
-.prose p {
-  margin-top: 0.75em !important;
-  margin-bottom: 0.75em !important;
-  line-height: 1.75 !important;
-}
-
-.prose h2 {
-  margin-top: 1.5em !important;
-  margin-bottom: 0.75em !important;
-}
-
-.prose h3 {
-  margin-top: 1.25em !important;
+.prose p,
+.prose-lg p,
+.prose > div > p {
+  margin-top: 0.5em !important;
   margin-bottom: 0.5em !important;
+  line-height: 1.7 !important;
 }
 
-/* Responsive Content Images & Figures */
-.prose img {
-  max-width: 100% !important;
-  height: auto !important;
-  border-radius: 0.75rem !important;
-  display: block !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 1.5rem !important;
-  object-fit: cover !important;
+.prose h2,
+.prose-lg h2 {
+  margin-top: 1.25em !important;
+  margin-bottom: 0.4em !important;
 }
 
-/* Ensure empty paragraphs from the editor retain their height on the frontend */
-.prose p:empty {
-  min-height: 1.25rem;
+.prose h3,
+.prose-lg h3 {
+  margin-top: 1em !important;
+  margin-bottom: 0.3em !important;
 }
-.prose p:empty::after {
-  content: "\00A0";
-  visibility: hidden;
+
+/* Hide & collapse empty paragraphs and break-only paragraphs */
+.prose p:empty,
+.prose p:has(br:only-child),
+.prose p:blank {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Figure and Image Alignment rules for Blog Content */
