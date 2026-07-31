@@ -2,6 +2,7 @@ import React from 'react';
 import { prisma } from '@/lib/prisma';
 import { PostCardItem } from '@/components/blog/PostCardItem';
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60; // ISR
 export const metadata = {
   title: 'Blog - betsetgo.xyz',

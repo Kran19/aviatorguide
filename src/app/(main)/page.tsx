@@ -8,6 +8,7 @@ import { Gamepad2 } from 'lucide-react'
 import { PostCardItem } from "@/components/blog/PostCardItem"
 
 
+export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
 
 export default async function Home() {

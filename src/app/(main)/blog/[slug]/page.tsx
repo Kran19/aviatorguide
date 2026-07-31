@@ -8,18 +8,25 @@ import { MetaPixel } from "@/components/analytics/MetaPixel"
 import Link from "next/link"
 import { Calendar, Clock } from "lucide-react"
 
+export const dynamic = "force-dynamic"
+
 interface BlogPageProps {
   params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params
-  const post = await prisma.post.findUnique({
-    where: { slug },
-  })
+  let post: any = null
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug },
+    })
+  } catch (err) {
+    console.warn("Database unreachable during metadata generation for blog page.", err)
+  }
 
   if (!post) {
-    return { title: "Blog Post Not Found" }
+    return { title: "Blog Post | betsetgo.xyz" }
   }
 
   const title = post.metaTitle || post.title
@@ -55,13 +62,18 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 
 export default async function DynamicBlogPage({ params }: BlogPageProps) {
   const { slug } = await params
+  let post: any = null
 
-  const post = await prisma.post.findUnique({
-    where: { slug },
-    include: {
-      categories: true,
-    },
-  })
+  try {
+    post = await prisma.post.findUnique({
+      where: { slug },
+      include: {
+        categories: true,
+      },
+    })
+  } catch (err) {
+    console.warn("Database unreachable during build time for blog page.", err)
+  }
 
   if (!post) {
     notFound()

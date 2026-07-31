@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next"
 import { prisma } from "@/lib/prisma"
 
+export const dynamic = "force-dynamic"
 export const revalidate = 3600 // Revalidate sitemap every hour for fresh updates
 
 const BASE_URL = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "https://betsetgo.xyz"
