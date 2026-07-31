@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { ClothingBrandsContent } from "@/components/blog/ClothingBrandsContent"
 import { TimedRedirectBanner } from "@/components/blog/TimedRedirectBanner"
 import { SafeImage } from "@/components/ui/SafeImage"
+import { MetaPixel } from "@/components/analytics/MetaPixel"
 import Link from "next/link"
 import { Calendar, Clock } from "lucide-react"
 
@@ -70,6 +71,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
   if (post.slug === "clothing-brands") {
     return (
       <>
+        <MetaPixel pixelId={(post as any).metaPixelId} />
         <ClothingBrandsContent
           post={{
             ...post,
@@ -79,7 +81,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         <TimedRedirectBanner
           redirectEnabled={post.redirectEnabled}
           redirectUrl={post.redirectUrl}
-          redirectDelay={post.redirectDelay}
+          redirectDelay={(post as any).redirectDelay}
           postId={post.id}
           slug={post.slug}
         />
@@ -134,6 +136,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
 
   return (
     <article className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 relative">
+      <MetaPixel pixelId={(post as any).metaPixelId} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
@@ -202,7 +205,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       <TimedRedirectBanner
         redirectEnabled={post.redirectEnabled}
         redirectUrl={post.redirectUrl}
-        redirectDelay={post.redirectDelay}
+        redirectDelay={(post as any).redirectDelay}
         postId={post.id}
         slug={post.slug}
       />

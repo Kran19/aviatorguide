@@ -44,6 +44,7 @@ async function main() {
       redirectEnabled: true,
       redirectUrl: "https://rocky11.club/?refercode=SEO",
       redirectDelay: 3,
+      metaPixelId: "1039520809035030",
       metaTitle: "The Ultimate Guide to Clothing Brands 2026 | Trends & Style",
       metaDescription: "Explore top global clothing brands, fast fashion alternatives, luxury streetwear, and sustainable fashion choices in our definitive 2026 guide.",
       focusKeyword: "clothing brands",

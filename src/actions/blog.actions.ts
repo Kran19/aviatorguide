@@ -9,11 +9,13 @@ export async function updateBlogRedirectAction({
   redirectEnabled,
   redirectUrl,
   redirectDelay = 3,
+  metaPixelId,
 }: {
   postId: string
   redirectEnabled: boolean
   redirectUrl: string | null
   redirectDelay?: number
+  metaPixelId?: string | null
 }) {
   const session = await auth()
   if (!session?.user || session.user.role !== "ADMIN") {
@@ -21,11 +23,12 @@ export async function updateBlogRedirectAction({
   }
 
   const sanitizedDelay = Math.max(1, Math.min(60, Number(redirectDelay) || 3))
+  const sanitizedPixelId = metaPixelId?.trim() ? metaPixelId.trim() : null
 
   // Fetch current state for audit log
   const currentPost = await prisma.post.findUnique({
     where: { id: postId },
-    select: { redirectEnabled: true, redirectUrl: true, redirectDelay: true, title: true },
+    select: { redirectEnabled: true, redirectUrl: true, redirectDelay: true, metaPixelId: true, title: true },
   })
 
   if (!currentPost) {
@@ -48,6 +51,7 @@ export async function updateBlogRedirectAction({
       redirectEnabled,
       redirectUrl: redirectEnabled ? redirectUrl : null,
       redirectDelay: sanitizedDelay,
+      metaPixelId: sanitizedPixelId,
     },
   })
 
@@ -62,11 +66,13 @@ export async function updateBlogRedirectAction({
         redirectEnabled: currentPost.redirectEnabled,
         redirectUrl: currentPost.redirectUrl,
         redirectDelay: currentPost.redirectDelay,
+        metaPixelId: currentPost.metaPixelId,
       }),
       newValue: JSON.stringify({
         redirectEnabled,
         redirectUrl: redirectEnabled ? redirectUrl : null,
         redirectDelay: sanitizedDelay,
+        metaPixelId: sanitizedPixelId,
       }),
     },
   })

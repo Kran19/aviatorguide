@@ -12,6 +12,7 @@ interface BlogRedirectEditorClientProps {
     redirectEnabled: boolean
     redirectUrl: string | null
     redirectDelay?: number
+    metaPixelId?: string | null
   }
   userRole: string
 }
@@ -20,6 +21,7 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
   const [redirectEnabled, setRedirectEnabled] = useState(post.redirectEnabled)
   const [redirectUrl, setRedirectUrl] = useState(post.redirectUrl || "https://rocky11.club/?refercode=SEO")
   const [redirectDelay, setRedirectDelay] = useState(post.redirectDelay ?? 3)
+  const [metaPixelId, setMetaPixelId] = useState(post.metaPixelId || "1039520809035030")
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
@@ -38,8 +40,9 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
         redirectEnabled,
         redirectUrl,
         redirectDelay,
+        metaPixelId,
       })
-      setMessage({ type: "success", text: "Redirect settings updated successfully!" })
+      setMessage({ type: "success", text: "Redirect and Meta Pixel settings updated successfully!" })
     } catch (err: any) {
       setMessage({ type: "error", text: err.message || "Failed to update redirect settings" })
     } finally {
@@ -53,8 +56,8 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
         <div className="flex items-center space-x-2.5">
           <ShieldCheck className="w-6 h-6 text-emerald-400" />
           <div>
-            <h3 className="text-xl font-bold text-white">Dynamic Redirect Configuration</h3>
-            <p className="text-xs text-slate-400">Super Admin control panel for CTA visitor destination management.</p>
+            <h3 className="text-xl font-bold text-white">Dynamic Redirect & Meta Pixel Configuration</h3>
+            <p className="text-xs text-slate-400">Super Admin control panel for CTA redirect destination and Facebook Meta Pixel ID.</p>
           </div>
         </div>
 
@@ -132,6 +135,22 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
               className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-mono"
             />
           </div>
+        </div>
+
+        {/* Meta Pixel Field */}
+        <div className="space-y-2 pt-2 border-t border-slate-800">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">Meta (Facebook) Pixel ID (Post-Wise / Default)</label>
+          <p className="text-xs text-slate-400">
+            Set custom Facebook Pixel ID for this blog post, or keep default (<code className="text-emerald-400">1039520809035030</code>).
+          </p>
+          <input
+            type="text"
+            disabled={!isSuperAdmin}
+            value={metaPixelId}
+            onChange={(e) => setMetaPixelId(e.target.value)}
+            placeholder="1039520809035030"
+            className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-mono"
+          />
         </div>
 
         {isSuperAdmin && (
