@@ -108,6 +108,7 @@ model Post {
   focusKeyword    String?
   redirectEnabled Boolean    @default(false)
   redirectUrl     String?
+  redirectDelay   Int        @default(3)
   scheduledAt     DateTime?
   viewCount       Int         @default(0)
   authorId        String

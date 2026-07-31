@@ -1,83 +1,89 @@
-import { MetadataRoute } from "next";
-import { prisma } from "@/lib/prisma";
+import { MetadataRoute } from "next"
+import { prisma } from "@/lib/prisma"
 
-export const revalidate = 86400; // Cache sitemap for 1 day
-const BASE_URL = "https://betsetgo.xyz";
-const STATIC_LASTMOD = new Date("2026-07-15T00:00:00.000Z");
+export const revalidate = 3600 // Revalidate sitemap every hour for fresh updates
+
+const BASE_URL = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "https://betsetgo.xyz"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const currentDate = new Date()
+
+  // Static core routes
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
     },
     {
       url: `${BASE_URL}/blog`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${BASE_URL}/categories`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
       url: `${BASE_URL}/about`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "monthly",
-      priority: 0.7,
+      priority: 0.6,
     },
     {
       url: `${BASE_URL}/contact`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${BASE_URL}/privacy`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "yearly",
-      priority: 0.5,
+      priority: 0.4,
     },
     {
       url: `${BASE_URL}/terms`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "yearly",
-      priority: 0.5,
+      priority: 0.4,
     },
-  ];
+  ]
 
   try {
+    // Dynamic published blog posts
     const posts = await prisma.post.findMany({
       where: { status: "PUBLISHED" },
       select: { slug: true, updatedAt: true, createdAt: true },
-    });
+      orderBy: { updatedAt: "desc" },
+    })
 
+    // Dynamic categories
     const categories = await prisma.category.findMany({
       select: { slug: true },
-    });
+    })
 
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${BASE_URL}/blog/${post.slug}`,
-      lastModified: post.updatedAt ?? post.createdAt,
+      lastModified: post.updatedAt || post.createdAt,
       changeFrequency: "weekly",
       priority: 0.8,
-    }));
+    }))
 
     const categoryRoutes: MetadataRoute.Sitemap = categories.map((cat) => ({
       url: `${BASE_URL}/categories/${cat.slug}`,
-      lastModified: STATIC_LASTMOD,
+      lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.7,
-    }));
+    }))
 
-    return [...staticRoutes, ...postRoutes, ...categoryRoutes];
+    return [...staticRoutes, ...postRoutes, ...categoryRoutes]
   } catch (error) {
-    console.error("Sitemap Error:", error);
-    return staticRoutes;
+    console.error("Sitemap generation error:", error)
+    return staticRoutes
   }
 }

@@ -14,7 +14,7 @@ interface SafeImageProps extends Omit<ImageProps, 'src'> {
 
 export function SafeImage({
   src,
-  fallbackSrc,
+  fallbackSrc = "/images/default-blog-banner.svg",
   fallbackText = "Image unavailable",
   alt,
   className,

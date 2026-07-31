@@ -320,12 +320,12 @@ export function ClothingBrandsContent({ post }: ClothingBrandsContentProps) {
                     onClick={() => setActiveFaq(activeFaq === index ? null : index)}
                     className="w-full p-5 text-left font-bold text-lg text-white flex items-center justify-between hover:text-emerald-400 transition-colors"
                   >
-                    <span>{faq.question}</span>
-                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${activeFaq === index ? "rotate-180 text-emerald-400" : ""}`} />
+                    <h3 className="text-lg font-bold text-white leading-snug">{faq.question}</h3>
+                    <ChevronDown className={`w-5 h-5 shrink-0 transition-transform duration-300 ${activeFaq === index ? "rotate-180 text-emerald-400" : ""}`} />
                   </button>
                   {activeFaq === index && (
                     <div className="px-5 pb-5 text-slate-300 text-base border-t border-slate-800/60 pt-4 leading-relaxed">
-                      {faq.answer}
+                      <p>{faq.answer}</p>
                     </div>
                   )}
                 </div>

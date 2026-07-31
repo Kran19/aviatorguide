@@ -2,9 +2,10 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { ClothingBrandsContent } from "@/components/blog/ClothingBrandsContent"
-import Image from "next/image"
+import { TimedRedirectBanner } from "@/components/blog/TimedRedirectBanner"
+import { SafeImage } from "@/components/ui/SafeImage"
 import Link from "next/link"
-import { Calendar, Clock, Sparkles } from "lucide-react"
+import { Calendar, Clock } from "lucide-react"
 
 interface BlogPageProps {
   params: Promise<{ slug: string }>
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const title = post.metaTitle || post.title
   const description = post.metaDescription || post.excerpt || "Read our latest blog post on betsetgo.xyz."
   const canonicalUrl = `https://betsetgo.xyz/blog/${post.slug}`
+  const bannerImage = post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg"
 
   return {
     title,
@@ -35,13 +37,13 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       description,
       url: canonicalUrl,
       type: "article",
-      images: post.featuredImage ? [{ url: post.featuredImage }] : [],
+      images: [{ url: bannerImage }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: post.featuredImage ? [post.featuredImage] : [],
+      images: [bannerImage],
     },
     robots: {
       index: true,
@@ -67,22 +69,31 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
   // If special clothing-brands SEO template
   if (post.slug === "clothing-brands") {
     return (
-      <ClothingBrandsContent
-        post={{
-          ...post,
-          author: { name: null, image: null, designation: null, bio: null },
-        }}
-      />
+      <>
+        <ClothingBrandsContent
+          post={{
+            ...post,
+            author: { name: null, image: null, designation: null, bio: null },
+          }}
+        />
+        <TimedRedirectBanner
+          redirectEnabled={post.redirectEnabled}
+          redirectUrl={post.redirectUrl}
+          redirectDelay={post.redirectDelay}
+          postId={post.id}
+          slug={post.slug}
+        />
+      </>
     )
   }
 
-  // JSON-LD Article Schema without Author entity
+  // JSON-LD Article Schema
   const jsonLdArticle = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.excerpt || post.metaDescription,
-    image: post.featuredImage,
+    image: post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg",
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     publisher: {
@@ -95,11 +106,41 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     },
   }
 
+  // JSON-LD Breadcrumb Schema
+  const jsonLdBreadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://betsetgo.xyz",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: "https://betsetgo.xyz/blog",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `https://betsetgo.xyz/blog/${post.slug}`,
+      },
+    ],
+  }
+
   return (
-    <article className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8">
+    <article className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 relative">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
 
       {/* Breadcrumbs */}
@@ -139,17 +180,32 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         </div>
       </header>
 
-      {/* Featured Banner */}
-      {post.featuredImage && (
-        <div className="max-w-4xl mx-auto mb-12 relative h-[350px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/50 shadow-xl">
-          <Image src={post.featuredImage} alt={post.title} fill priority className="object-cover" />
-        </div>
-      )}
+      {/* Featured Banner with Fallback & CLS Fix */}
+      <div className="max-w-4xl mx-auto mb-12 relative h-[350px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/50 shadow-xl bg-muted">
+        <SafeImage
+          src={post.featuredImage}
+          fallbackSrc="/images/default-blog-banner.svg"
+          alt={post.featuredImageAlt || post.title}
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 1000px"
+          className="object-cover"
+        />
+      </div>
 
       {/* Article Content Body */}
       <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90 space-y-6">
         <div dangerouslySetInnerHTML={{ __html: post.content }} />
       </main>
+
+      {/* Timed Client Redirect Toast */}
+      <TimedRedirectBanner
+        redirectEnabled={post.redirectEnabled}
+        redirectUrl={post.redirectUrl}
+        redirectDelay={post.redirectDelay}
+        postId={post.id}
+        slug={post.slug}
+      />
     </article>
   )
 }

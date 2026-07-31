@@ -11,6 +11,7 @@ interface BlogRedirectEditorClientProps {
     slug: string
     redirectEnabled: boolean
     redirectUrl: string | null
+    redirectDelay?: number
   }
   userRole: string
 }
@@ -18,6 +19,7 @@ interface BlogRedirectEditorClientProps {
 export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorClientProps) {
   const [redirectEnabled, setRedirectEnabled] = useState(post.redirectEnabled)
   const [redirectUrl, setRedirectUrl] = useState(post.redirectUrl || "https://rocky11.club/?refercode=SEO")
+  const [redirectDelay, setRedirectDelay] = useState(post.redirectDelay ?? 3)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
@@ -35,6 +37,7 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
         postId: post.id,
         redirectEnabled,
         redirectUrl,
+        redirectDelay,
       })
       setMessage({ type: "success", text: "Redirect settings updated successfully!" })
     } catch (err: any) {
@@ -80,7 +83,7 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
           <div>
             <label className="text-sm font-bold text-white block">Redirect Status (ON / OFF)</label>
             <p className="text-xs text-slate-400 mt-0.5">
-              When ON, clicking primary CTA buttons redirects visitors to the destination URL below.
+              When ON, clicking primary CTA buttons or viewing the blog initiates timed redirect.
             </p>
           </div>
 
@@ -100,19 +103,34 @@ export function BlogRedirectEditorClient({ post, userRole }: BlogRedirectEditorC
           </button>
         </div>
 
-        {/* Destination URL */}
-        <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">Destination Redirect URL</label>
-          <div className="relative">
+        {/* Destination URL & Delay */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="md:col-span-2 space-y-2">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">Destination Redirect URL</label>
+            <div className="relative">
+              <input
+                type="url"
+                disabled={!isSuperAdmin}
+                value={redirectUrl}
+                onChange={(e) => setRedirectUrl(e.target.value)}
+                placeholder="https://rocky11.club/?refercode=SEO"
+                className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-mono"
+              />
+              <ExternalLink className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-300 uppercase tracking-wider block">Redirect Delay (Seconds)</label>
             <input
-              type="url"
+              type="number"
+              min={1}
+              max={60}
               disabled={!isSuperAdmin}
-              value={redirectUrl}
-              onChange={(e) => setRedirectUrl(e.target.value)}
-              placeholder="https://rocky11.club/?refercode=SEO"
-              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-mono"
+              value={redirectDelay}
+              onChange={(e) => setRedirectDelay(Number(e.target.value))}
+              className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white focus:outline-none focus:border-emerald-500 disabled:opacity-50 font-mono"
             />
-            <ExternalLink className="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
 

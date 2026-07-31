@@ -8,20 +8,24 @@ export async function updateBlogRedirectAction({
   postId,
   redirectEnabled,
   redirectUrl,
+  redirectDelay = 3,
 }: {
   postId: string
   redirectEnabled: boolean
   redirectUrl: string | null
+  redirectDelay?: number
 }) {
   const session = await auth()
   if (!session?.user || session.user.role !== "ADMIN") {
     throw new Error("Unauthorized: Only Super Admin can modify redirect settings.")
   }
 
+  const sanitizedDelay = Math.max(1, Math.min(60, Number(redirectDelay) || 3))
+
   // Fetch current state for audit log
   const currentPost = await prisma.post.findUnique({
     where: { id: postId },
-    select: { redirectEnabled: true, redirectUrl: true, title: true },
+    select: { redirectEnabled: true, redirectUrl: true, redirectDelay: true, title: true },
   })
 
   if (!currentPost) {
@@ -43,6 +47,7 @@ export async function updateBlogRedirectAction({
     data: {
       redirectEnabled,
       redirectUrl: redirectEnabled ? redirectUrl : null,
+      redirectDelay: sanitizedDelay,
     },
   })
 
@@ -56,10 +61,12 @@ export async function updateBlogRedirectAction({
       oldValue: JSON.stringify({
         redirectEnabled: currentPost.redirectEnabled,
         redirectUrl: currentPost.redirectUrl,
+        redirectDelay: currentPost.redirectDelay,
       }),
       newValue: JSON.stringify({
         redirectEnabled,
         redirectUrl: redirectEnabled ? redirectUrl : null,
+        redirectDelay: sanitizedDelay,
       }),
     },
   })
