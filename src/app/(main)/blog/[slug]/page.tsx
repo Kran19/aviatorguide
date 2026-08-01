@@ -147,6 +147,36 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     ],
   }
 
+  // Dynamic FAQ Extraction from HTML Content for Google Rich Snippets
+  const extractedFaqs: { question: string; answer: string }[] = []
+  if (post.content) {
+    const faqRegex = /<h3[^>]*>([\s\S]*?\?[\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi
+    let match
+    while ((match = faqRegex.exec(post.content)) !== null) {
+      const question = match[1].replace(/<[^>]*>?/gm, "").trim()
+      const answer = match[2].replace(/<[^>]*>?/gm, "").trim()
+      if (question && answer) {
+        extractedFaqs.push({ question, answer })
+      }
+    }
+  }
+
+  const jsonLdFaq =
+    extractedFaqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: extractedFaqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null
+
   return (
     <article className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 relative">
       <MetaPixel pixelId={(post as any).metaPixelId} />
@@ -158,6 +188,12 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
       />
+      {jsonLdFaq && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
+        />
+      )}
 
       {/* Breadcrumbs */}
       <nav className="max-w-4xl mx-auto mb-8 flex items-center text-xs font-medium text-muted-foreground space-x-2">
