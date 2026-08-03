@@ -16,11 +16,14 @@ jobs:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 30m
           script: |
             set -e
             cd /home/stzk/nextblog
             git fetch --all
             git reset --hard origin/main
-            docker compose up -d --build --force-recreate
-            docker run --rm --network nextblog_app-network --env-file .env -v $(pwd):/app -w /app node:22-alpine sh -c "npm install -g pnpm@9 && pnpm install && npx prisma generate && npx prisma db push"
+            docker compose build
+            docker compose run --rm app npx prisma db push
+            docker compose up -d --force-recreate
             docker image prune -f
+

@@ -1,7 +1,20 @@
 node_modules
 .next
 .git
-.env
+.github
+.env*
 .DS_Store
 *.log
 coverage
+Website Images
+docs
+public/uploads
+build_log.txt
+*.tsbuildinfo
+saved_image_links.txt
+download_images.ps1
+docker-compose*.yml
+README.md
+CLAUDE.md
+AGENTS.md
+
