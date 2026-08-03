@@ -281,6 +281,19 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
             </div>
 
             <div className="space-y-3 pt-4 border-t border-border/50">
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="inSitemap"
+                  defaultChecked={post.inSitemap ?? true}
+                  className="w-5 h-5 rounded-md border-input bg-background/50 accent-emerald-500"
+                />
+                <span className="text-sm font-semibold text-foreground/90">Include in Sitemap</span>
+              </label>
+              <p className="text-xs text-muted-foreground ml-8">Allow search engines to discover this post in the XML sitemap.</p>
+            </div>
+
+            <div className="space-y-3 pt-4 border-t border-border/50">
               <label className="text-sm font-semibold text-foreground/90" htmlFor="excerpt">Excerpt</label>
               <textarea
                 id="excerpt"

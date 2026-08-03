@@ -112,6 +112,7 @@ model Post {
   metaPixelId     String?
   scheduledAt     DateTime?
   viewCount       Int         @default(0)
+  inSitemap       Boolean    @default(true)
   authorId        String
   author          User        @relation(fields: [authorId], references: [id])
   categories      Category[]

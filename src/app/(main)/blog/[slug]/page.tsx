@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { ClothingBrandsContent } from "@/components/blog/ClothingBrandsContent"
 import { TimedRedirectBanner } from "@/components/blog/TimedRedirectBanner"
 import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
+import { FaqAccordion } from "@/components/blog/FaqAccordion"
 import { SafeImage } from "@/components/ui/SafeImage"
 import { MetaPixel } from "@/components/analytics/MetaPixel"
 import Link from "next/link"
@@ -22,6 +23,16 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     post = await prisma.post.findUnique({
       where: { slug },
     })
+    if (!post) {
+      post = await prisma.post.findFirst({
+        where: {
+          OR: [
+            { slug: { startsWith: slug } },
+            { slug: { contains: slug } },
+          ],
+        },
+      })
+    }
   } catch (err) {
     console.warn("Database unreachable during metadata generation for blog page.", err)
   }
@@ -72,6 +83,19 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         categories: true,
       },
     })
+    if (!post) {
+      post = await prisma.post.findFirst({
+        where: {
+          OR: [
+            { slug: { startsWith: slug } },
+            { slug: { contains: slug } },
+          ],
+        },
+        include: {
+          categories: true,
+        },
+      })
+    }
   } catch (err) {
     console.warn("Database unreachable during build time for blog page.", err)
   }
@@ -257,9 +281,20 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       </div>
 
       {/* Article Content Body */}
-      <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
-      </main>
+      {(() => {
+        let cleanHtml = post.content || ""
+        if (extractedFaqs.length > 0) {
+          cleanHtml = cleanHtml.replace(/<h3[^>]*>[\s\S]*?\?[\s\S]*?<\/h3>\s*<p[^>]*>[\s\S]*?<\/p>/gi, "")
+        }
+        return (
+          <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
+            <div dangerouslySetInnerHTML={{ __html: cleanHtml }} />
+          </main>
+        )
+      })()}
+
+      {/* Styled Interactive FAQ Accordion */}
+      {extractedFaqs.length > 0 && <FaqAccordion faqs={extractedFaqs} />}
 
       {/* Timed Client Redirect Toast */}
       <TimedRedirectBanner

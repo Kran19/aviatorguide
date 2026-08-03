@@ -24,12 +24,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/categories`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
       url: `${BASE_URL}/about`,
       lastModified: currentDate,
       changeFrequency: "monthly",
@@ -58,14 +52,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     // Dynamic published blog posts
     const posts = await prisma.post.findMany({
-      where: { status: "PUBLISHED" },
+      where: { status: "PUBLISHED", inSitemap: true },
       select: { slug: true, updatedAt: true, createdAt: true },
       orderBy: { updatedAt: "desc" },
-    })
-
-    // Dynamic categories
-    const categories = await prisma.category.findMany({
-      select: { slug: true },
     })
 
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
@@ -75,14 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-    const categoryRoutes: MetadataRoute.Sitemap = categories.map((cat) => ({
-      url: `${BASE_URL}/categories/${cat.slug}`,
-      lastModified: currentDate,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    }))
-
-    return [...staticRoutes, ...postRoutes, ...categoryRoutes]
+    return [...staticRoutes, ...postRoutes]
   } catch (error) {
     console.error("Sitemap generation error:", error)
     return staticRoutes

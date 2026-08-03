@@ -25,6 +25,7 @@ export async function createPost(formData: FormData) {
   const focusKeyword = formData.get("focusKeyword") as string
   const categoryId = formData.get("categoryId") as string
   const tagsStr = formData.get("tags") as string
+  const inSitemap = formData.get("inSitemap") === "on"
   
   const tagNames = tagsStr 
     ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
@@ -58,6 +59,7 @@ export async function createPost(formData: FormData) {
         metaTitle: metaTitle || null,
         metaDescription: metaDescription || null,
         focusKeyword: focusKeyword || null,
+        inSitemap,
         authorId: session.user.id,
         categories: categoryId ? {
           connectOrCreate: [{
@@ -114,6 +116,7 @@ export async function updatePost(id: string, formData: FormData) {
   const adminRemarks = formData.get("adminRemarks") as string
   const categoryId = formData.get("categoryId") as string
   const tagsStr = formData.get("tags") as string
+  const inSitemap = formData.get("inSitemap") === "on"
   
   const tagNames = tagsStr 
     ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
@@ -133,6 +136,7 @@ export async function updatePost(id: string, formData: FormData) {
     metaTitle: metaTitle || null,
     metaDescription: metaDescription || null,
     focusKeyword: focusKeyword || null,
+    inSitemap,
     categories: categoryId ? {
       set: [],
       connectOrCreate: [{
