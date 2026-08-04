@@ -1,7 +1,7 @@
 FROM node:22-alpine AS base
 
-# Install pnpm once in base stage
-RUN npm install -g pnpm@9
+# Install pnpm and prisma CLI once in base stage
+RUN npm install -g pnpm@9 prisma@7.8.0
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -35,7 +35,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/package.json ./package.json
+
 
 RUN mkdir -p public/uploads .next && \
     chown -R nextjs:nodejs public/uploads .next

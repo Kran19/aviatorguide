@@ -23,7 +23,7 @@ jobs:
             git fetch --all
             git reset --hard origin/main
             docker compose build
-            docker compose run --rm app npx prisma db push
+            docker compose run --rm app prisma db push
             docker compose up -d --force-recreate
             docker image prune -f
 
