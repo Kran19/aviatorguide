@@ -1,9 +1,15 @@
 try {
   require("dotenv/config");
 } catch {
-  // dotenv is optional in production container where process.env is provided by environment
+  // dotenv is optional in production container
 }
-import { defineConfig } from "prisma/config";
+
+let defineConfig: any;
+try {
+  defineConfig = require("prisma/config").defineConfig;
+} catch {
+  defineConfig = (config: any) => config;
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

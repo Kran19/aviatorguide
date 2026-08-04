@@ -2,6 +2,7 @@ FROM node:22-alpine AS base
 
 # Install pnpm and prisma CLI once in base stage
 RUN npm install -g pnpm@9 prisma@7.8.0
+ENV NODE_PATH=/usr/local/lib/node_modules
 
 # Install dependencies only when needed
 FROM base AS deps
