@@ -15,9 +15,33 @@ import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import { Button } from '@/components/ui/button'
-import { Bold, Italic, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Pilcrow, ImageIcon, List, ListOrdered, Quote, Undo, Redo, Link as LinkIcon, Unlink, Highlighter, Type, AlignLeft, AlignCenter, AlignRight, Check, ArrowUp } from 'lucide-react'
+import {
+  Bold,
+  Italic,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
+  Pilcrow,
+  ImageIcon,
+  List,
+  ListOrdered,
+  Quote,
+  Undo,
+  Redo,
+  Link as LinkIcon,
+  Unlink,
+  Highlighter,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Check,
+  ArrowUp
+} from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
-import { InlineHeading } from './InlineHeading'
+import { LinkModal } from './LinkModal'
 
 interface RichTextEditorProps {
   content: string
@@ -25,34 +49,67 @@ interface RichTextEditorProps {
   onImageClick?: () => void
 }
 
-const rgbToHex = (color: string) => {
-  if (!color) return '#000000';
-  if (color.startsWith('#')) return color;
-  const match = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-  if (!match) return '#000000';
-  const r = parseInt(match[1]).toString(16).padStart(2, '0');
-  const g = parseInt(match[2]).toString(16).padStart(2, '0');
-  const b = parseInt(match[3]).toString(16).padStart(2, '0');
-  return `#${r}${g}${b}`;
-};
+/**
+ * Custom TipTap Link Extension with full support for href, target, rel, and CSS classes
+ */
+const CustomLink = LinkExtension.extend({
+  priority: 1000,
+  addAttributes() {
+    return {
+      href: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('href'),
+        renderHTML: (attributes) => {
+          if (!attributes.href) return {}
+          return { href: attributes.href }
+        },
+      },
+      target: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('target'),
+        renderHTML: (attributes) => {
+          if (!attributes.target) return {}
+          return { target: attributes.target }
+        },
+      },
+      rel: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('rel'),
+        renderHTML: (attributes) => {
+          if (!attributes.rel) return {}
+          return { rel: attributes.rel }
+        },
+      },
+      class: {
+        default: 'text-blue-500 cursor-pointer hover:text-blue-600 transition-colors',
+      },
+    }
+  },
+})
 
-const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => void }) => {
+const rgbToHex = (color: string) => {
+  if (!color) return '#000000'
+  if (color.startsWith('#')) return color
+  const match = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)
+  if (!match) return '#000000'
+  const r = parseInt(match[1]).toString(16).padStart(2, '0')
+  const g = parseInt(match[2]).toString(16).padStart(2, '0')
+  const b = parseInt(match[3]).toString(16).padStart(2, '0')
+  return `#${r}${g}${b}`
+}
+
+const MenuBar = ({
+  editor,
+  onImageClick,
+  onOpenLinkModal,
+}: {
+  editor: any
+  onImageClick?: () => void
+  onOpenLinkModal: () => void
+}) => {
   if (!editor) {
     return null
   }
-
-  const setLink = React.useCallback(() => {
-    const previousUrl = editor.getAttributes('link').href
-    const url = window.prompt('URL', previousUrl)
-    if (url === null) {
-      return
-    }
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run()
-      return
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-  }, [editor])
 
   return (
     <div className="flex flex-wrap gap-1 p-2 border-b border-border/50 bg-muted/95 backdrop-blur z-40 sticky top-[64px] rounded-t-xl items-center shadow-sm">
@@ -62,6 +119,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         size="sm"
         onClick={() => editor.chain().focus().toggleBold().run()}
         className={editor.isActive('bold') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Bold"
       >
         <Bold className="h-4 w-4" />
       </Button>
@@ -71,6 +129,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         size="sm"
         onClick={() => editor.chain().focus().toggleItalic().run()}
         className={editor.isActive('italic') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Italic"
       >
         <Italic className="h-4 w-4" />
       </Button>
@@ -128,13 +187,14 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
       
       <div className="w-px h-6 bg-border mx-1" />
 
+      {/* Link Controls */}
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        onClick={setLink}
+        onClick={onOpenLinkModal}
         className={editor.isActive('link') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
-        title="Add Link"
+        title="Insert or Edit Link (Ctrl+K)"
       >
         <LinkIcon className="h-4 w-4" />
       </Button>
@@ -152,12 +212,13 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
 
       <div className="w-px h-6 bg-border mx-1" />
 
+      {/* Semantic Headings & Paragraph */}
       <Button
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().setParagraph().unsetInlineHeading().run()}
-        className={editor.isActive('paragraph') && !editor.isActive('inlineHeading') && !editor.isActive('heading') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        className={editor.isActive('paragraph') && !editor.isActive('heading') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
         title="Paragraph"
       >
         <Pilcrow className="h-4 w-4" />
@@ -166,8 +227,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
-        className={editor.isActive('inlineHeading', { level: 1 }) || editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 1"
       >
         <Heading1 className="h-4 w-4" />
       </Button>
@@ -175,8 +237,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
-        className={editor.isActive('inlineHeading', { level: 2 }) || editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        className={editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 2 (H2)"
       >
         <Heading2 className="h-4 w-4" />
       </Button>
@@ -184,8 +247,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
-        className={editor.isActive('inlineHeading', { level: 3 }) || editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 3 (H3)"
       >
         <Heading3 className="h-4 w-4" />
       </Button>
@@ -193,8 +257,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
-        className={editor.isActive('inlineHeading', { level: 4 }) || editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 4 (H4)"
       >
         <Heading4 className="h-4 w-4" />
       </Button>
@@ -202,8 +267,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(5).run()}
-        className={editor.isActive('inlineHeading', { level: 5 }) || editor.isActive('heading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+        className={editor.isActive('heading', { level: 5 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 5 (H5)"
       >
         <Heading5 className="h-4 w-4" />
       </Button>
@@ -211,8 +277,9 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         type="button"
         variant="ghost"
         size="sm"
-        onClick={() => editor.chain().focus().toggleInlineHeading(6).run()}
-        className={editor.isActive('inlineHeading', { level: 6 }) || editor.isActive('heading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+        className={editor.isActive('heading', { level: 6 }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Heading 6 (H6)"
       >
         <Heading6 className="h-4 w-4" />
       </Button>
@@ -225,6 +292,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         size="sm"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={editor.isActive('bulletList') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Bullet List"
       >
         <List className="h-4 w-4" />
       </Button>
@@ -234,6 +302,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         size="sm"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={editor.isActive('orderedList') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Numbered List"
       >
         <ListOrdered className="h-4 w-4" />
       </Button>
@@ -243,6 +312,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         size="sm"
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={editor.isActive('blockquote') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Blockquote"
       >
         <Quote className="h-4 w-4" />
       </Button>
@@ -295,6 +365,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().undo()}
         className="hover:bg-muted/80"
+        title="Undo"
       >
         <Undo className="h-4 w-4" />
       </Button>
@@ -305,6 +376,7 @@ const MenuBar = ({ editor, onImageClick }: { editor: any, onImageClick?: () => v
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().redo()}
         className="hover:bg-muted/80"
+        title="Redo"
       >
         <Redo className="h-4 w-4" />
       </Button>
@@ -320,6 +392,20 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const [imageHeight, setImageHeight] = React.useState('auto')
   const [imageFloat, setImageFloat] = React.useState('none')
 
+  // Link Modal State
+  const [linkModalOpen, setLinkModalOpen] = React.useState(false)
+  const [linkModalData, setLinkModalData] = React.useState<{
+    href: string
+    target: string | null
+    rel: string | null
+    isActive: boolean
+  }>({
+    href: '',
+    target: null,
+    rel: null,
+    isActive: false,
+  })
+
   React.useEffect(() => {
     const handleImageSelect = (e: any) => {
       setSelectedImage(e.detail.src)
@@ -330,11 +416,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       setImageFloat(e.detail.float || 'none')
     }
     const handleImageDeselect = () => {
-      // Small delay to prevent race conditions when clicking from one image directly to another
       setTimeout(() => {
         setSelectedImage((current) => {
-          // Only clear if the active element isn't still an image
-          return current ? null : null;
+          return current ? null : null
         })
       }, 50)
     }
@@ -351,14 +435,16 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        link: false, // disabled — we register LinkExtension below with custom options
+        link: false, // Managed by CustomLink
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
       }),
-      InlineHeading,
       CustomImage,
       TextStyle,
       Color,
       TextAlign.configure({
-        types: ['heading', 'paragraph', 'inlineHeading', 'customImage'],
+        types: ['heading', 'paragraph', 'customImage'],
       }),
       Highlight.configure({ multicolor: true }),
       Table.configure({
@@ -382,11 +468,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           class: 'border border-border p-2',
         },
       }),
-      LinkExtension.configure({
+      CustomLink.configure({
         openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-500 cursor-pointer hover:text-blue-600 transition-colors',
-        },
       }),
     ],
     content,
@@ -394,33 +477,70 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600 prose-li:my-0 prose-ul:my-1 prose-ol:my-1',
       },
+      handleKeyDown: (view, event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+          event.preventDefault()
+          handleOpenLinkModal()
+          return true
+        }
+        return false
+      },
       handlePaste: (view, event) => {
-        // Allow default behavior for images/files
         if (event.clipboardData?.files?.length) {
-          return false;
+          return false
         }
         
-        const text = event.clipboardData?.getData('text/plain');
+        const text = event.clipboardData?.getData('text/plain')
         if (text) {
-          // Normalize line endings
-          const normalized = text.replace(/\r\n/g, '\n');
-          
-          // If the pasted content is a single line, force it to be inserted as plain text.
-          // This prevents HTML block tags (like <p>) from splitting the current line and adding spaces.
+          const normalized = text.replace(/\r\n/g, '\n')
           if (!normalized.includes('\n')) {
-            event.preventDefault();
-            view.dispatch(view.state.tr.insertText(normalized));
-            return true;
+            event.preventDefault()
+            view.dispatch(view.state.tr.insertText(normalized))
+            return true
           }
         }
         
-        return false;
+        return false
       }
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML())
     },
   })
+
+  const handleOpenLinkModal = React.useCallback(() => {
+    if (!editor) return
+    const attrs = editor.getAttributes('link')
+    setLinkModalData({
+      href: attrs.href || '',
+      target: attrs.target || null,
+      rel: attrs.rel || null,
+      isActive: editor.isActive('link'),
+    })
+    setLinkModalOpen(true)
+  }, [editor])
+
+  const handleApplyLink = React.useCallback(
+    ({ href, target, rel }: { href: string; target: string | null; rel: string | null }) => {
+      if (!editor) return
+      if (!href) {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run()
+        return
+      }
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href, target: target || undefined, rel: rel || undefined })
+        .run()
+    },
+    [editor]
+  )
+
+  const handleRemoveLink = React.useCallback(() => {
+    if (!editor) return
+    editor.chain().focus().extendMarkRange('link').unsetLink().run()
+  }, [editor])
 
   React.useEffect(() => {
     if (editor) {
@@ -433,9 +553,11 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
 
   return (
     <div className="border border-border/60 rounded-xl bg-background shadow-sm hover:border-primary/30 transition-colors duration-300 relative w-full h-full flex flex-col">
-      <MenuBar editor={editor} onImageClick={onImageClick} />
-
-
+      <MenuBar
+        editor={editor}
+        onImageClick={onImageClick}
+        onOpenLinkModal={handleOpenLinkModal}
+      />
 
       {editor && (
         <BubbleMenu
@@ -446,110 +568,111 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
           {selectedImage !== null && (
-              <div className="flex flex-col gap-2 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼 META</span>
-                  <input
-                    type="text"
-                    className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    value={imageAlt}
-                    onChange={(e) => setImageAlt(e.target.value)}
-                    onKeyDown={(e) => {
-                      e.stopPropagation()
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
-                      }
-                    }}
-                    placeholder="Alt Text..."
-                    title="Alt Text (SEO)"
-                  />
-                  <input
-                    type="text"
-                    className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    value={imageCaption}
-                    onChange={(e) => setImageCaption(e.target.value)}
-                    onKeyDown={(e) => {
-                      e.stopPropagation()
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
-                      }
-                    }}
-                    placeholder="Caption..."
-                    title="Image Caption"
-                  />
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">📏 SIZE</span>
-                  <input
-                    type="text"
-                    className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    value={imageWidth}
-                    onChange={(e) => setImageWidth(e.target.value)}
-                    onKeyDown={(e) => {
-                      e.stopPropagation()
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
-                      }
-                    }}
-                    placeholder="Width"
-                    title="Width (e.g. 100%, 300px)"
-                  />
-                  <input
-                    type="text"
-                    className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    value={imageHeight}
-                    onChange={(e) => setImageHeight(e.target.value)}
-                    onKeyDown={(e) => {
-                      e.stopPropagation()
-                      if (e.key === 'Enter') {
-                        e.preventDefault()
-                        editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
-                      }
-                    }}
-                    placeholder="Height"
-                    title="Height (e.g. auto, 300px)"
-                  />
-                  <div className="w-px h-5 bg-border mx-1" />
-                  <Button
-                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'left' ? 'bg-primary/20 text-primary' : ''}`}
-                    onClick={() => { setImageFloat('left'); editor.chain().focus().updateAttributes('customImage', { float: 'left' }).run() }}
-                    title="Wrap Text Right (Float Left)"
-                  >
-                    Left
-                  </Button>
-                  <Button
-                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'none' ? 'bg-primary/20 text-primary' : ''}`}
-                    onClick={() => { setImageFloat('none'); editor.chain().focus().updateAttributes('customImage', { float: 'none' }).run() }}
-                    title="Inline (No Float)"
-                  >
-                    Center
-                  </Button>
-                  <Button
-                    type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'right' ? 'bg-primary/20 text-primary' : ''}`}
-                    onClick={() => { setImageFloat('right'); editor.chain().focus().updateAttributes('customImage', { float: 'right' }).run() }}
-                    title="Wrap Text Left (Float Right)"
-                  >
-                    Right
-                  </Button>
-                  <div className="flex-1" />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0 ml-1"
-                    onClick={() => {
+            <div className="flex flex-col gap-2 pr-2 border-r border-border mr-1 bg-muted/40 rounded-lg p-1">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">🖼 META</span>
+                <input
+                  type="text"
+                  className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={imageAlt}
+                  onChange={(e) => setImageAlt(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
                       editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
-                    }}
-                    title="Apply Changes"
-                  >
-                    <Check className="h-4 w-4 text-green-600" />
-                  </Button>
-                </div>
+                    }
+                  }}
+                  placeholder="Alt Text..."
+                  title="Alt Text (SEO)"
+                />
+                <input
+                  type="text"
+                  className="h-7 w-24 md:w-28 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={imageCaption}
+                  onChange={(e) => setImageCaption(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                    }
+                  }}
+                  placeholder="Caption..."
+                  title="Image Caption"
+                />
               </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground shrink-0 px-1">📏 SIZE</span>
+                <input
+                  type="text"
+                  className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={imageWidth}
+                  onChange={(e) => setImageWidth(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                    }
+                  }}
+                  placeholder="Width"
+                  title="Width (e.g. 100%, 300px)"
+                />
+                <input
+                  type="text"
+                  className="h-7 w-16 md:w-20 rounded-md border border-input bg-background px-2 py-1 text-xs shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  value={imageHeight}
+                  onChange={(e) => setImageHeight(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                    }
+                  }}
+                  placeholder="Height"
+                  title="Height (e.g. auto, 300px)"
+                />
+                <div className="w-px h-5 bg-border mx-1" />
+                <Button
+                  type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'left' ? 'bg-primary/20 text-primary' : ''}`}
+                  onClick={() => { setImageFloat('left'); editor.chain().focus().updateAttributes('customImage', { float: 'left' }).run() }}
+                  title="Wrap Text Right (Float Left)"
+                >
+                  Left
+                </Button>
+                <Button
+                  type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'none' ? 'bg-primary/20 text-primary' : ''}`}
+                  onClick={() => { setImageFloat('none'); editor.chain().focus().updateAttributes('customImage', { float: 'none' }).run() }}
+                  title="Inline (No Float)"
+                >
+                  Center
+                </Button>
+                <Button
+                  type="button" variant="ghost" size="sm" className={`h-7 px-2 text-xs ${imageFloat === 'right' ? 'bg-primary/20 text-primary' : ''}`}
+                  onClick={() => { setImageFloat('right'); editor.chain().focus().updateAttributes('customImage', { float: 'right' }).run() }}
+                  title="Wrap Text Left (Float Right)"
+                >
+                  Right
+                </Button>
+                <div className="flex-1" />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0 ml-1"
+                  onClick={() => {
+                    editor.chain().focus().updateAttributes('customImage', { alt: imageAlt, caption: imageCaption, width: imageWidth, height: imageHeight, float: imageFloat }).run()
+                  }}
+                  title="Apply Changes"
+                >
+                  <Check className="h-4 w-4 text-green-600" />
+                </Button>
+              </div>
+            </div>
           )}
+
           <Button
             type="button"
             variant="ghost"
@@ -617,22 +740,15 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           </div>
 
           <div className="w-px h-6 bg-border mx-1" />
+
+          {/* Link in BubbleMenu */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => {
-              const previousUrl = editor.getAttributes('link').href
-              const url = window.prompt('URL', previousUrl)
-              if (url === null) return
-              if (url === '') {
-                editor.chain().focus().extendMarkRange('link').unsetLink().run()
-                return
-              }
-              editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
-            }}
+            onClick={handleOpenLinkModal}
             className={editor.isActive('link') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
-            title="Link"
+            title="Insert or Edit Link (Ctrl+K)"
           >
             <LinkIcon className="h-4 w-4" />
           </Button>
@@ -640,20 +756,23 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().unsetLink().run()}
+            onClick={handleRemoveLink}
             disabled={!editor.isActive('link')}
             className="hover:bg-muted/80"
             title="Remove Link"
           >
             <Unlink className="h-4 w-4" />
           </Button>
+
           <div className="w-px h-6 bg-border mx-1" />
+
+          {/* Semantic Headings & Paragraph in BubbleMenu */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().setParagraph().unsetInlineHeading().run()}
-            className={editor.isActive('paragraph') && !editor.isActive('inlineHeading') && !editor.isActive('heading') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={editor.isActive('paragraph') && !editor.isActive('heading') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
             title="Paragraph"
           >
             <Pilcrow className="h-4 w-4" />
@@ -662,8 +781,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleInlineHeading(1).run()}
-            className={editor.isActive('inlineHeading', { level: 1 }) || editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            className={editor.isActive('heading', { level: 1 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Heading 1"
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -671,8 +791,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleInlineHeading(2).run()}
-            className={editor.isActive('inlineHeading', { level: 2 }) || editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+            className={editor.isActive('heading', { level: 2 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Heading 2 (H2)"
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -680,8 +801,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleInlineHeading(3).run()}
-            className={editor.isActive('inlineHeading', { level: 3 }) || editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+            className={editor.isActive('heading', { level: 3 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Heading 3 (H3)"
           >
             <Heading3 className="h-4 w-4" />
           </Button>
@@ -689,18 +811,22 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => editor.chain().focus().toggleInlineHeading(4).run()}
-            className={editor.isActive('inlineHeading', { level: 4 }) || editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+            className={editor.isActive('heading', { level: 4 }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Heading 4 (H4)"
           >
             <Heading4 className="h-4 w-4" />
           </Button>
+
           <div className="w-px h-6 bg-border mx-1" />
+
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive('bulletList') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Bullet List"
           >
             <List className="h-4 w-4" />
           </Button>
@@ -710,6 +836,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             size="sm"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             className={editor.isActive('orderedList') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Numbered List"
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
@@ -719,10 +846,13 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             size="sm"
             onClick={() => editor.chain().focus().toggleBlockquote().run()}
             className={editor.isActive('blockquote') ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Blockquote"
           >
             <Quote className="h-4 w-4" />
           </Button>
+
           <div className="w-px h-6 bg-border mx-1" />
+
           <MediaLibraryModal 
             onInsert={(url) => (editor.chain().focus() as any).setImage({ src: url }).run()}
             trigger={
@@ -749,7 +879,21 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           </Button>
         </BubbleMenu>
       )}
+
       <EditorContent editor={editor} className="flex-1 w-full" />
+
+      {/* Link Edit Dialog */}
+      <LinkModal
+        isOpen={linkModalOpen}
+        onClose={() => setLinkModalOpen(false)}
+        initialUrl={linkModalData.href}
+        initialTarget={linkModalData.target}
+        initialRel={linkModalData.rel}
+        isActive={linkModalData.isActive}
+        onApply={handleApplyLink}
+        onRemove={handleRemoveLink}
+      />
+
       <Button
         type="button"
         variant="default"
