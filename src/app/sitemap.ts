@@ -9,43 +9,13 @@ const BASE_URL = process.env.NEXTAUTH_URL || process.env.AUTH_URL || "https://be
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const currentDate = new Date()
 
-  // Static core routes
+  // Static core routes (Only root homepage is included; /blog, /about, /contact, /privacy, /terms excluded per SEO specification)
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
       lastModified: currentDate,
       changeFrequency: "daily",
       priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/blog`,
-      lastModified: currentDate,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/about`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/contact`,
-      lastModified: currentDate,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/privacy`,
-      lastModified: currentDate,
-      changeFrequency: "yearly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/terms`,
-      lastModified: currentDate,
-      changeFrequency: "yearly",
-      priority: 0.4,
     },
   ]
 

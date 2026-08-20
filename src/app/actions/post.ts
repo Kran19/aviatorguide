@@ -5,6 +5,27 @@ import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
+function parseFaqsFromFormData(formData: FormData): { question: string; answer: string; sortOrder: number }[] {
+  const faqsRaw = formData.get("faqs") as string
+  if (!faqsRaw) return []
+
+  try {
+    const arr = JSON.parse(faqsRaw)
+    if (!Array.isArray(arr)) return []
+
+    return arr
+      .map((item: any, index: number) => ({
+        question: typeof item.question === "string" ? item.question.trim() : "",
+        answer: typeof item.answer === "string" ? item.answer.trim() : "",
+        sortOrder: typeof item.sortOrder === "number" ? item.sortOrder : index,
+      }))
+      .filter((item) => item.question.length > 0 && item.answer.length > 0)
+  } catch (err) {
+    console.error("Failed to parse faqs:", err)
+    return []
+  }
+}
+
 export async function createPost(formData: FormData) {
   const session = await auth()
   
@@ -26,6 +47,7 @@ export async function createPost(formData: FormData) {
   const categoryId = formData.get("categoryId") as string
   const tagsStr = formData.get("tags") as string
   const inSitemap = formData.get("inSitemap") === "on"
+  const parsedFaqs = parseFaqsFromFormData(formData)
   
   const tagNames = tagsStr 
     ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
@@ -72,7 +94,10 @@ export async function createPost(formData: FormData) {
             where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
             create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
           }))
-        }
+        },
+        faqs: parsedFaqs.length > 0 ? {
+          create: parsedFaqs
+        } : undefined,
       },
     })
   } catch (error: any) {
@@ -85,6 +110,8 @@ export async function createPost(formData: FormData) {
 
   revalidatePath("/admin/posts")
   revalidatePath("/")
+  revalidatePath("/blog")
+  revalidatePath(`/blog/${slug}`)
   return { success: true }
 }
 
@@ -117,6 +144,7 @@ export async function updatePost(id: string, formData: FormData) {
   const categoryId = formData.get("categoryId") as string
   const tagsStr = formData.get("tags") as string
   const inSitemap = formData.get("inSitemap") === "on"
+  const parsedFaqs = parseFaqsFromFormData(formData)
   
   const tagNames = tagsStr 
     ? tagsStr.split(",").map(t => t.trim()).filter(Boolean) 
@@ -150,7 +178,11 @@ export async function updatePost(id: string, formData: FormData) {
         where: { slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
         create: { name, slug: name.toLowerCase().replace(/[^a-z0-9]+/g, '-') }
       }))
-    }
+    },
+    faqs: {
+      deleteMany: {},
+      create: parsedFaqs,
+    },
   }
 
   if (session.user.role === "ADMIN" || session.user.permissions?.includes("CAN_PUBLISH_POSTS")) {
@@ -184,6 +216,8 @@ export async function updatePost(id: string, formData: FormData) {
 
   revalidatePath("/admin/posts")
   revalidatePath("/")
+  revalidatePath("/blog")
+  revalidatePath(`/blog/${slug}`)
   return { success: true }
 }
 

@@ -25,31 +25,12 @@ export function FAQSection({
 
   if (!faqs || faqs.length === 0) return null
 
-  // Generate Google-compliant FAQPage JSON-LD schema
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
-      "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer
-      }
-    }))
-  }
-
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
   }
 
   return (
     <section aria-labelledby="faq-heading" className={`py-12 ${className}`}>
-      {/* Inject FAQPage Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
 
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">

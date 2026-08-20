@@ -16,6 +16,13 @@ interface BlogPageProps {
   params: Promise<{ slug: string }>
 }
 
+function safeJsonLd(data: object): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+}
+
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params
   let post: any = null
@@ -81,6 +88,10 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       where: { slug },
       include: {
         categories: true,
+        author: true,
+        faqs: {
+          orderBy: { sortOrder: "asc" },
+        },
       },
     })
     if (!post) {
@@ -93,6 +104,10 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         },
         include: {
           categories: true,
+          author: true,
+          faqs: {
+            orderBy: { sortOrder: "asc" },
+          },
         },
       })
     }
@@ -104,7 +119,11 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     notFound()
   }
 
-  // If special clothing-brands SEO template
+  // Canonical post URL
+  const canonicalUrl = `https://betsetgo.xyz/blog/${post.slug}`
+  const bannerImage = post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg"
+
+  // Special clothing-brands SEO template fallback
   if (post.slug === "clothing-brands") {
     return (
       <>
@@ -112,7 +131,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         <ClothingBrandsContent
           post={{
             ...post,
-            author: { name: null, image: null, designation: null, bio: null },
+            author: { name: post.author?.name || null, image: post.author?.image || null, designation: post.author?.designation || null, bio: post.author?.bio || null },
           }}
         />
         <TimedRedirectBanner
@@ -126,15 +145,26 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     )
   }
 
-  // JSON-LD Article Schema
+  // 1. Dynamic Article / BlogPosting Schema
   const jsonLdArticle = {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
     headline: post.title,
-    description: post.excerpt || post.metaDescription,
-    image: post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg",
+    description: post.metaDescription || post.excerpt || `Read ${post.title} on betsetgo.xyz`,
+    image: [bannerImage],
     datePublished: post.createdAt.toISOString(),
-    dateModified: post.updatedAt.toISOString(),
+    dateModified: post.updatedAt ? post.updatedAt.toISOString() : post.createdAt.toISOString(),
+    author: {
+      "@type": "Person",
+      name: post.author?.name || "Editorial Team",
+      ...(post.author?.image ? { image: post.author.image } : {}),
+      ...(post.author?.slug ? { url: `https://betsetgo.xyz/author/${post.author.slug}` } : {}),
+      ...(post.author?.bio ? { description: post.author.bio } : {}),
+    },
     publisher: {
       "@type": "Organization",
       name: "betsetgo.xyz",
@@ -145,82 +175,89 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     },
   }
 
-  // JSON-LD Breadcrumb Schema
+  // 2. Dynamic BreadcrumbList Schema (Reflecting current page hierarchy)
+  const breadcrumbItems: any[] = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://betsetgo.xyz",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Blog",
+      item: "https://betsetgo.xyz/blog",
+    },
+  ]
+
+  if (post.categories?.[0]) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: 3,
+      name: post.categories[0].name,
+      item: `https://betsetgo.xyz/categories/${post.categories[0].slug}`,
+    })
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: 4,
+      name: post.title,
+      item: canonicalUrl,
+    })
+  } else {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: 3,
+      name: post.title,
+      item: canonicalUrl,
+    })
+  }
+
   const jsonLdBreadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://betsetgo.xyz",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: "https://betsetgo.xyz/blog",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: post.title,
-        item: `https://betsetgo.xyz/blog/${post.slug}`,
-      },
-    ],
+    itemListElement: breadcrumbItems,
   }
 
-  // Dynamic FAQ Extraction from HTML Content for Google Rich Snippets
-  const extractedFaqs: { question: string; answer: string }[] = []
-  if (post.content) {
-    const faqRegex = /<h3[^>]*>([\s\S]*?\?[\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi
-    let match
-    while ((match = faqRegex.exec(post.content)) !== null) {
-      const question = match[1].replace(/<[^>]*>?/gm, "").trim()
-      const answer = match[2].replace(/<[^>]*>?/gm, "").trim()
-      if (question && answer) {
-        extractedFaqs.push({ question, answer })
+  // 3. Dynamic FAQPage Schema (ONLY generated if structured FAQs exist)
+  const hasFaqs = post.faqs && post.faqs.length > 0
+  const jsonLdFaq = hasFaqs
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: post.faqs.map((faq: { question: string; answer: string }) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer.replace(/<[^>]*>?/gm, "").trim(),
+          },
+        })),
       }
-    }
-  }
-
-  const jsonLdFaq =
-    extractedFaqs.length > 0
-      ? {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: extractedFaqs.map((faq) => ({
-            "@type": "Question",
-            name: faq.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: faq.answer,
-            },
-          })),
-        }
-      : null
+    : null
 
   return (
     <article className="min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 relative">
       <MetaPixel pixelId={(post as any).metaPixelId} />
+
+      {/* Dynamic Structured Data (JSON-LD) */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdArticle) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdBreadcrumb) }}
       />
       {jsonLdFaq && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdFaq) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdFaq) }}
         />
       )}
 
-      {/* Breadcrumbs */}
-      <nav className="max-w-4xl mx-auto mb-8 flex items-center text-xs font-medium text-muted-foreground space-x-2">
+      {/* Semantic Breadcrumbs Navigation */}
+      <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto mb-8 flex items-center text-xs font-medium text-muted-foreground space-x-2">
         <Link href="/" className="hover:text-primary transition-colors">
           Home
         </Link>
@@ -228,6 +265,14 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         <Link href="/blog" className="hover:text-primary transition-colors">
           Blog
         </Link>
+        {post.categories?.[0] && (
+          <>
+            <span>/</span>
+            <Link href={`/categories/${post.categories[0].slug}`} className="hover:text-primary transition-colors">
+              {post.categories[0].name}
+            </Link>
+          </>
+        )}
         <span>/</span>
         <span className="text-foreground truncate">{post.title}</span>
       </nav>
@@ -256,7 +301,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         </div>
       </header>
 
-      {/* Featured Banner with Fallback & CLS Fix */}
+      {/* Featured Banner */}
       <div className="max-w-4xl mx-auto mb-8 relative h-[350px] sm:h-[450px] rounded-2xl overflow-hidden border border-border/50 shadow-xl bg-muted">
         <SafeImage
           src={post.featuredImage}
@@ -280,21 +325,13 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         />
       </div>
 
-      {/* Article Content Body */}
-      {(() => {
-        let cleanHtml = post.content || ""
-        if (extractedFaqs.length > 0) {
-          cleanHtml = cleanHtml.replace(/<h3[^>]*>[\s\S]*?\?[\s\S]*?<\/h3>\s*<p[^>]*>[\s\S]*?<\/p>/gi, "")
-        }
-        return (
-          <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
-            <div dangerouslySetInnerHTML={{ __html: cleanHtml }} />
-          </main>
-        )
-      })()}
+      {/* Article Content Body (Unmangled HTML) */}
+      <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
+        <div dangerouslySetInnerHTML={{ __html: post.content || "" }} />
+      </main>
 
-      {/* Styled Interactive FAQ Accordion */}
-      {extractedFaqs.length > 0 && <FaqAccordion faqs={extractedFaqs} />}
+      {/* CMS-Driven Accessible FAQ Accordion */}
+      {hasFaqs && <FaqAccordion faqs={post.faqs} />}
 
       {/* Timed Client Redirect Toast */}
       <TimedRedirectBanner

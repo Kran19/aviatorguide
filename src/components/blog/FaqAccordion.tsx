@@ -77,7 +77,7 @@ export function FaqAccordion({ faqs }: FaqAccordionProps) {
               {/* Expandable Answer */}
               {isOpen && (
                 <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 text-muted-foreground text-base leading-relaxed border-t border-border/30 mt-1 pl-11">
-                  <p>{faq.answer}</p>
+                  <p className="whitespace-pre-line">{faq.answer}</p>
                 </div>
               )}
             </div>

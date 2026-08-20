@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
+import { FAQManager, FAQItem } from "@/components/editor/FAQManager"
 import { toast } from "sonner"
 
 type Post = {
@@ -26,6 +27,7 @@ type Post = {
   metaDescription: string | null
   focusKeyword: string | null
   categories?: { name: string }[]
+  faqs?: { id?: string; question: string; answer: string; sortOrder: number }[]
 }
 
 export default function EditPostForm({ post, userRole, categories }: { post: any, userRole: string, categories: any[] }) {
@@ -34,6 +36,7 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
   const [content, setContent] = React.useState(post.content)
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState(post.featuredImage || "")
   const [playImageUrl, setPlayImageUrl] = React.useState(post.playImage || "")
+  const [faqs, setFaqs] = React.useState<FAQItem[]>(post.faqs || [])
   
   const updatePostWithId = updatePost.bind(null, post.id)
 
@@ -53,6 +56,7 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
         formData.set("content", content)
         formData.set("featuredImage", featuredImageUrl)
         formData.set("playImage", playImageUrl)
+        formData.set("faqs", JSON.stringify(faqs))
         startTransition(async () => {
           try {
             const res = await updatePostWithId(formData)
@@ -187,6 +191,8 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
               onChange={setContent} 
             />
           </div>
+
+          <FAQManager faqs={faqs} onChange={setFaqs} />
           
         </div>
 

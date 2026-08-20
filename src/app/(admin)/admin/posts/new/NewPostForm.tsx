@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react"
 import RichTextEditor from "@/components/editor/RichTextEditor"
 import { MediaLibraryModal } from "@/components/editor/MediaLibraryModal"
+import { FAQManager, FAQItem } from "@/components/editor/FAQManager"
 import { toast } from "sonner"
 
 export default function NewPostForm({ userRole, categories }: { userRole: string, categories: any[] }) {
@@ -17,6 +18,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
   const [content, setContent] = React.useState("")
   const [featuredImageUrl, setFeaturedImageUrl] = React.useState("")
   const [playImageUrl, setPlayImageUrl] = React.useState("")
+  const [faqs, setFaqs] = React.useState<FAQItem[]>([])
   
   const [formDataState, setFormDataState] = React.useState({
     title: "",
@@ -40,6 +42,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         if (parsed.featuredImageUrl) setFeaturedImageUrl(parsed.featuredImageUrl)
         if (parsed.playImageUrl) setPlayImageUrl(parsed.playImageUrl)
         if (parsed.formDataState) setFormDataState(parsed.formDataState)
+        if (Array.isArray(parsed.faqs)) setFaqs(parsed.faqs)
       } catch (e) {}
     }
     setIsLoaded(true)
@@ -51,11 +54,12 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         content,
         featuredImageUrl,
         playImageUrl,
-        formDataState
+        formDataState,
+        faqs
       }))
     }, 1000)
     return () => clearTimeout(timeout)
-  }, [content, featuredImageUrl, playImageUrl, formDataState])
+  }, [content, featuredImageUrl, playImageUrl, formDataState, faqs])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormDataState(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -85,6 +89,7 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
         formData.set("content", content)
         formData.set("featuredImage", featuredImageUrl)
         formData.set("playImage", playImageUrl)
+        formData.set("faqs", JSON.stringify(faqs))
         startTransition(async () => {
           try {
             const res = await createPost(formData)
@@ -224,6 +229,8 @@ export default function NewPostForm({ userRole, categories }: { userRole: string
               onChange={setContent} 
             />
           </div>
+
+          <FAQManager faqs={faqs} onChange={setFaqs} />
           
         </div>
 
