@@ -220,12 +220,21 @@ model ContactMessage {
 }
 
 model GlobalSettings {
-  id              String   @id @default("global")
-  siteName        String   @default("betsetgo.xyz")
-  seoTitle        String?
-  seoDescription  String?  @db.Text
-  seoKeywords     String?
-  updatedAt       DateTime @updatedAt
+  id                         String   @id @default("global")
+  siteName                   String   @default("betsetgo.xyz")
+  seoTitle                   String?
+  seoDescription             String?  @db.Text
+  seoKeywords                String?
+  featuredPortalEnabled      Boolean  @default(true)
+  featuredPortalHeading      String?  @default("Featured Gaming Portal")
+  featuredPortalTitle        String?  @default("Ready to Play & Win Rewards?")
+  featuredPortalDescription  String?  @db.Text @default("Experience fast multiplier rounds, instant cashouts, and official certified fair play.")
+  featuredPortalCtaText      String?  @default("PLAY NOW")
+  featuredPortalCtaUrl       String?  @default("https://rocky11.club/?refercode=SEO")
+  featuredPortalBadge1       String?  @default("Provably Fair")
+  featuredPortalBadge2       String?  @default("Instant Cashouts")
+  featuredPortalRelFollow    Boolean  @default(false)
+  updatedAt                  DateTime @updatedAt
 }
 
 model BlogVisitor {

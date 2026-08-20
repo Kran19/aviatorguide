@@ -2,11 +2,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Hero } from "@/components/home/hero/Hero"
 import { prisma } from "@/lib/prisma"
-import Image from "next/image"
-import { SafeImage } from "@/components/ui/SafeImage"
 import { Gamepad2 } from 'lucide-react'
 import { PostCardItem } from "@/components/blog/PostCardItem"
-
+import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
@@ -38,8 +36,20 @@ export default async function Home() {
       {/* Hero Section with 3D Cinematic Vibe */}
       <Hero />
 
+      {/* Dynamic Featured Gaming Portal CTA Banner (Home) */}
+      {settings?.featuredPortalEnabled !== false && (
+        <div className="max-w-7xl mx-auto px-6 w-full -mt-6 sm:-mt-10 mb-8 relative z-20">
+          <PlayNowBanner
+            postId="homepage"
+            slug="homepage"
+            title={settings?.featuredPortalTitle || "Featured Gaming Portal"}
+            settings={settings}
+          />
+        </div>
+      )}
+
       {/* Latest Posts Section */}
-      <section className="py-24 bg-muted/30 border-t border-border/50 relative z-10">
+      <section className="py-20 bg-muted/30 border-t border-border/50 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -67,9 +77,9 @@ export default async function Home() {
 
       {/* Floating Action Button */}
       <a 
-        href="https://rocky11.club/?refercode=SEO" 
+        href={settings?.featuredPortalCtaUrl || "https://rocky11.club/?refercode=SEO"} 
         target="_blank" 
-        rel="noopener noreferrer"
+        rel={settings?.featuredPortalRelFollow ? "noopener noreferrer" : "nofollow noopener noreferrer"}
         className="fixed bottom-6 right-6 z-50 group flex flex-col items-center animate-[bounce_3s_infinite]"
       >
         <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-[#00D09C] to-[#00ffcc] shadow-[0_0_20px_rgba(0,208,156,0.5)] text-black mb-2 transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(0,208,156,0.8)] overflow-hidden">

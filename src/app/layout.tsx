@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 
@@ -42,17 +41,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${outfit.variable} antialiased`}>
-      <body className={`${outfit.className} min-h-screen flex flex-col bg-background font-sans`}>
+    <html lang="en" className={`dark ${outfit.variable} antialiased`} style={{ colorScheme: "dark" }}>
+      <body className={`${outfit.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         <GoogleAnalytics />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

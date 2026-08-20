@@ -82,18 +82,28 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
 export default async function DynamicBlogPage({ params }: BlogPageProps) {
   const { slug } = await params
   let post: any = null
+  let settings: any = null
 
   try {
-    post = await prisma.post.findUnique({
-      where: { slug },
-      include: {
-        categories: true,
-        author: true,
-        faqs: {
-          orderBy: { sortOrder: "asc" },
+    const [fetchedPost, fetchedSettings] = await Promise.all([
+      prisma.post.findUnique({
+        where: { slug },
+        include: {
+          categories: true,
+          author: true,
+          faqs: {
+            orderBy: { sortOrder: "asc" },
+          },
         },
-      },
-    })
+      }),
+      prisma.globalSettings.findUnique({
+        where: { id: "global" },
+      }),
+    ])
+
+    post = fetchedPost
+    settings = fetchedSettings
+
     if (!post) {
       post = await prisma.post.findFirst({
         where: {
@@ -322,6 +332,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
           title={post.title}
           image={post.playImage || post.featuredImage}
           redirectUrl={post.redirectUrl}
+          settings={settings}
         />
       </div>
 

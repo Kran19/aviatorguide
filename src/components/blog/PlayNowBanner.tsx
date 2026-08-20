@@ -6,19 +6,44 @@ import { useBlogTracker } from "@/hooks/useBlogTracker"
 import { Play, Sparkles, ShieldCheck, Zap } from "lucide-react"
 
 interface PlayNowBannerProps {
-  postId: string
-  slug: string
-  title: string
+  postId?: string
+  slug?: string
+  title?: string
   image?: string | null
   redirectUrl?: string | null
+  settings?: {
+    featuredPortalEnabled?: boolean
+    featuredPortalHeading?: string | null
+    featuredPortalTitle?: string | null
+    featuredPortalDescription?: string | null
+    featuredPortalCtaText?: string | null
+    featuredPortalCtaUrl?: string | null
+    featuredPortalBadge1?: string | null
+    featuredPortalBadge2?: string | null
+    featuredPortalRelFollow?: boolean
+  } | null
 }
 
-export function PlayNowBanner({ postId, slug, title, image, redirectUrl }: PlayNowBannerProps) {
-  const { trackAndRedirect } = useBlogTracker({ postId, slug })
+export function PlayNowBanner({ postId, slug, title, image, redirectUrl, settings }: PlayNowBannerProps) {
+  const { trackAndRedirect } = useBlogTracker({ postId: postId || "home", slug: slug || "home" })
 
-  const destinationUrl = redirectUrl || "https://rocky11.club/?refercode=SEO"
+  const isEnabled = settings?.featuredPortalEnabled ?? true
+  if (!isEnabled) {
+    return null
+  }
 
-  const handlePlayNowClick = () => {
+  const heading = settings?.featuredPortalHeading || "Featured Gaming Portal"
+  const portalTitle = settings?.featuredPortalTitle || "Ready to Play & Win Rewards?"
+  const description = settings?.featuredPortalDescription || "Experience fast multiplier rounds, instant cashouts, and official certified fair play."
+  const ctaText = settings?.featuredPortalCtaText || "PLAY NOW"
+  const destinationUrl = redirectUrl || settings?.featuredPortalCtaUrl || "https://rocky11.club/?refercode=SEO"
+  const badge1 = settings?.featuredPortalBadge1 || "Provably Fair"
+  const badge2 = settings?.featuredPortalBadge2 || "Instant Cashouts"
+  const isFollow = settings?.featuredPortalRelFollow ?? false
+
+  const linkRel = isFollow ? "noopener noreferrer" : "nofollow noopener noreferrer"
+
+  const handlePlayNowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     trackAndRedirect("Top Play Now Banner CTA Button", destinationUrl)
   }
 
@@ -34,7 +59,7 @@ export function PlayNowBanner({ postId, slug, title, image, redirectUrl }: PlayN
           <SafeImage
             src={image}
             fallbackSrc="/images/default-blog-banner.svg"
-            alt={title}
+            alt={title || portalTitle}
             fill
             className="object-cover"
           />
@@ -49,38 +74,45 @@ export function PlayNowBanner({ postId, slug, title, image, redirectUrl }: PlayN
         <div className="flex-1 text-center md:text-left space-y-2">
           <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Featured Gaming Portal</span>
+            <span>{heading}</span>
           </div>
 
           <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
-            Ready to Play &amp; Win Rewards?
+            {portalTitle}
           </h3>
 
           <p className="text-sm text-slate-300 max-w-xl">
-            Experience fast multiplier rounds, instant cashouts, and official certified fair play.
+            {description}
           </p>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-xs text-slate-400 pt-1">
-            <span className="flex items-center space-x-1">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Provably Fair</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <Zap className="w-4 h-4 text-amber-400" />
-              <span>Instant Cashouts</span>
-            </span>
+            {badge1 && (
+              <span className="flex items-center space-x-1">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>{badge1}</span>
+              </span>
+            )}
+            {badge2 && (
+              <span className="flex items-center space-x-1">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span>{badge2}</span>
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* Action Button Link */}
         <div className="w-full md:w-auto shrink-0">
-          <button
+          <a
+            href={destinationUrl}
+            target="_blank"
+            rel={linkRel}
             onClick={handlePlayNowClick}
             className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 group/btn"
           >
-            <span>PLAY NOW</span>
+            <span>{ctaText}</span>
             <Play className="w-5 h-5 fill-current group-hover/btn:translate-x-1 transition-transform" />
-          </button>
+          </a>
         </div>
       </div>
     </div>

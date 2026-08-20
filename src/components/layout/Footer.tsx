@@ -51,7 +51,19 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
+        {/* 18+ Responsible Gambling Notice */}
+        <div className="pt-8 pb-4 border-t border-border/50">
+          <div className="p-4 rounded-2xl border border-red-500/20 bg-red-500/5 flex flex-col sm:flex-row items-center gap-3 text-xs text-slate-300">
+            <span className="shrink-0 px-2.5 py-1 rounded-lg bg-red-500/20 text-red-400 font-extrabold border border-red-500/30 text-xs">
+              18+ ONLY
+            </span>
+            <p className="text-center sm:text-left leading-relaxed">
+              18+ | This website contains gambling-related content, casino games analysis, and betting strategies. Please gamble responsibly.
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>© {currentYear} betsetgo.xyz. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Powered by Next.js & betsetgo</span>
