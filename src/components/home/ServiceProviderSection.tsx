@@ -6,14 +6,15 @@ export function ServiceProviderSection() {
     <section className="bg-[#050505] text-white py-16 md:py-24 relative overflow-hidden border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
         
-        {/* Left side: Image and overlays */}
+        {/* Left side: Video and overlays */}
         <div className="relative w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-lg overflow-hidden border border-white/10 group">
-          <Image
-            src="https://images.unsplash.com/photo-1596484552834-6a58f850d0d1?q=80&w=1000&auto=format&fit=crop"
-            alt="Service Provider"
-            fill
-            className="object-cover"
-            unoptimized
+          <video
+            src="/videos/rockybook.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />

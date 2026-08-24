@@ -45,6 +45,9 @@ export function Footer() {
                 <Link href="/terms" className="hover:text-primary transition-colors duration-300">Terms of Service</Link>
               </li>
               <li>
+                <Link href="/disclaimer" className="hover:text-primary transition-colors duration-300">Disclaimer</Link>
+              </li>
+              <li>
                 <Link href="/contact" className="hover:text-primary transition-colors duration-300">Contact Us</Link>
               </li>
             </ul>
