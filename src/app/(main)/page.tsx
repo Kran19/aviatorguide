@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { Gamepad2 } from 'lucide-react'
 import { PostCardItem } from "@/components/blog/PostCardItem"
 import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
+import { ServiceProviderSection } from "@/components/home/ServiceProviderSection"
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // Revalidate page every 60 seconds (ISR)
@@ -35,6 +36,9 @@ export default async function Home() {
     <div className="flex flex-col w-full min-h-screen">
       {/* Hero Section with 3D Cinematic Vibe */}
       <Hero />
+
+      {/* Service Provider Section */}
+      <ServiceProviderSection />
 
       {/* Dynamic Featured Gaming Portal CTA Banner (Home) */}
       {settings?.featuredPortalEnabled !== false && (
