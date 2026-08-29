@@ -5,7 +5,7 @@ export function ServiceProviderSection() {
   return (
     <section className="bg-[#050505] text-white py-16 md:py-24 relative overflow-hidden border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
-        
+
         {/* Left side: Video and overlays */}
         <div className="relative w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-lg overflow-hidden border border-white/10 group">
           <video
@@ -26,22 +26,7 @@ export function ServiceProviderSection() {
             </div>
           </div>
 
-          {/* 10 Years Experience Badge */}
-          <div className="absolute top-4 left-4 sm:top-8 sm:left-8 w-24 h-24 sm:w-32 sm:h-32 bg-[#111] rounded-full flex items-center justify-center border-2 border-dashed border-[#FFB800] animate-[spin_10s_linear_infinite]">
-            <div className="absolute inset-0 flex items-center justify-center flex-col animate-[spin_10s_linear_infinite_reverse]">
-              <span className="text-3xl sm:text-4xl font-extrabold text-[#FFB800]">10</span>
-              <span className="text-[10px] sm:text-xs font-bold tracking-widest uppercase">Years</span>
-            </div>
-          </div>
-          
-          {/* Bottom WhatsApp numbers mock overlay */}
-          <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur-md p-3 flex gap-4 text-xs font-mono text-green-400 overflow-x-auto whitespace-nowrap hide-scrollbar">
-            <span>💬 9111191111</span>
-            <span>💬 9111191111</span>
-            <span>💬 9111191111</span>
-            <span>💬 9111191111</span>
-            <span>💬 9111191111</span>
-          </div>
+
         </div>
 
         {/* Right side: Text Content */}
@@ -79,13 +64,13 @@ export function ServiceProviderSection() {
           </ul>
 
           <div className="pt-6">
-            <a 
+            <a
               href="https://rocky11.club/?refercode=SEO"
               rel="nofollow"
               target="_blank"
               className="inline-flex items-center justify-center h-14 px-10 border-2 border-[#FFB800] rounded-xl text-[#FFB800] font-bold text-lg hover:bg-[#FFB800] hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(255,184,0,0.2)] hover:shadow-[0_0_30px_rgba(255,184,0,0.5)]"
             >
-              PLAY NOW
+              READ MORE
             </a>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Sparkles, ArrowRight, ShieldCheck, Zap, Trophy } from "lucide-react"
+import { Sparkles, ArrowRight } from "lucide-react"
 
 export function Hero() {
   return (
@@ -52,48 +52,6 @@ export function Hero() {
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
-
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="w-full sm:w-auto rounded-full h-13 px-8 text-base font-semibold border-border hover:bg-muted/80 transition-all duration-300"
-            asChild
-          >
-            <a 
-              href="https://rocky11.club/?refercode=SEO" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2"
-            >
-              <Trophy className="w-4 h-4 text-emerald-400" />
-              <span>Join Games</span>
-            </a>
-          </Button>
-        </div>
-
-        {/* Feature Highlights / Trust Signals */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-10 border-t border-border/40 w-full max-w-3xl text-left">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card/40 border border-border/40 backdrop-blur-sm">
-            <Zap className="w-5 h-5 text-primary shrink-0" />
-            <div>
-              <p className="text-xs font-bold text-foreground">Real-Time Insights</p>
-              <p className="text-[11px] text-muted-foreground">Updated strategies &amp; reviews</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card/40 border border-border/40 backdrop-blur-sm">
-            <Trophy className="w-5 h-5 text-emerald-400 shrink-0" />
-            <div>
-              <p className="text-xs font-bold text-foreground">Expert Breakdowns</p>
-              <p className="text-[11px] text-muted-foreground">Crash games, slots &amp; sports</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-card/40 border border-border/40 backdrop-blur-sm">
-            <ShieldCheck className="w-5 h-5 text-blue-400 shrink-0" />
-            <div>
-              <p className="text-xs font-bold text-foreground">Verified Coverage</p>
-              <p className="text-[11px] text-muted-foreground">100% fair analysis</p>
-            </div>
-          </div>
         </div>
 
       </div>
