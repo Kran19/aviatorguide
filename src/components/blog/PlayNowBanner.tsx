@@ -2,7 +2,6 @@
 
 import React from "react"
 import { SafeImage } from "@/components/ui/SafeImage"
-import { useBlogTracker } from "@/hooks/useBlogTracker"
 import { Play, Sparkles, ShieldCheck, Zap } from "lucide-react"
 
 interface PlayNowBannerProps {
@@ -25,8 +24,6 @@ interface PlayNowBannerProps {
 }
 
 export function PlayNowBanner({ postId, slug, title, image, redirectUrl, settings }: PlayNowBannerProps) {
-  const { trackAndRedirect } = useBlogTracker({ postId: postId || "home", slug: slug || "home" })
-
   const isEnabled = settings?.featuredPortalEnabled ?? true
   if (!isEnabled) {
     return null
@@ -35,17 +32,8 @@ export function PlayNowBanner({ postId, slug, title, image, redirectUrl, setting
   const heading = settings?.featuredPortalHeading || "Featured Gaming Portal"
   const portalTitle = settings?.featuredPortalTitle || "Ready to Play & Win Rewards?"
   const description = settings?.featuredPortalDescription || "Experience fast multiplier rounds, instant cashouts, and official certified fair play."
-  const ctaText = settings?.featuredPortalCtaText || "PLAY NOW"
-  const destinationUrl = redirectUrl || settings?.featuredPortalCtaUrl || "https://rocky11.club/?refercode=SEO"
   const badge1 = settings?.featuredPortalBadge1 || "Provably Fair"
   const badge2 = settings?.featuredPortalBadge2 || "Instant Cashouts"
-  const isFollow = settings?.featuredPortalRelFollow ?? false
-
-  const linkRel = isFollow ? "noopener noreferrer" : "nofollow noopener noreferrer"
-
-  const handlePlayNowClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    trackAndRedirect("Top Play Now Banner CTA Button", destinationUrl)
-  }
 
   return (
     <div className="w-full my-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-emerald-950/90 border border-emerald-500/30 shadow-2xl relative overflow-hidden group">
@@ -99,20 +87,6 @@ export function PlayNowBanner({ postId, slug, title, image, redirectUrl, setting
               </span>
             )}
           </div>
-        </div>
-
-        {/* Action Button Link */}
-        <div className="w-full md:w-auto shrink-0">
-          <a
-            href={destinationUrl}
-            target="_blank"
-            rel={linkRel}
-            onClick={handlePlayNowClick}
-            className="w-full md:w-auto px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-lg rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.4)] transition-all hover:scale-105 active:scale-95 flex items-center justify-center space-x-2 group/btn"
-          >
-            <span>{ctaText}</span>
-            <Play className="w-5 h-5 fill-current group-hover/btn:translate-x-1 transition-transform" />
-          </a>
         </div>
       </div>
     </div>
