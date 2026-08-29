@@ -22,8 +22,7 @@ jobs:
             cd /home/stzk/nextblog
             git fetch --all
             git reset --hard origin/main
-            docker compose build
-            docker compose run --rm app prisma db push
-            docker compose up -d --force-recreate
+            docker compose up -d --build
+            docker compose exec -T app npx prisma db push
             docker image prune -f
 

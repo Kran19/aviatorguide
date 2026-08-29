@@ -12,6 +12,11 @@ services:
       - db_data:/var/lib/postgresql/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U betsetgo_user -d betsetgo_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   app:
     build:
@@ -29,7 +34,8 @@ services:
       - AUTH_SECRET=${AUTH_SECRET:-your-super-secret-key-change-in-production}
       - AUTH_TRUST_HOST=true
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - app-network
     volumes:
