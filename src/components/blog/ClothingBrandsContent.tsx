@@ -31,6 +31,8 @@ interface ClothingBrandsContentProps {
     slug: string
     excerpt: string | null
     featuredImage: string | null
+    playImage?: string | null
+    redirectUrl?: string | null
     createdAt: Date
     author: {
       name: string | null
