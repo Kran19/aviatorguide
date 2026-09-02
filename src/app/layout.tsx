@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { StatCounter } from "@/components/analytics/StatCounter";
 
 const outfit = Outfit({
   variable: "--font-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
     <html lang="en" className={`dark ${outfit.variable} antialiased`} style={{ colorScheme: "dark" }}>
       <body className={`${outfit.className} min-h-screen flex flex-col bg-background text-foreground font-sans`}>
         <GoogleAnalytics />
+        <StatCounter />
         {children}
         <Toaster />
       </body>
