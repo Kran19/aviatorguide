@@ -46,6 +46,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               <Tags className="h-4 w-4" />
               Categories
             </Link>
+            <Link href="/admin/authors" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors text-amber-400">
+              <User className="h-4 w-4" />
+              Authors
+            </Link>
             {isAdmin && (
               <>
                 <Link href="/admin/audit-logs" className="flex items-center gap-3 rounded-lg px-4 py-2 hover:bg-accent text-sm font-medium transition-colors text-purple-400">

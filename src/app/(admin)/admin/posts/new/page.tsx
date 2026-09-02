@@ -12,13 +12,18 @@ export default async function NewPostPage() {
     redirect("/")
   }
 
-  const categories = await prisma.category.findMany({
-    orderBy: { name: 'asc' }
-  })
+  const [categories, authors] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { name: 'asc' }
+    }),
+    prisma.author.findMany({
+      orderBy: { name: 'asc' }
+    })
+  ])
 
   return (
     <div className="container mx-auto py-10">
-      <NewPostForm userRole={session.user.role} categories={categories} />
+      <NewPostForm userRole={session.user.role} categories={categories} authors={authors} />
     </div>
   )
 }

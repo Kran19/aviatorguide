@@ -115,6 +115,8 @@ model Post {
   inSitemap       Boolean    @default(true)
   authorId        String
   author          User        @relation(fields: [authorId], references: [id])
+  authorProfileId String?
+  authorProfile   Author?     @relation(fields: [authorProfileId], references: [id], onDelete: SetNull)
   categories      Category[]
   tags            Tag[]
   comments        Comment[]
@@ -127,6 +129,22 @@ model Post {
   auditLogs       BlogAuditLog[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model Author {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  designation String?  @default("Gaming Journalist & Analyst")
+  bio         String?  @db.Text
+  image       String?
+  coverImage  String?
+  socialLinks Json?
+  expertise   String[] @default([])
+  featured    Boolean  @default(false)
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model PostFAQ {

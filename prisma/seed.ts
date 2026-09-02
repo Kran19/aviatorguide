@@ -1,5 +1,7 @@
-import { prisma } from "../src/lib/prisma"
+import { PrismaClient } from "@prisma/client"
 import bcrypt from "bcryptjs"
+
+const prisma = new PrismaClient()
 
 async function main() {
   console.log("Seeding database...")
@@ -7,6 +9,7 @@ async function main() {
   // Clean up existing data
   await prisma.comment.deleteMany()
   await prisma.post.deleteMany()
+  await prisma.author.deleteMany()
   await prisma.category.deleteMany()
   await prisma.user.deleteMany()
 
@@ -22,7 +25,43 @@ async function main() {
   })
   console.log("Admin user created: admin@betsetgo.xyz (password123)")
 
-  // 2. Create Categories
+  // 2. Create Default Authors
+  const [alexAuthor, sarahAuthor] = await Promise.all([
+    prisma.author.create({
+      data: {
+        name: "Alex Mercer",
+        slug: "alex-mercer",
+        designation: "Senior eSports Journalist & Game Analyst",
+        bio: "Veteran gaming journalist with over 8 years of experience covering competitive gaming, tournament strategy, and emerging game dynamics.",
+        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",
+        coverImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=1200",
+        expertise: ["eSports", "Crash Games", "Multiplier Rounds", "Tournament Meta"],
+        socialLinks: {
+          twitter: "https://twitter.com/betsetgo",
+          linkedin: "https://linkedin.com",
+          website: "https://betsetgo.xyz",
+        },
+      },
+    }),
+    prisma.author.create({
+      data: {
+        name: "Sarah Chen",
+        slug: "sarah-chen",
+        designation: "iGaming Strategist & Mechanics Reviewer",
+        bio: "Specializing in statistical probabilities, provably fair algorithms, and game review breakdowns with data-driven insights.",
+        image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400",
+        coverImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1200",
+        expertise: ["Fair Play Analysis", "Slot Reviews", "Bankroll Management", "Guides"],
+        socialLinks: {
+          twitter: "https://twitter.com/betsetgo",
+          website: "https://betsetgo.xyz",
+        },
+      },
+    }),
+  ])
+  console.log(`Created authors: ${alexAuthor.name}, ${sarahAuthor.name}`)
+
+  // 3. Create Categories
   const categories = await Promise.all([
     prisma.category.create({ data: { name: "Guides", slug: "guides", description: "In-depth game guides and strategies." } }),
     prisma.category.create({ data: { name: "Sports game", slug: "sports-game", description: "Sports game previews, schedules, and reviews." } }),
@@ -151,12 +190,13 @@ async function main() {
     },
   ]
 
-  for (const postData of postsData) {
-    const { categoryId, ...data } = postData
+  for (let i = 0; i < postsData.length; i++) {
+    const { categoryId, ...data } = postsData[i]
     await prisma.post.create({
       data: {
         ...data,
         authorId: admin.id,
+        authorProfileId: i % 2 === 0 ? alexAuthor.id : sarahAuthor.id,
         categories: {
           connect: { id: categoryId }
         }

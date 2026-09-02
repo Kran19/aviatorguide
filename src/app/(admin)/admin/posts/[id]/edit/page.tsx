@@ -13,9 +13,14 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
     include: { categories: true, tags: true, faqs: { orderBy: { sortOrder: 'asc' } } }
   })
 
-  const allCategories = await prisma.category.findMany({
-    orderBy: { name: 'asc' }
-  })
+  const [allCategories, allAuthors] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { name: 'asc' }
+    }),
+    prisma.author.findMany({
+      orderBy: { name: 'asc' }
+    })
+  ])
 
   if (!post) {
     notFound()
@@ -23,7 +28,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="container mx-auto py-10">
-      <EditPostForm post={post} userRole={session?.user?.role || "USER"} categories={allCategories} />
+      <EditPostForm post={post} userRole={session?.user?.role || "USER"} categories={allCategories} authors={allAuthors} />
     </div>
   )
 }

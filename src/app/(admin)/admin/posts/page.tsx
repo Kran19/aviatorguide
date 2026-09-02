@@ -42,7 +42,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
     prisma.post.findMany({
       where: whereCondition,
       orderBy,
-      include: { author: true },
+      include: { author: true, authorProfile: true },
       skip,
       take: limit
     }),
@@ -106,7 +106,7 @@ export default async function AdminPostsPage({ searchParams }: { searchParams: P
                       {post.status.replace("_", " ")}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{post.author?.name || 'Unknown'}</td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{post.authorProfile?.name || post.author?.name || 'Unknown'}</td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{new Date(post.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">

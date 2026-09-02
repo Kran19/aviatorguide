@@ -45,6 +45,7 @@ export async function createPost(formData: FormData) {
   const metaDescription = formData.get("metaDescription") as string
   const focusKeyword = formData.get("focusKeyword") as string
   const categoryId = formData.get("categoryId") as string
+  const authorProfileId = (formData.get("authorProfileId") as string) || null
   const tagsStr = formData.get("tags") as string
   const inSitemap = formData.get("inSitemap") === "on"
   const parsedFaqs = parseFaqsFromFormData(formData)
@@ -83,6 +84,7 @@ export async function createPost(formData: FormData) {
         focusKeyword: focusKeyword || null,
         inSitemap,
         authorId: session.user.id,
+        authorProfileId: authorProfileId || null,
         categories: categoryId ? {
           connectOrCreate: [{
             where: { slug: categoryId.toLowerCase().replace(/[^a-z0-9]+/g, '-') },
@@ -109,6 +111,7 @@ export async function createPost(formData: FormData) {
   }
 
   revalidatePath("/admin/posts")
+  revalidatePath("/admin/authors")
   revalidatePath("/")
   revalidatePath("/blog")
   revalidatePath(`/blog/${slug}`)
@@ -142,6 +145,7 @@ export async function updatePost(id: string, formData: FormData) {
   const focusKeyword = formData.get("focusKeyword") as string
   const adminRemarks = formData.get("adminRemarks") as string
   const categoryId = formData.get("categoryId") as string
+  const authorProfileId = (formData.get("authorProfileId") as string) || null
   const tagsStr = formData.get("tags") as string
   const inSitemap = formData.get("inSitemap") === "on"
   const parsedFaqs = parseFaqsFromFormData(formData)
@@ -165,6 +169,7 @@ export async function updatePost(id: string, formData: FormData) {
     metaDescription: metaDescription || null,
     focusKeyword: focusKeyword || null,
     inSitemap,
+    authorProfileId: authorProfileId || null,
     categories: categoryId ? {
       set: [],
       connectOrCreate: [{

@@ -30,7 +30,7 @@ type Post = {
   faqs?: { id?: string; question: string; answer: string; sortOrder: number }[]
 }
 
-export default function EditPostForm({ post, userRole, categories }: { post: any, userRole: string, categories: any[] }) {
+export default function EditPostForm({ post, userRole, categories, authors = [] }: { post: any, userRole: string, categories: any[], authors?: any[] }) {
   const [isPending, startTransition] = React.useTransition()
   const router = useRouter()
   const [content, setContent] = React.useState(post.content)
@@ -309,6 +309,38 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
               />
             </div>
 
+            {/* Author Selector */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-foreground/90" htmlFor="authorProfileId">
+                  Article Author
+                </label>
+                <Link
+                  href="/admin/authors"
+                  target="_blank"
+                  className="text-xs font-semibold text-primary hover:underline"
+                >
+                  + Manage Authors
+                </Link>
+              </div>
+              <select
+                id="authorProfileId"
+                name="authorProfileId"
+                defaultValue={post.authorProfileId || ""}
+                className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background cursor-pointer"
+              >
+                <option value="">Default Admin Author</option>
+                {authors.map((author: any) => (
+                  <option key={author.id} value={author.id}>
+                    {author.name} {author.designation ? `(${author.designation})` : ""}
+                  </option>
+                ))}
+              </select>
+              <p className="text-[11px] text-muted-foreground">
+                Select the public author persona shown to readers on the blog.
+              </p>
+            </div>
+
             <div className="space-y-3">
               <label className="text-sm font-semibold text-foreground/90" htmlFor="categoryId">Category</label>
               <select
@@ -319,14 +351,22 @@ export default function EditPostForm({ post, userRole, categories }: { post: any
                 className="flex h-12 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background cursor-pointer"
               >
                 <option value="" disabled>Select a category...</option>
-                <option value="Casino game">Casino game</option>
-                <option value="Crash game">Crash game</option>
-                <option value="Slot game">Slot game</option>
-                <option value="Sports game">Sports game</option>
-                <option value="Bonuses">Bonuses</option>
-                <option value="Payment">Payment</option>
-                <option value="Guides">Guides</option>
-                <option value="News">News</option>
+                {categories && categories.length > 0 ? (
+                  categories.map((c: any) => (
+                    <option key={c.id || c.name} value={c.name}>{c.name}</option>
+                  ))
+                ) : (
+                  <>
+                    <option value="Casino game">Casino game</option>
+                    <option value="Crash game">Crash game</option>
+                    <option value="Slot game">Slot game</option>
+                    <option value="Sports game">Sports game</option>
+                    <option value="Bonuses">Bonuses</option>
+                    <option value="Payment">Payment</option>
+                    <option value="Guides">Guides</option>
+                    <option value="News">News</option>
+                  </>
+                )}
               </select>
             </div>
 

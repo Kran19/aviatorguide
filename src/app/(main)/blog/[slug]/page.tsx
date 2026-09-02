@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { ClothingBrandsContent } from "@/components/blog/ClothingBrandsContent"
 import { TimedRedirectBanner } from "@/components/blog/TimedRedirectBanner"
 import { PlayNowBanner } from "@/components/blog/PlayNowBanner"
+import { AuthorCard } from "@/components/blog/AuthorCard"
 import { FaqAccordion } from "@/components/blog/FaqAccordion"
 import { SafeImage } from "@/components/ui/SafeImage"
 import { MetaPixel } from "@/components/analytics/MetaPixel"
@@ -91,6 +92,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         include: {
           categories: true,
           author: true,
+          authorProfile: true,
           faqs: {
             orderBy: { sortOrder: "asc" },
           },
@@ -115,6 +117,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         include: {
           categories: true,
           author: true,
+          authorProfile: true,
           faqs: {
             orderBy: { sortOrder: "asc" },
           },
@@ -129,6 +132,14 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
     notFound()
   }
 
+  const effectiveAuthor = post.authorProfile || post.author || null
+  const authorName = effectiveAuthor?.name || "Editorial Team"
+  const authorSlug = effectiveAuthor?.slug || (effectiveAuthor?.name ? effectiveAuthor.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') : "editorial")
+  const authorImage = effectiveAuthor?.image || null
+  const authorDesignation = effectiveAuthor?.designation || "Content Creator & Gaming Analyst"
+  const authorBio = effectiveAuthor?.bio || null
+  const authorSocialLinks = (effectiveAuthor as any)?.socialLinks || null
+
   // Canonical post URL
   const canonicalUrl = `https://betsetgo.xyz/blog/${post.slug}`
   const bannerImage = post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg"
@@ -140,8 +151,15 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
         <MetaPixel pixelId={(post as any).metaPixelId} />
         <ClothingBrandsContent
           post={{
-            ...post,
-            author: { name: post.author?.name || null, image: post.author?.image || null, designation: post.author?.designation || null, bio: post.author?.bio || null },
+            id: post.id,
+            title: post.title,
+            slug: post.slug,
+            excerpt: post.excerpt,
+            featuredImage: post.featuredImage,
+            playImage: post.playImage,
+            redirectUrl: post.redirectUrl,
+            createdAt: post.createdAt,
+            author: { name: authorName, image: authorImage, designation: authorDesignation, bio: authorBio },
           }}
         />
         <TimedRedirectBanner
@@ -299,7 +317,27 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
           {post.title}
         </h1>
 
-        <div className="flex items-center space-x-6 text-xs text-muted-foreground border-y border-border/50 py-3">
+        <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs text-muted-foreground border-y border-border/50 py-3">
+          <Link
+            href={`/author/${authorSlug}`}
+            className="flex items-center space-x-2 text-foreground font-semibold hover:text-primary transition-colors group"
+          >
+            <div className="w-6 h-6 rounded-full overflow-hidden relative bg-muted border border-border shrink-0">
+              {authorImage ? (
+                <SafeImage
+                  src={authorImage}
+                  alt={authorName}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-primary/20 flex items-center justify-center text-[10px] text-primary font-bold">
+                  {authorName.substring(0, 2).toUpperCase()}
+                </div>
+              )}
+            </div>
+            <span className="group-hover:underline">By {authorName}</span>
+          </Link>
           <span className="flex items-center space-x-1.5">
             <Calendar className="w-4 h-4 text-primary" />
             <span>{new Date(post.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
@@ -340,6 +378,18 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       <main className="max-w-4xl mx-auto prose prose-invert prose-emerald lg:prose-lg leading-relaxed text-foreground/90">
         <div dangerouslySetInnerHTML={{ __html: post.content || "" }} />
       </main>
+
+      {/* Author Profile Bio Card */}
+      <div className="max-w-4xl mx-auto my-12">
+        <AuthorCard
+          name={authorName}
+          slug={authorSlug}
+          image={authorImage}
+          designation={authorDesignation}
+          bio={authorBio}
+          socialLinks={authorSocialLinks}
+        />
+      </div>
 
       {/* CMS-Driven Accessible FAQ Accordion */}
       {hasFaqs && <FaqAccordion faqs={post.faqs} />}
