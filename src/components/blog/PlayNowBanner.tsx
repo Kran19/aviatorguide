@@ -36,7 +36,7 @@ export function PlayNowBanner({ postId, slug, title, image, redirectUrl, setting
   const badge1 = settings?.featuredPortalBadge1 || "Provably Fair"
   const badge2 = settings?.featuredPortalBadge2 || "Instant Cashouts"
   const ctaText = settings?.featuredPortalCtaText || "PLAY NOW"
-  const ctaUrl = redirectUrl || settings?.featuredPortalCtaUrl || "http://localhost:3000/"
+  const ctaUrl = redirectUrl || settings?.featuredPortalCtaUrl || "https://rocky11.club/?refercode=SEO"
   const relFollow = settings?.featuredPortalRelFollow ?? false
   const relAttribute = relFollow ? undefined : "nofollow noopener noreferrer"
   const isExternal = ctaUrl.startsWith("http://") || ctaUrl.startsWith("https://")
