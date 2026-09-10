@@ -12,6 +12,44 @@ import { Plugin, PluginKey } from "@tiptap/pm/state"
 export const TableExitPlugin = Extension.create({
   name: "tableStructurePlugin",
 
+  onCreate() {
+    // Automatically guarantee the invariant upon initial editor creation / document load
+    const editor = this.editor
+    if (!editor || !editor.view) return
+    const { state, dispatch } = editor.view
+    const { doc, schema } = state
+    let tr: any = null
+
+    for (let i = doc.childCount - 1; i >= 0; i--) {
+      const child = doc.child(i)
+      if (child.type.name === "table") {
+        let offset = 0
+        for (let j = 0; j < i; j++) {
+          offset += doc.child(j).nodeSize
+        }
+        const endPos = offset + child.nodeSize
+
+        const isLast = i === doc.childCount - 1
+        const nextSibling = !isLast ? doc.child(i + 1) : null
+        if (isLast || (nextSibling && nextSibling.type.name !== "paragraph")) {
+          tr = tr || state.tr
+          tr.insert(endPos, schema.nodes.paragraph.create())
+        }
+
+        const isFirst = i === 0
+        const prevSibling = !isFirst ? doc.child(i - 1) : null
+        if (isFirst || (prevSibling && prevSibling.type.name === "table")) {
+          tr = tr || state.tr
+          tr.insert(offset, schema.nodes.paragraph.create())
+        }
+      }
+    }
+
+    if (tr) {
+      dispatch(tr)
+    }
+  },
+
   addProseMirrorPlugins() {
     return [
       new Plugin({
