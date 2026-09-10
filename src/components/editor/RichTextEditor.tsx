@@ -537,8 +537,8 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           const target = event.target as HTMLElement | null
           if (!target) return false
 
-          // Don't intercept clicks inside table cells, buttons, inputs, context menus, or exit buttons
-          if (target.closest('td, th, button, input, a, select, [role="menu"], .table-exit-btn')) {
+          // Don't intercept clicks inside table cells, buttons, inputs, context menus, or forms
+          if (target.closest('td, th, button, input, a, select, [role="menu"]')) {
             return false
           }
 
@@ -1134,7 +1134,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           if (!editor) return
           const target = e.target as HTMLElement
           // If clicked inside a cell, link, button, input, or control, ignore
-          if (target.closest('td, th, button, input, a, select, [role="menu"], .table-exit-btn')) return
+          if (target.closest('td, th, button, input, a, select, [role="menu"]')) return
 
           const editorEl = editor.view.dom
           const tables = Array.from(editorEl.querySelectorAll('table'))
