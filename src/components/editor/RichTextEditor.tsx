@@ -48,7 +48,8 @@ import {
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { LinkModal } from './LinkModal'
 import { TableModal } from './TableModal'
-import { TableContextMenu } from './TableContextMenu'
+import { TableContextMenu, insertParagraphAfterTable, insertParagraphBeforeTable } from './TableContextMenu'
+import { TableExitPlugin } from './TableExitPlugin'
 
 interface RichTextEditorProps {
   content: string
@@ -207,6 +208,32 @@ const MenuBar = ({
       >
         <Table2 className="h-4 w-4" />
       </Button>
+
+      {/* Active Table Quick Helpers in MenuBar */}
+      {editor.isActive('table') && (
+        <div className="flex items-center gap-1 bg-primary/10 border border-primary/20 rounded-lg px-1.5 py-0.5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertParagraphBeforeTable(editor)}
+            className="h-6 px-1.5 text-[11px] hover:bg-background text-foreground font-medium gap-1"
+            title="Write simple text above this table"
+          >
+            <Pilcrow className="h-3 w-3 text-primary" /> + Text Above
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertParagraphAfterTable(editor)}
+            className="h-6 px-1.5 text-[11px] hover:bg-background text-foreground font-medium gap-1"
+            title="Write simple text below this table"
+          >
+            <Pilcrow className="h-3 w-3 text-primary" /> + Text Below
+          </Button>
+        </div>
+      )}
 
       <div className="w-px h-6 bg-border mx-1" />
 
@@ -498,6 +525,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       CustomLink.configure({
         openOnClick: false,
       }),
+      TableExitPlugin,
     ],
     content,
     editorProps: {
@@ -505,6 +533,43 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600 prose-li:my-0 prose-ul:my-1 prose-ol:my-1',
       },
       handleDOMEvents: {
+        mousedown: (view, event) => {
+          const target = event.target as HTMLElement | null
+          if (!target) return false
+
+          // Don't intercept clicks inside table cells, buttons, inputs, context menus, or exit buttons
+          if (target.closest('td, th, button, input, a, select, [role="menu"], .table-exit-btn')) {
+            return false
+          }
+
+          const editorEl = view.dom
+          const tables = Array.from(editorEl.querySelectorAll('table'))
+          if (tables.length === 0) return false
+
+          const clickY = event.clientY
+
+          // 1. Check if clicking below the lowest table
+          const lastTable = tables[tables.length - 1]
+          const lastRect = lastTable.getBoundingClientRect()
+          if (clickY > lastRect.bottom + 4) {
+            event.preventDefault()
+            event.stopPropagation()
+            insertParagraphAfterTable(view)
+            return true
+          }
+
+          // 2. Check if clicking above the topmost table
+          const firstTable = tables[0]
+          const firstRect = firstTable.getBoundingClientRect()
+          if (clickY < firstRect.top - 4) {
+            event.preventDefault()
+            event.stopPropagation()
+            insertParagraphBeforeTable(view)
+            return true
+          }
+
+          return false
+        },
         contextmenu: (view, event) => {
           const target = event.target as HTMLElement | null
           const tableElement = target?.closest('table')
@@ -530,6 +595,55 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           handleOpenLinkModal()
           return true
         }
+
+        // Table Exit Navigation
+        const { state } = view
+        const { selection } = state
+        const { $from } = selection
+
+        let tableDepth = -1
+        for (let d = $from.depth; d > 0; d--) {
+          if ($from.node(d).type.name === 'table') {
+            tableDepth = d
+            break
+          }
+        }
+
+        if (tableDepth !== -1) {
+          const tableNode = $from.node(tableDepth)
+          const tablePos = $from.before(tableDepth)
+          const tableEndPos = tablePos + tableNode.nodeSize
+
+          // Ctrl+Enter or Cmd+Enter: quickly exit to text below
+          if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault()
+            insertParagraphAfterTable(view)
+            return true
+          }
+
+          // ArrowDown on the last row of the table
+          if (event.key === 'ArrowDown') {
+            const rowIndex = $from.index(tableDepth)
+            const isLastRow = rowIndex === tableNode.childCount - 1
+            if (isLastRow && tableEndPos >= state.doc.content.size) {
+              event.preventDefault()
+              insertParagraphAfterTable(view)
+              return true
+            }
+          }
+
+          // ArrowUp on the first row of the table
+          if (event.key === 'ArrowUp') {
+            const rowIndex = $from.index(tableDepth)
+            const isFirstRow = rowIndex === 0
+            if (isFirstRow && tablePos === 0) {
+              event.preventDefault()
+              insertParagraphBeforeTable(view)
+              return true
+            }
+          }
+        }
+
         return false
       },
       handlePaste: (view, event) => {
@@ -874,6 +988,27 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
               >
                 <Trash2 className="h-3 w-3" /> -Col
               </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => insertParagraphBeforeTable(editor)}
+                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium text-primary"
+                title="Write simple text above table"
+              >
+                <Pilcrow className="h-3 w-3 text-primary" /> Text Above
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => insertParagraphAfterTable(editor)}
+                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium text-primary"
+                title="Write simple text below table"
+              >
+                <Pilcrow className="h-3 w-3 text-primary" /> Text Below
+              </Button>
             </>
           )}
 
@@ -994,7 +1129,35 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       )}
 
       <div
-        className="flex-1 w-full"
+        className="flex-1 w-full relative min-h-[500px]"
+        onClick={(e) => {
+          if (!editor) return
+          const target = e.target as HTMLElement
+          // If clicked inside a cell, link, button, input, or control, ignore
+          if (target.closest('td, th, button, input, a, select, [role="menu"], .table-exit-btn')) return
+
+          const editorEl = editor.view.dom
+          const tables = Array.from(editorEl.querySelectorAll('table'))
+          if (tables.length > 0) {
+            const lastTable = tables[tables.length - 1]
+            const lastTableRect = lastTable.getBoundingClientRect()
+            if (e.clientY > lastTableRect.bottom) {
+              // Clicked in empty editor space below the table!
+              e.preventDefault()
+              insertParagraphAfterTable(editor)
+              return
+            }
+
+            const firstTable = tables[0]
+            const firstTableRect = firstTable.getBoundingClientRect()
+            if (e.clientY < firstTableRect.top) {
+              // Clicked in empty editor space above the table!
+              e.preventDefault()
+              insertParagraphBeforeTable(editor)
+              return
+            }
+          }
+        }}
         onContextMenu={(e) => {
           const target = e.target as HTMLElement | null
           const tableElement = target?.closest('table')
@@ -1012,6 +1175,42 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       >
         <EditorContent editor={editor} className="flex-1 w-full" />
       </div>
+
+      {/* Floating Action Strip when Cursor is Inside a Table */}
+      {editor && editor.isActive('table') && (
+        <div className="flex items-center justify-between px-4 py-2 bg-muted/90 backdrop-blur border-t border-border text-xs text-muted-foreground animate-in fade-in slide-in-from-bottom-2 duration-150 sticky bottom-0 z-30 shadow-md">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-foreground flex items-center gap-1.5">
+              <Table2 className="h-4 w-4 text-primary" /> Inside Table
+            </span>
+            <span className="hidden sm:inline text-muted-foreground/80">• Click to exit table & write normal text:</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => insertParagraphBeforeTable(editor)}
+              className="h-7 text-xs gap-1.5 bg-background shadow-xs hover:border-primary hover:text-primary transition-all font-medium"
+              title="Add a normal text paragraph above this table"
+            >
+              <Pilcrow className="h-3.5 w-3.5 text-primary" />
+              Write Text Above Table
+            </Button>
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              onClick={() => insertParagraphAfterTable(editor)}
+              className="h-7 text-xs gap-1.5 shadow-xs font-semibold"
+              title="Add a normal text paragraph below this table"
+            >
+              <Pilcrow className="h-3.5 w-3.5" />
+              Write Text Below Table
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Link Edit Dialog */}
       <LinkModal
@@ -1031,7 +1230,16 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         onClose={() => setTableModalOpen(false)}
         onInsert={(rows, cols, withHeaderRow) => {
           if (!editor) return
+          const isAtStart = editor.state.selection.$from.pos <= 1
           editor.chain().focus().insertTable({ rows, cols, withHeaderRow }).run()
+          // Automatically append an empty paragraph after the table so the user can easily click/type below it!
+          insertParagraphAfterTable(editor)
+          // If the table was inserted at the very beginning of the document, also ensure a paragraph BEFORE it exists!
+          if (isAtStart) {
+            insertParagraphBeforeTable(editor)
+          }
+          // Move focus back into the table's first cell so they can begin typing table data immediately
+          editor.commands.goToNextCell()
         }}
       />
 

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Editor } from "@tiptap/react"
+import { TextSelection } from "@tiptap/pm/state"
 import {
   Columns2,
   Trash2,
@@ -12,13 +13,146 @@ import {
   Combine,
   Split,
   Table2,
-  Heading
+  Heading,
+  Pilcrow
 } from "lucide-react"
 
 export interface TableContextMenuProps {
   editor: Editor
   position: { x: number; y: number } | null
   onClose: () => void
+}
+
+/**
+ * Inserts or focuses a paragraph directly after the active table.
+ * Accepts either a TipTap Editor instance or a ProseMirror EditorView.
+ * If a paragraph already exists immediately after the table, moves selection to it.
+ * Otherwise, creates a new paragraph after the table and moves selection into it.
+ */
+export const insertParagraphAfterTable = (target: any, customTablePos?: number) => {
+  if (!target) return false
+  const view = target.view || target
+  if (!view || !view.state || !view.dispatch) return false
+
+  const { state, dispatch } = view
+  let tableEndPos = -1
+
+  if (typeof customTablePos === 'number') {
+    const node = state.doc.nodeAt(customTablePos)
+    if (node && node.type.name === 'table') {
+      tableEndPos = customTablePos + node.nodeSize
+    }
+  }
+
+  if (tableEndPos === -1) {
+    const { $from } = state.selection
+    for (let depth = $from.depth; depth > 0; depth--) {
+      const node = $from.node(depth)
+      if (node.type.name === 'table') {
+        tableEndPos = $from.after(depth)
+        break
+      }
+    }
+  }
+
+  if (tableEndPos === -1) {
+    // Find the last table in the document
+    let lastTableEnd = -1
+    state.doc.descendants((node: any, pos: number) => {
+      if (node.type.name === 'table') {
+        lastTableEnd = pos + node.nodeSize
+      }
+    })
+    tableEndPos = lastTableEnd
+  }
+
+  if (tableEndPos === -1) {
+    tableEndPos = state.doc.content.size
+  }
+
+  // Check if a paragraph node already exists right after tableEndPos
+  if (tableEndPos < state.doc.content.size) {
+    const $after = state.doc.resolve(tableEndPos)
+    const nextNode = $after.nodeAfter
+    if (nextNode && nextNode.type.name === 'paragraph') {
+      const targetPos = tableEndPos + 1
+      const tr = state.tr.setSelection(TextSelection.create(state.doc, Math.min(targetPos, state.doc.content.size)))
+      dispatch(tr)
+      view.focus()
+      return true
+    }
+  }
+
+  // Otherwise, insert a new paragraph after tableEndPos
+  const tr = state.tr.insert(tableEndPos, state.schema.nodes.paragraph.create())
+  tr.setSelection(TextSelection.create(tr.doc, tableEndPos + 1))
+  dispatch(tr)
+  view.focus()
+  return true
+}
+
+/**
+ * Inserts or focuses a paragraph directly before the active table.
+ * Accepts either a TipTap Editor instance or a ProseMirror EditorView.
+ * If a paragraph already exists immediately before the table, moves selection to it.
+ * Otherwise, creates a new paragraph before the table and moves selection into it.
+ */
+export const insertParagraphBeforeTable = (target: any, customTablePos?: number) => {
+  if (!target) return false
+  const view = target.view || target
+  if (!view || !view.state || !view.dispatch) return false
+
+  const { state, dispatch } = view
+  let tableBeforePos = -1
+
+  if (typeof customTablePos === 'number') {
+    tableBeforePos = customTablePos
+  }
+
+  if (tableBeforePos === -1) {
+    const { $from } = state.selection
+    for (let depth = $from.depth; depth > 0; depth--) {
+      const node = $from.node(depth)
+      if (node.type.name === 'table') {
+        tableBeforePos = $from.before(depth)
+        break
+      }
+    }
+  }
+
+  if (tableBeforePos === -1) {
+    // Find the first table in the document
+    state.doc.descendants((node: any, pos: number) => {
+      if (node.type.name === 'table' && tableBeforePos === -1) {
+        tableBeforePos = pos
+        return false
+      }
+    })
+  }
+
+  if (tableBeforePos === -1) {
+    tableBeforePos = 0
+  }
+
+  // Check if a paragraph node already exists right before tableBeforePos
+  if (tableBeforePos > 0) {
+    const $before = state.doc.resolve(tableBeforePos)
+    const prevNode = $before.nodeBefore
+    if (prevNode && prevNode.type.name === 'paragraph') {
+      const targetPos = Math.max(1, tableBeforePos - 1)
+      const tr = state.tr.setSelection(TextSelection.create(state.doc, targetPos))
+      dispatch(tr)
+      view.focus()
+      return true
+    }
+  }
+
+  // Otherwise, insert a new paragraph before tableBeforePos
+  const tr = state.tr.insert(tableBeforePos, state.schema.nodes.paragraph.create())
+  tr.setSelection(TextSelection.create(tr.doc, tableBeforePos + 1))
+  dispatch(tr)
+  view.focus()
+  return true
 }
 
 export function TableContextMenu({
@@ -105,6 +239,29 @@ export function TableContextMenu({
         <Table2 className="h-3.5 w-3.5 text-primary" />
         Table Options
       </div>
+
+      {/* Write Normal Text Options */}
+      <div className="px-2 py-0.5 text-[10px] font-semibold text-primary uppercase tracking-wider">
+        Write Normal Text
+      </div>
+      <button
+        type="button"
+        onClick={() => runCmd(() => insertParagraphBeforeTable(editor))}
+        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-foreground hover:bg-muted font-medium transition-colors cursor-pointer"
+      >
+        <Pilcrow className="h-3.5 w-3.5 text-primary" />
+        <span>Write Text Above Table</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => runCmd(() => insertParagraphAfterTable(editor))}
+        className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs text-foreground hover:bg-muted font-medium transition-colors cursor-pointer"
+      >
+        <Pilcrow className="h-3.5 w-3.5 text-primary" />
+        <span>Write Text Below Table</span>
+      </button>
+
+      <div className="my-1 h-px bg-border/60" />
 
       {/* Row Operations */}
       <div className="px-2 py-0.5 text-[10px] font-semibold text-muted-foreground/80 uppercase tracking-wider">
