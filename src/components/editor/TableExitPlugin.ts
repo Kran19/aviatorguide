@@ -2,96 +2,74 @@
 
 import { Extension } from "@tiptap/core"
 import { Plugin, PluginKey } from "@tiptap/pm/state"
-import { Decoration, DecorationSet } from "@tiptap/pm/view"
-import { insertParagraphAfterTable, insertParagraphBeforeTable } from "./TableContextMenu"
 
+/**
+ * TableStructurePlugin enforces the document-level invariant:
+ * - Every table has a paragraph before it (if at the start of doc or preceded by another table)
+ * - Every table has a paragraph after it (if at the end of doc or followed by another table)
+ * - Idempotent: returns null if the invariant is already satisfied, preventing infinite loops.
+ */
 export const TableExitPlugin = Extension.create({
-  name: "tableExitPlugin",
+  name: "tableStructurePlugin",
 
   addProseMirrorPlugins() {
-    const editor = this.editor
-
     return [
       new Plugin({
-        key: new PluginKey("tableExitPlugin"),
-        props: {
-          decorations(state) {
-            const decorations: Decoration[] = []
+        key: new PluginKey("tableStructurePlugin"),
+        appendTransaction(transactions, oldState, newState) {
+          // Only evaluate when the document content has actually changed
+          const docChanged = transactions.some((tr) => tr.docChanged)
+          if (!docChanged) return null
 
-            state.doc.descendants((node, pos) => {
-              if (node.type.name === "table") {
-                const endPos = pos + node.nodeSize
+          const { doc, schema } = newState
+          let tr: any = null
 
-                // Helper widget ABOVE table
-                decorations.push(
-                  Decoration.widget(
-                    pos,
-                    () => {
-                      const container = document.createElement("div")
-                      container.className = "table-exit-helper table-exit-above"
-                      
-                      const btn = document.createElement("button")
-                      btn.type = "button"
-                      btn.className = "table-exit-btn"
-                      btn.title = "Click to write simple text above this table"
-                      btn.innerHTML = `
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>Click to write text above table</span>
-                      `
+          // Collect all top-level or descendant table node ranges
+          const tables: { pos: number; endPos: number }[] = []
+          doc.descendants((node, pos) => {
+            if (node.type.name === "table") {
+              tables.push({ pos, endPos: pos + node.nodeSize })
+            }
+          })
 
-                      btn.addEventListener("mousedown", (e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        insertParagraphBeforeTable(editor, pos)
-                      })
+          if (tables.length === 0) return null
 
-                      container.appendChild(btn)
-                      return container
-                    },
-                    { side: -1, stopEvent: () => true }
-                  )
-                )
+          // Iterate tables from bottom to top so insertions at the end
+          // do not shift positions earlier in the document
+          for (let i = tables.length - 1; i >= 0; i--) {
+            const { pos, endPos } = tables[i]
 
-                // Helper widget BELOW table
-                decorations.push(
-                  Decoration.widget(
-                    endPos,
-                    () => {
-                      const container = document.createElement("div")
-                      container.className = "table-exit-helper table-exit-below"
-
-                      const btn = document.createElement("button")
-                      btn.type = "button"
-                      btn.className = "table-exit-btn"
-                      btn.title = "Click to write simple text below this table"
-                      btn.innerHTML = `
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>Click to write text below table</span>
-                      `
-
-                      btn.addEventListener("mousedown", (e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        insertParagraphAfterTable(editor, pos)
-                      })
-
-                      container.appendChild(btn)
-                      return container
-                    },
-                    { side: 1, stopEvent: () => true }
-                  )
-                )
+            // 1. Ensure a paragraph AFTER the table
+            // If the table is at the very end of the document, or immediately followed by another table
+            if (endPos === doc.content.size) {
+              tr = tr || newState.tr
+              tr.insert(endPos, schema.nodes.paragraph.create())
+            } else {
+              const $after = doc.resolve(endPos)
+              const nextNode = $after.nodeAfter
+              if (!nextNode || nextNode.type.name === "table") {
+                tr = tr || newState.tr
+                tr.insert(endPos, schema.nodes.paragraph.create())
               }
-            })
+            }
 
-            return DecorationSet.create(state.doc, decorations)
-          },
+            // 2. Ensure a paragraph BEFORE the table
+            // If the table is at the very start of the document (pos 0), or immediately preceded by another table
+            if (pos === 0) {
+              tr = tr || newState.tr
+              tr.insert(0, schema.nodes.paragraph.create())
+            } else {
+              const $before = doc.resolve(pos)
+              const prevNode = $before.nodeBefore
+              if (!prevNode || prevNode.type.name === "table") {
+                tr = tr || newState.tr
+                tr.insert(pos, schema.nodes.paragraph.create())
+              }
+            }
+          }
+
+          // Returns null if no changes were needed (idempotent, no repeated transactions)
+          return tr
         },
       }),
     ]

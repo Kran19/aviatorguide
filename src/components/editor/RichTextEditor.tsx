@@ -10,11 +10,11 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
-import { Table } from '@tiptap/extension-table'
+import { Table, createTable } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
-import { Selection } from '@tiptap/pm/state'
+import { Selection, TextSelection } from '@tiptap/pm/state'
 import { Button } from '@/components/ui/button'
 import {
   Bold,
@@ -1230,16 +1230,70 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         onClose={() => setTableModalOpen(false)}
         onInsert={(rows, cols, withHeaderRow) => {
           if (!editor) return
-          const isAtStart = editor.state.selection.$from.pos <= 1
-          editor.chain().focus().insertTable({ rows, cols, withHeaderRow }).run()
-          // Automatically append an empty paragraph after the table so the user can easily click/type below it!
-          insertParagraphAfterTable(editor)
-          // If the table was inserted at the very beginning of the document, also ensure a paragraph BEFORE it exists!
-          if (isAtStart) {
-            insertParagraphBeforeTable(editor)
+
+          const { state, dispatch } = editor.view
+          const { schema, selection } = state
+          const { $from } = selection
+
+          const tableNode = createTable(schema, rows, cols, withHeaderRow)
+          const pNode = schema.nodes.paragraph.create()
+          const tr = state.tr
+
+          // Check if cursor is currently inside an existing table to prevent accidental nesting
+          let insideTableDepth = -1
+          for (let d = $from.depth; d > 0; d--) {
+            if ($from.node(d).type.name === 'table') {
+              insideTableDepth = d
+              break
+            }
           }
-          // Move focus back into the table's first cell so they can begin typing table data immediately
-          editor.commands.goToNextCell()
+
+          let insertPos: number
+
+          if (insideTableDepth !== -1) {
+            // Never nest a table inside a table cell!
+            // Move insertion position to after the current table
+            const tableEndPos = $from.after(insideTableDepth)
+            const nextNode = tableEndPos < tr.doc.content.size ? tr.doc.resolve(tableEndPos).nodeAfter : null
+            if (nextNode && nextNode.type.name === 'paragraph') {
+              insertPos = tableEndPos + nextNode.nodeSize
+            } else {
+              tr.insert(tableEndPos, schema.nodes.paragraph.create())
+              insertPos = tableEndPos + 2
+            }
+          } else {
+            const currentParent = $from.parent
+            const isCurrentEmptyTextblock = currentParent.isTextblock && currentParent.content.size === 0
+            const isAtDocStart = $from.pos <= 1
+
+            if (isAtDocStart && isCurrentEmptyTextblock) {
+              // Document starts with empty paragraph: keep it, insert table after it
+              insertPos = 2
+            } else if (isCurrentEmptyTextblock) {
+              // Empty paragraph in document: replace it with the table
+              const blockStart = $from.before()
+              const blockEnd = $from.after()
+              tr.delete(blockStart, blockEnd)
+              insertPos = blockStart
+            } else {
+              // Existing paragraph with text (e.g. "Hello|"): insert after it
+              insertPos = $from.after()
+            }
+          }
+
+          // Insert table
+          tr.insert(insertPos, tableNode)
+          const tableEnd = insertPos + tableNode.nodeSize
+
+          // Insert empty paragraph after table
+          tr.insert(tableEnd, pNode)
+
+          // Move Selection into the empty paragraph outside the table
+          const targetPos = Math.min(tableEnd + 1, tr.doc.content.size)
+          tr.setSelection(TextSelection.create(tr.doc, targetPos))
+
+          dispatch(tr.scrollIntoView())
+          editor.view.focus()
         }}
       />
 
