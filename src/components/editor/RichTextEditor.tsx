@@ -532,46 +532,180 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600 prose-li:my-0 prose-ul:my-1 prose-ol:my-1',
       },
+      handleClick: (view, pos, event) => {
+        if (event.defaultPrevented) return true
+
+        const target = event.target as HTMLElement | null
+        if (target?.closest('td, th, button, input, a, select, [role="menu"], h1, h2, h3, h4, h5, h6, blockquote, ul, ol, li')) {
+          return false
+        }
+
+        const { state } = view
+        const $pos = state.doc.resolve(pos)
+
+        // Check if selection landed inside a tableCell even though click was physically outside the table
+        let insideTable = false
+        for (let d = $pos.depth; d > 0; d--) {
+          if ($pos.node(d).type.name === 'table') {
+            insideTable = true
+            break
+          }
+        }
+
+        if (insideTable) {
+          const tables = Array.from(view.dom.querySelectorAll('table'))
+          for (const tableEl of tables) {
+            const rect = tableEl.getBoundingClientRect()
+            if (event.clientY >= rect.bottom - 2) {
+              insertParagraphAfterTable(view)
+              return true
+            }
+          }
+        }
+
+        return false
+      },
       handleDOMEvents: {
         mousedown: (view, event) => {
           const target = event.target as HTMLElement | null
           if (!target) return false
 
-          // Don't intercept clicks inside table cells, buttons, inputs, context menus, or forms
+          // 1. NEVER intercept clicks inside table cells (td/th), form controls, or popup menus
           if (target.closest('td, th, button, input, a, select, [role="menu"]')) {
             return false
           }
 
-          // Don't intercept clicks on existing textblocks (paragraphs, headings, lists, quotes)
-          // ProseMirror will position the caret naturally exactly where clicked!
-          if (target.closest('p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol, li')) {
+          // 2. Don't intercept clicks on structured blocks (headings, lists, blockquotes)
+          if (target.closest('h1, h2, h3, h4, h5, h6, blockquote, ul, ol, li')) {
             return false
           }
 
-          const editorEl = view.dom
-          const tables = Array.from(editorEl.querySelectorAll('table'))
-          if (tables.length === 0) return false
-
+          const { state, dispatch } = view
+          const { doc, schema } = state
+          const clickX = event.clientX
           const clickY = event.clientY
 
-          // 1. Check if clicking below the lowest table in empty/container background
-          const lastTable = tables[tables.length - 1]
-          const lastRect = lastTable.getBoundingClientRect()
-          if (clickY > lastRect.bottom + 4) {
-            event.preventDefault()
-            event.stopPropagation()
-            insertParagraphAfterTable(view)
-            return true
+          const tables = Array.from(view.dom.querySelectorAll('table'))
+          if (tables.length === 0) return false
+
+          // Test posAtCoords
+          const posAtPoint = view.posAtCoords({ left: clickX, top: clickY })
+          let isInsideTableCell = false
+          let isAtTableBoundary = false
+
+          if (posAtPoint) {
+            const $resolved = doc.resolve(posAtPoint.pos)
+            for (let d = $resolved.depth; d > 0; d--) {
+              if ($resolved.node(d).type.name === 'table') {
+                isInsideTableCell = true
+                break
+              }
+            }
+            if ($resolved.nodeBefore?.type.name === 'table') {
+              isAtTableBoundary = true
+            }
           }
 
-          // 2. Check if clicking above the topmost table in empty/container background
-          const firstTable = tables[0]
-          const firstRect = firstTable.getBoundingClientRect()
-          if (clickY < firstRect.top - 4) {
-            event.preventDefault()
-            event.stopPropagation()
-            insertParagraphBeforeTable(view)
-            return true
+          // Iterate tables to check vertical boundaries
+          for (let i = 0; i < tables.length; i++) {
+            const tableEl = tables[i]
+            const wrapperEl = (tableEl.closest('.tableWrapper') as HTMLElement) || tableEl
+            const tableRect = tableEl.getBoundingClientRect()
+            const wrapperRect = wrapperEl.getBoundingClientRect()
+            const tableBottom = Math.max(tableRect.bottom, wrapperRect.bottom)
+            const tableTop = Math.min(tableRect.top, wrapperRect.top)
+
+            // Find this table node in ProseMirror doc
+            let currentTablePos = -1
+            let currentTableEnd = -1
+            let tableIndex = 0
+            doc.descendants((node, pos) => {
+              if (node.type.name === 'table') {
+                if (tableIndex === i) {
+                  currentTablePos = pos
+                  currentTableEnd = pos + node.nodeSize
+                }
+                tableIndex++
+              }
+            })
+            if (currentTableEnd === -1) continue
+
+            // A) Click is BELOW this table (gap, trailing paragraph, or blank background below)
+            if (clickY >= tableBottom - 2) {
+              const nextTableEl = tables[i + 1]
+              const nextTableTop = nextTableEl
+                ? ((nextTableEl.closest('.tableWrapper') as HTMLElement) || nextTableEl).getBoundingClientRect().top
+                : Infinity
+
+              if (clickY < nextTableTop) {
+                if (currentTableEnd < doc.content.size) {
+                  const $after = doc.resolve(currentTableEnd)
+                  const nextNode = $after.nodeAfter
+                  if (nextNode && nextNode.type.name === 'paragraph') {
+                    // If click already naturally resolved into this paragraph's text (and not cell/boundary), let PM handle it
+                    if (posAtPoint && !isInsideTableCell && !isAtTableBoundary) {
+                      const $p = doc.resolve(posAtPoint.pos)
+                      if ($p.parent.type.name === 'paragraph' && $p.node(-1)?.type.name !== 'tableCell') {
+                        return false
+                      }
+                    }
+
+                    // Otherwise (empty paragraph, blank space below, or posAtCoords fell into table):
+                    const targetPos = currentTableEnd + 1
+                    const tr = state.tr.setSelection(TextSelection.create(doc, Math.min(targetPos, doc.content.size)))
+                    dispatch(tr)
+                    view.focus()
+                    event.preventDefault()
+                    return true
+                  }
+                }
+
+                // If no paragraph exists after table, insert one and focus it
+                const tr = state.tr.insert(currentTableEnd, schema.nodes.paragraph.create())
+                tr.setSelection(TextSelection.create(tr.doc, currentTableEnd + 1))
+                dispatch(tr)
+                view.focus()
+                event.preventDefault()
+                return true
+              }
+            }
+
+            // B) Click is ABOVE this table (gap or blank area above this table)
+            if (clickY <= tableTop + 2) {
+              const prevTableEl = tables[i - 1]
+              const prevTableBottom = prevTableEl
+                ? ((prevTableEl.closest('.tableWrapper') as HTMLElement) || prevTableEl).getBoundingClientRect().bottom
+                : -Infinity
+
+              if (clickY > prevTableBottom) {
+                if (currentTablePos > 0) {
+                  const $before = doc.resolve(currentTablePos)
+                  const prevNode = $before.nodeBefore
+                  if (prevNode && prevNode.type.name === 'paragraph') {
+                    if (posAtPoint && !isInsideTableCell) {
+                      const $p = doc.resolve(posAtPoint.pos)
+                      if ($p.parent.type.name === 'paragraph' && $p.node(-1)?.type.name !== 'tableCell') {
+                        return false
+                      }
+                    }
+                    const targetPos = Math.max(1, currentTablePos - 1)
+                    const tr = state.tr.setSelection(TextSelection.create(doc, targetPos))
+                    dispatch(tr)
+                    view.focus()
+                    event.preventDefault()
+                    return true
+                  }
+                }
+
+                // Insert paragraph before table
+                const tr = state.tr.insert(currentTablePos, schema.nodes.paragraph.create())
+                tr.setSelection(TextSelection.create(tr.doc, currentTablePos + 1))
+                dispatch(tr)
+                view.focus()
+                event.preventDefault()
+                return true
+              }
+            }
           }
 
           return false
@@ -675,6 +809,12 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     },
   })
 
+  React.useEffect(() => {
+    if (editor && typeof window !== 'undefined') {
+      (window as any).__tiptapEditor = editor
+    }
+  }, [editor])
+
   const handleOpenLinkModal = React.useCallback(() => {
     if (!editor) return
     const attrs = editor.getAttributes('link')
@@ -731,7 +871,9 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         <BubbleMenu
           editor={editor}
           shouldShow={({ editor, state }) => {
-            return editor.isFocused || selectedImage !== null || !state.selection.empty || editor.isActive('table')
+            if (selectedImage !== null || editor.isActive('customImage')) return true
+            if (editor.isActive('table') || state.selection.empty) return false
+            return true
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
@@ -950,74 +1092,6 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             <Unlink className="h-4 w-4" />
           </Button>
 
-          {/* Quick Table Controls in BubbleMenu */}
-          {editor.isActive('table') && (
-            <>
-              <div className="w-px h-6 bg-border mx-1" />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().addRowAfter().run()}
-                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium"
-                title="Insert Row Below"
-              >
-                <Rows2 className="h-3 w-3" /> +Row
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().addColumnAfter().run()}
-                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium"
-                title="Insert Column Right"
-              >
-                <Columns2 className="h-3 w-3" /> +Col
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().deleteRow().run()}
-                className="hover:bg-destructive/10 text-destructive text-xs px-2 gap-1 h-7 font-medium"
-                title="Delete Current Row"
-              >
-                <Trash2 className="h-3 w-3" /> -Row
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => editor.chain().focus().deleteColumn().run()}
-                className="hover:bg-destructive/10 text-destructive text-xs px-2 gap-1 h-7 font-medium"
-                title="Delete Current Column"
-              >
-                <Trash2 className="h-3 w-3" /> -Col
-              </Button>
-              <div className="w-px h-5 bg-border mx-1" />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => insertParagraphBeforeTable(editor)}
-                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium text-primary"
-                title="Write simple text above table"
-              >
-                <Pilcrow className="h-3 w-3 text-primary" /> Text Above
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => insertParagraphAfterTable(editor)}
-                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium text-primary"
-                title="Write simple text below table"
-              >
-                <Pilcrow className="h-3 w-3 text-primary" /> Text Below
-              </Button>
-            </>
-          )}
-
           <div className="w-px h-6 bg-border mx-1" />
 
           {/* Semantic Headings & Paragraph in BubbleMenu */}
@@ -1182,41 +1256,6 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         <EditorContent editor={editor} className="flex-1 w-full" />
       </div>
 
-      {/* Floating Action Strip when Cursor is Inside a Table */}
-      {editor && editor.isActive('table') && (
-        <div className="flex items-center justify-between px-4 py-2 bg-muted/90 backdrop-blur border-t border-border text-xs text-muted-foreground animate-in fade-in slide-in-from-bottom-2 duration-150 sticky bottom-0 z-30 shadow-md">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-foreground flex items-center gap-1.5">
-              <Table2 className="h-4 w-4 text-primary" /> Inside Table
-            </span>
-            <span className="hidden sm:inline text-muted-foreground/80">• Click to exit table & write normal text:</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => insertParagraphBeforeTable(editor)}
-              className="h-7 text-xs gap-1.5 bg-background shadow-xs hover:border-primary hover:text-primary transition-all font-medium"
-              title="Add a normal text paragraph above this table"
-            >
-              <Pilcrow className="h-3.5 w-3.5 text-primary" />
-              Write Text Above Table
-            </Button>
-            <Button
-              type="button"
-              variant="default"
-              size="sm"
-              onClick={() => insertParagraphAfterTable(editor)}
-              className="h-7 text-xs gap-1.5 shadow-xs font-semibold"
-              title="Add a normal text paragraph below this table"
-            >
-              <Pilcrow className="h-3.5 w-3.5" />
-              Write Text Below Table
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* Link Edit Dialog */}
       <LinkModal

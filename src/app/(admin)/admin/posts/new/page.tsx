@@ -12,14 +12,22 @@ export default async function NewPostPage() {
     redirect("/")
   }
 
-  const [categories, authors] = await Promise.all([
-    prisma.category.findMany({
-      orderBy: { name: 'asc' }
-    }),
-    prisma.author.findMany({
-      orderBy: { name: 'asc' }
-    })
-  ])
+  let categories: any[] = []
+  let authors: any[] = []
+  try {
+    const res = await Promise.all([
+      prisma.category.findMany({
+        orderBy: { name: 'asc' }
+      }),
+      prisma.author.findMany({
+        orderBy: { name: 'asc' }
+      })
+    ])
+    categories = res[0]
+    authors = res[1]
+  } catch (e) {
+    console.error("Failed to load categories/authors:", e)
+  }
 
   return (
     <div className="container mx-auto py-10">
