@@ -14,6 +14,7 @@ import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
+import { Selection } from '@tiptap/pm/state'
 import { Button } from '@/components/ui/button'
 import {
   Bold,
@@ -38,10 +39,16 @@ import {
   AlignCenter,
   AlignRight,
   Check,
-  ArrowUp
+  ArrowUp,
+  Table2,
+  Rows2,
+  Columns2,
+  Trash2
 } from 'lucide-react'
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { LinkModal } from './LinkModal'
+import { TableModal } from './TableModal'
+import { TableContextMenu } from './TableContextMenu'
 
 interface RichTextEditorProps {
   content: string
@@ -102,10 +109,12 @@ const MenuBar = ({
   editor,
   onImageClick,
   onOpenLinkModal,
+  onOpenTableModal,
 }: {
   editor: any
   onImageClick?: () => void
   onOpenLinkModal: () => void
+  onOpenTableModal: () => void
 }) => {
   if (!editor) {
     return null
@@ -185,6 +194,20 @@ const MenuBar = ({
         <AlignRight className="h-4 w-4" />
       </Button>
       
+      <div className="w-px h-6 bg-border mx-1" />
+
+      {/* Table Controls */}
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onOpenTableModal}
+        className={editor.isActive('table') ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}
+        title="Insert Table (Rows & Columns)"
+      >
+        <Table2 className="h-4 w-4" />
+      </Button>
+
       <div className="w-px h-6 bg-border mx-1" />
 
       {/* Link Controls */}
@@ -406,6 +429,10 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     isActive: false,
   })
 
+  // Table Modal & Context Menu State
+  const [tableModalOpen, setTableModalOpen] = React.useState(false)
+  const [tableContextMenu, setTableContextMenu] = React.useState<{ x: number; y: number } | null>(null)
+
   React.useEffect(() => {
     const handleImageSelect = (e: any) => {
       setSelectedImage(e.detail.src)
@@ -476,6 +503,26 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
     editorProps: {
       attributes: {
         class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert focus:outline-none min-h-[500px] p-6 bg-background w-full max-w-none prose-p:leading-normal prose-p:my-1 prose-headings:font-bold prose-headings:my-1 prose-img:rounded-xl prose-a:text-blue-500 prose-a:no-underline hover:prose-a:text-blue-600 prose-li:my-0 prose-ul:my-1 prose-ol:my-1',
+      },
+      handleDOMEvents: {
+        contextmenu: (view, event) => {
+          const target = event.target as HTMLElement | null
+          const tableElement = target?.closest('table')
+          if (tableElement) {
+            event.preventDefault()
+            const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })
+            if (pos) {
+              const tr = view.state.tr
+              const resolved = view.state.doc.resolve(pos.pos)
+              tr.setSelection(Selection.near(resolved))
+              view.dispatch(tr)
+              view.focus()
+            }
+            setTableContextMenu({ x: event.clientX, y: event.clientY })
+            return true
+          }
+          return false
+        },
       },
       handleKeyDown: (view, event) => {
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -557,13 +604,14 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         editor={editor}
         onImageClick={onImageClick}
         onOpenLinkModal={handleOpenLinkModal}
+        onOpenTableModal={() => setTableModalOpen(true)}
       />
 
       {editor && (
         <BubbleMenu
           editor={editor}
           shouldShow={({ editor, state }) => {
-            return editor.isFocused || selectedImage !== null || !state.selection.empty
+            return editor.isFocused || selectedImage !== null || !state.selection.empty || editor.isActive('table')
           }}
           className="flex flex-wrap max-w-2xl bg-popover text-popover-foreground shadow-lg border rounded-xl overflow-hidden p-1 gap-1 items-center z-50"
         >
@@ -782,6 +830,53 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             <Unlink className="h-4 w-4" />
           </Button>
 
+          {/* Quick Table Controls in BubbleMenu */}
+          {editor.isActive('table') && (
+            <>
+              <div className="w-px h-6 bg-border mx-1" />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().addRowAfter().run()}
+                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium"
+                title="Insert Row Below"
+              >
+                <Rows2 className="h-3 w-3" /> +Row
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().addColumnAfter().run()}
+                className="hover:bg-muted/80 text-xs px-2 gap-1 h-7 font-medium"
+                title="Insert Column Right"
+              >
+                <Columns2 className="h-3 w-3" /> +Col
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().deleteRow().run()}
+                className="hover:bg-destructive/10 text-destructive text-xs px-2 gap-1 h-7 font-medium"
+                title="Delete Current Row"
+              >
+                <Trash2 className="h-3 w-3" /> -Row
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => editor.chain().focus().deleteColumn().run()}
+                className="hover:bg-destructive/10 text-destructive text-xs px-2 gap-1 h-7 font-medium"
+                title="Delete Current Column"
+              >
+                <Trash2 className="h-3 w-3" /> -Col
+              </Button>
+            </>
+          )}
+
           <div className="w-px h-6 bg-border mx-1" />
 
           {/* Semantic Headings & Paragraph in BubbleMenu */}
@@ -898,7 +993,25 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         </BubbleMenu>
       )}
 
-      <EditorContent editor={editor} className="flex-1 w-full" />
+      <div
+        className="flex-1 w-full"
+        onContextMenu={(e) => {
+          const target = e.target as HTMLElement | null
+          const tableElement = target?.closest('table')
+          if (tableElement && editor) {
+            e.preventDefault()
+            const pos = editor.view.posAtCoords({ left: e.clientX, top: e.clientY })
+            if (pos) {
+              const resolved = editor.state.doc.resolve(pos.pos)
+              editor.view.dispatch(editor.state.tr.setSelection(Selection.near(resolved)))
+              editor.view.focus()
+            }
+            setTableContextMenu({ x: e.clientX, y: e.clientY })
+          }
+        }}
+      >
+        <EditorContent editor={editor} className="flex-1 w-full" />
+      </div>
 
       {/* Link Edit Dialog */}
       <LinkModal
@@ -911,6 +1024,25 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         onApply={handleApplyLink}
         onRemove={handleRemoveLink}
       />
+
+      {/* Table Insert Dialog */}
+      <TableModal
+        isOpen={tableModalOpen}
+        onClose={() => setTableModalOpen(false)}
+        onInsert={(rows, cols, withHeaderRow) => {
+          if (!editor) return
+          editor.chain().focus().insertTable({ rows, cols, withHeaderRow }).run()
+        }}
+      />
+
+      {/* Table Right-Click Context Menu */}
+      {editor && (
+        <TableContextMenu
+          editor={editor}
+          position={tableContextMenu}
+          onClose={() => setTableContextMenu(null)}
+        />
+      )}
 
       <Button
         type="button"
