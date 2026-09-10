@@ -542,13 +542,19 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             return false
           }
 
+          // Don't intercept clicks on existing textblocks (paragraphs, headings, lists, quotes)
+          // ProseMirror will position the caret naturally exactly where clicked!
+          if (target.closest('p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol, li')) {
+            return false
+          }
+
           const editorEl = view.dom
           const tables = Array.from(editorEl.querySelectorAll('table'))
           if (tables.length === 0) return false
 
           const clickY = event.clientY
 
-          // 1. Check if clicking below the lowest table
+          // 1. Check if clicking below the lowest table in empty/container background
           const lastTable = tables[tables.length - 1]
           const lastRect = lastTable.getBoundingClientRect()
           if (clickY > lastRect.bottom + 4) {
@@ -558,7 +564,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             return true
           }
 
-          // 2. Check if clicking above the topmost table
+          // 2. Check if clicking above the topmost table in empty/container background
           const firstTable = tables[0]
           const firstRect = firstTable.getBoundingClientRect()
           if (clickY < firstRect.top - 4) {
@@ -1285,10 +1291,13 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
           tr.insert(insertPos, tableNode)
           const tableEnd = insertPos + tableNode.nodeSize
 
-          // Insert empty paragraph after table
-          tr.insert(tableEnd, pNode)
+          // Ensure an independent paragraph immediately after the table
+          const afterNode = tableEnd < tr.doc.content.size ? tr.doc.resolve(tableEnd).nodeAfter : null
+          if (!afterNode || afterNode.type.name !== 'paragraph') {
+            tr.insert(tableEnd, pNode)
+          }
 
-          // Move Selection into the empty paragraph outside the table
+          // Move Selection into the independent paragraph outside and below the table
           const targetPos = Math.min(tableEnd + 1, tr.doc.content.size)
           tr.setSelection(TextSelection.create(tr.doc, targetPos))
 

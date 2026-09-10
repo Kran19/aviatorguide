@@ -194,10 +194,10 @@
   margin-bottom: 0.3em !important;
 }
 
-/* Hide & collapse empty paragraphs and break-only paragraphs */
-.prose p:empty,
-.prose p:has(br:only-child),
-.prose p:blank {
+/* Hide & collapse empty paragraphs ONLY in rendered blog articles, NEVER in the editor */
+article.prose p:empty,
+article.prose p:has(br:only-child),
+article.prose p:blank {
   display: none !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -264,12 +264,11 @@
 /* TipTap & Prose Responsive Table Styles */
 .tableWrapper {
   overflow-x: auto;
-  margin: 1.5rem 0;
+  margin: 1.25rem 0;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border);
-  background: var(--card);
+  border: none !important;
+  background: transparent !important;
 }
 
 /* Ensure table container does not break out of prose column */
@@ -277,15 +276,28 @@
   overflow-x: hidden;
 }
 
-/* Responsive Table Wrapper in prose and tiptap */
+/* Responsive Table in prose and tiptap */
 .prose table,
 .tiptap table {
   border-collapse: collapse;
-  margin: 1.25rem 0;
+  margin: 0 !important;
   width: 100%;
   min-width: 100%;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
+  background: var(--card);
+}
+
+/* Ensure paragraph sibling after table wrapper is a pure, independent document block */
+.tableWrapper + p,
+.tiptap .tableWrapper + p,
+.ProseMirror .tableWrapper + p {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  margin-top: 0.75rem !important;
 }
 
 /* On mobile / small screens, enable horizontal scroll directly on the table */
@@ -387,12 +399,22 @@
   cursor: col-resize;
 }
 
-/* Ensure editor paragraphs have clickable minimum height and natural text cursor */
+/* Ensure all editor paragraphs have clickable minimum height, natural text cursor, and are ALWAYS visible */
 .tiptap p,
-.prose p {
-  min-height: 1.5rem;
-  line-height: 1.5rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  cursor: text;
+.ProseMirror p,
+.prose.tiptap p,
+.prose.ProseMirror p,
+.tiptap p:empty,
+.ProseMirror p:empty,
+.tiptap p:has(br),
+.ProseMirror p:has(br) {
+  display: block !important;
+  min-height: 1.5rem !important;
+  line-height: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  padding: 0 !important;
+  cursor: text !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
