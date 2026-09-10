@@ -261,21 +261,43 @@
   100% { background-position: -200% center; }
 }
 
-/* TipTap & Prose Table Styles */
+/* TipTap & Prose Responsive Table Styles */
 .tableWrapper {
   overflow-x: auto;
   margin: 1.5rem 0;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
 }
 
-.tiptap table,
-.prose table {
+/* Ensure table container does not break out of prose column */
+.prose {
+  overflow-x: hidden;
+}
+
+/* Responsive Table Wrapper in prose and tiptap */
+.prose table,
+.tiptap table {
   border-collapse: collapse;
   margin: 1.25rem 0;
   width: 100%;
-  table-layout: fixed;
+  min-width: 100%;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
+}
+
+/* On mobile / small screens, enable horizontal scroll directly on the table */
+@media (max-width: 768px) {
+  .prose table,
+  .tiptap table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: normal;
+  }
 }
 
 .tiptap table th,
@@ -284,20 +306,20 @@
   background-color: var(--muted);
   color: var(--foreground);
   font-weight: 600;
-  padding: 0.625rem 0.875rem;
+  padding: 0.75rem 1rem;
   text-align: left;
   vertical-align: top;
   position: relative;
-  min-width: 80px;
+  min-width: 110px;
 }
 
 .tiptap table td,
 .prose table td {
   border: 1px solid var(--border);
-  padding: 0.625rem 0.875rem;
+  padding: 0.75rem 1rem;
   vertical-align: top;
   position: relative;
-  min-width: 80px;
+  min-width: 110px;
   box-sizing: border-box;
 }
 
@@ -305,6 +327,34 @@
 .tiptap table th > * {
   margin-bottom: 0 !important;
   margin-top: 0 !important;
+}
+
+/* Sleek custom scrollbars for mobile & desktop table scrolling */
+.tableWrapper::-webkit-scrollbar,
+.prose table::-webkit-scrollbar,
+.tiptap table::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tableWrapper::-webkit-scrollbar-track,
+.prose table::-webkit-scrollbar-track,
+.tiptap table::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 9999px;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb,
+.prose table::-webkit-scrollbar-thumb,
+.tiptap table::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 9999px;
+  opacity: 0.5;
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover,
+.prose table::-webkit-scrollbar-thumb:hover,
+.tiptap table::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 /* TipTap Selected Table Cells */

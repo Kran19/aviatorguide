@@ -9,7 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Table2, Plus, Minus, Check } from "lucide-react"
+import { Table2, Plus, Minus, Check, Smartphone } from "lucide-react"
 
 export interface TableModalProps {
   isOpen: boolean
@@ -220,19 +220,28 @@ export function TableModal({
             </div>
           </div>
 
-          {/* Header Row Option */}
-          <label className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/30 cursor-pointer transition-colors">
-            <input
-              type="checkbox"
-              checked={withHeaderRow}
-              onChange={(e) => setWithHeaderRow(e.target.checked)}
-              className="h-4 w-4 rounded border-input text-primary focus:ring-primary accent-primary cursor-pointer"
-            />
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-foreground">Include Header Row</span>
-              <span className="text-xs text-muted-foreground">Formats the top row as table headers with distinct styling</span>
+          {/* Header Row Option & Responsive Feature */}
+          <div className="space-y-2">
+            <label className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/30 cursor-pointer transition-colors">
+              <input
+                type="checkbox"
+                checked={withHeaderRow}
+                onChange={(e) => setWithHeaderRow(e.target.checked)}
+                className="h-4 w-4 rounded border-input text-primary focus:ring-primary accent-primary cursor-pointer"
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-foreground">Include Header Row</span>
+                <span className="text-xs text-muted-foreground">Formats the top row as table headers with distinct styling</span>
+              </div>
+            </label>
+
+            <div className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/5 border border-primary/20 text-xs text-muted-foreground">
+              <Smartphone className="h-4 w-4 text-primary shrink-0" />
+              <span>
+                <strong className="text-foreground">Responsive Table:</strong> Automatically formatted with smooth horizontal scrolling for mobile & tablet screens.
+              </span>
             </div>
-          </label>
+          </div>
 
           <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-border/40">
             <Button
