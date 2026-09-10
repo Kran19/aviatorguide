@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { StatCounter } from "@/components/analytics/StatCounter";
 
-const outfit = Outfit({
+const outfit = localFont({
+  src: "./fonts/Outfit-VariableFont_wght.ttf",
   variable: "--font-sans",
-  subsets: ["latin"],
   display: "swap",
 });
 
