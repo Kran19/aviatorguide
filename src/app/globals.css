@@ -399,22 +399,11 @@ article.prose p:blank {
   cursor: col-resize;
 }
 
-/* Ensure all editor paragraphs have clickable minimum height, natural text cursor, and are ALWAYS visible */
-.tiptap p,
-.ProseMirror p,
-.prose.tiptap p,
-.prose.ProseMirror p,
+/* Ensure empty paragraphs (including table entry/exit blank lines) have a clickable line box */
 .tiptap p:empty,
 .ProseMirror p:empty,
-.tiptap p:has(br),
-.ProseMirror p:has(br) {
-  display: block !important;
-  min-height: 1.5rem !important;
-  line-height: 1.5rem !important;
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
-  padding: 0 !important;
-  cursor: text !important;
-  visibility: visible !important;
-  opacity: 1 !important;
+.tiptap p:has(br:only-child),
+.ProseMirror p:has(br:only-child) {
+  min-height: 1.5rem;
+  cursor: text;
 }

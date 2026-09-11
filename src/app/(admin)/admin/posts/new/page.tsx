@@ -23,10 +23,12 @@ export default async function NewPostPage() {
         orderBy: { name: 'asc' }
       })
     ])
-    categories = res[0]
-    authors = res[1]
-  } catch (e) {
-    console.error("Failed to load categories/authors:", e)
+    categories = res[0] || []
+    authors = res[1] || []
+  } catch (e: any) {
+    console.warn("Database offline or unreachable; using fallback categories/authors:", e?.message || e)
+    categories = [{ id: "cat-default", name: "General", slug: "general" }]
+    authors = [{ id: "auth-default", name: "Default Admin Author", email: "admin@betsetgo.xyz" }]
   }
 
   return (
