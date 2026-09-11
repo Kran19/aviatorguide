@@ -1105,14 +1105,26 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             }
           }
 
-          // Insert table
-          tr.insert(insertPos, tableNode)
-          const tableEnd = insertPos + tableNode.nodeSize
+          // Insert entry paragraph before table if preceding node is not already an empty paragraph
+          let tableInsertPos = insertPos
+          const beforeNode = insertPos > 0 ? tr.doc.resolve(insertPos).nodeBefore : null
+          const isBeforeEmptyP = beforeNode && beforeNode.type.name === 'paragraph' && beforeNode.content.size === 0
+          if (!isBeforeEmptyP) {
+            const entryP = schema.nodes.paragraph.create()
+            tr.insert(tableInsertPos, entryP)
+            tableInsertPos += entryP.nodeSize
+          }
 
-          // Ensure an independent paragraph immediately after the table
+          // Insert table
+          tr.insert(tableInsertPos, tableNode)
+          const tableEnd = tableInsertPos + tableNode.nodeSize
+
+          // Insert exit paragraph after table if following node is not already an empty paragraph
           const afterNode = tableEnd < tr.doc.content.size ? tr.doc.resolve(tableEnd).nodeAfter : null
-          if (!afterNode || afterNode.type.name !== 'paragraph') {
-            tr.insert(tableEnd, pNode)
+          const isAfterEmptyP = afterNode && afterNode.type.name === 'paragraph' && afterNode.content.size === 0
+          if (!isAfterEmptyP) {
+            const exitP = schema.nodes.paragraph.create()
+            tr.insert(tableEnd, exitP)
           }
 
           // Move Selection into the independent paragraph outside and below the table
