@@ -25,17 +25,27 @@ export const metadata: Metadata = {
     siteName: "betsetgo.xyz",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "betsetgo.xyz logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "betsetgo.xyz - Premium Gaming Blog",
     description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+    images: ["/icon.png"],
   },
   verification: {
     google: "GwBrIU3Un37BTLPfnQINBwTKAjWjO4zTcVVAqkvt3Dw",
   },
   icons: {
     icon: [
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
       { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
@@ -43,8 +53,9 @@ export const metadata: Metadata = {
       { url: "/android-chrome-192x192.png", type: "image/png", sizes: "192x192" },
       { url: "/android-chrome-512x512.png", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico",
+    shortcut: ["/icon.png", "/favicon.ico"],
     apple: [
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
