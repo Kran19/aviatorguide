@@ -17,13 +17,29 @@ async function main() {
   const hashedPassword = await bcrypt.hash("password123", 10)
   const admin = await prisma.user.create({
     data: {
-      email: "admin@betsetgo.xyz",
+      email: "admin@aviatorgameguide.com",
       name: "Admin User",
       passwordHash: hashedPassword,
       role: "ADMIN",
     },
   })
-  console.log("Admin user created: admin@betsetgo.xyz (password123)")
+  console.log("Admin user created: admin@aviatorgameguide.com (password123)")
+
+  // 1b. Create Global Settings
+  await prisma.globalSettings.upsert({
+    where: { id: "global" },
+    update: {
+      siteName: "I Sports Game Guide",
+      seoTitle: "I Sports Game Guide - Premier Esports & Crash Game Guides",
+      seoDescription: "Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.",
+    },
+    create: {
+      id: "global",
+      siteName: "I Sports Game Guide",
+      seoTitle: "I Sports Game Guide - Premier Esports & Crash Game Guides",
+      seoDescription: "Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.",
+    },
+  })
 
   // 2. Create Default Authors
   const [alexAuthor, sarahAuthor] = await Promise.all([
@@ -37,9 +53,9 @@ async function main() {
         coverImage: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&q=80&w=1200",
         expertise: ["eSports", "Crash Games", "Multiplier Rounds", "Tournament Meta"],
         socialLinks: {
-          twitter: "https://twitter.com/betsetgo",
+          twitter: "https://twitter.com/isportsguide",
           linkedin: "https://linkedin.com",
-          website: "https://betsetgo.xyz",
+          website: "https://aviatorgameguide.com",
         },
       },
     }),
@@ -53,8 +69,8 @@ async function main() {
         coverImage: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=1200",
         expertise: ["Fair Play Analysis", "Slot Reviews", "Bankroll Management", "Guides"],
         socialLinks: {
-          twitter: "https://twitter.com/betsetgo",
-          website: "https://betsetgo.xyz",
+          twitter: "https://twitter.com/isportsguide",
+          website: "https://aviatorgameguide.com",
         },
       },
     }),

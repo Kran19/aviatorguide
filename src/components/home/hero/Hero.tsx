@@ -23,21 +23,21 @@ export function Hero() {
         {/* Quality Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-primary text-xs sm:text-sm font-semibold tracking-wide shadow-sm">
           <Sparkles className="w-4 h-4 text-primary" />
-          <span>PREMIUM GAMING &amp; ESPORTS INTELLIGENCE</span>
+          <span>PREMIUM I-SPORTS &amp; ESPORTS INTELLIGENCE</span>
         </div>
 
         {/* Semantic Primary H1 Header */}
         <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] sm:leading-[1.05]">
-          <span className="block text-foreground">BET SMART.</span>
-          <span className="block text-foreground/90">BET FASTER.</span>
-          <span className="block bg-gradient-to-r from-primary via-blue-500 to-emerald-400 bg-clip-text text-transparent drop-shadow-sm">
-            BETSETGO.
+          <span className="block text-foreground">PLAY SMART.</span>
+          <span className="block text-foreground/90">WIN STRATEGIC.</span>
+          <span className="block bg-gradient-to-r from-primary via-emerald-400 to-teal-400 bg-clip-text text-transparent drop-shadow-sm">
+            I SPORTS GAME GUIDE.
           </span>
         </h1>
 
         {/* Supporting Copy */}
         <p className="max-w-2xl text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed font-normal">
-          Your premier destination for in-depth game guides, crash game mechanics, sports analytics, and the latest esports drops.
+          Your premier destination for in-depth i-sports guides, crash game mechanics, sports analytics, and competitive gaming intelligence.
         </p>
 
         {/* Action Buttons */}

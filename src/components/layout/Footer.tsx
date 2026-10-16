@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gamepad2 } from "lucide-react";
+import Image from "next/image";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,14 +9,22 @@ export function Footer() {
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2 group">
-              <Gamepad2 className="h-6 w-6 text-primary group-hover:rotate-12 transition-transform duration-300" />
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-9 h-9 rounded-full overflow-hidden border border-emerald-500/30 shadow-md group-hover:scale-105 transition-transform shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="I Sports Game Guide Logo"
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
+              </div>
               <span className="font-black text-xl tracking-tight group-hover:text-primary transition-colors duration-300">
-                betsetgo.xyz
+                I Sports Game Guide
               </span>
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
-              Your premium destination for eSports news, RPG guides, and the latest deep dives into the modern gaming world. Level up your experience with us.
+              Your premier destination for i-sports news, crash game mechanics, esports analytics, and competitive strategy guides. Elevate your play with data-driven insights.
             </p>
           </div>
           
@@ -67,9 +75,9 @@ export function Footer() {
         </div>
 
         <div className="pt-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© {currentYear} betsetgo.xyz. All rights reserved.</p>
+          <p>© {currentYear} I Sports Game Guide. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <span>Powered by Next.js & betsetgo</span>
+            <span>Powered by Next.js &amp; I Sports Game Guide</span>
           </div>
         </div>
       </div>

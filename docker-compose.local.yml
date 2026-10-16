@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: isports_user
+      POSTGRES_PASSWORD: isports_local_password
+      POSTGRES_DB: isports_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - db_local_data:/var/lib/postgresql/data
+    networks:
+      - app-local-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U isports_user -d isports_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://isports_user:isports_local_password@db:5432/isports_db?schema=public
+      - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      - NEXTAUTH_URL=http://localhost:3000
+      - AUTH_URL=http://localhost:3000
+      - AUTH_SECRET=local-development-secret-key-32-chars-long
+      - AUTH_TRUST_HOST=true
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-local-network
+    volumes:
+      - uploads_local_data:/app/public/uploads
+
+networks:
+  app-local-network:
+    driver: bridge
+
+volumes:
+  db_local_data:
+  uploads_local_data:

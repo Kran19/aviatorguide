@@ -5,8 +5,8 @@ import { PostCardItem } from '@/components/blog/PostCardItem';
 export const dynamic = "force-dynamic";
 export const revalidate = 60; // ISR
 export const metadata = {
-  title: 'Blog - betsetgo.xyz',
-  description: 'Read our latest gaming blog posts.',
+  title: 'Blog - I Sports Game Guide',
+  description: 'Read our latest i-sports and gaming guides, crash game mechanics, and esports strategies.',
   alternates: {
     canonical: '/blog',
   },

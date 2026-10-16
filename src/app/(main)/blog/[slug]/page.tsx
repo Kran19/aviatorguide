@@ -45,14 +45,16 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     console.warn("Database unreachable during metadata generation for blog page.", err)
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aviatorgameguide.com"
+
   if (!post) {
-    return { title: "Blog Post | betsetgo.xyz" }
+    return { title: "Blog Post | I Sports Game Guide" }
   }
 
   const title = post.metaTitle || post.title
-  const description = post.metaDescription || post.excerpt || "Read our latest blog post on betsetgo.xyz."
-  const canonicalUrl = `https://betsetgo.xyz/blog/${post.slug}`
-  const bannerImage = post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg"
+  const description = post.metaDescription || post.excerpt || "Read our latest guide on I Sports Game Guide."
+  const canonicalUrl = `${siteUrl}/blog/${post.slug}`
+  const bannerImage = post.featuredImage || `${siteUrl}/images/default-blog-banner.svg`
 
   return {
     title,
@@ -140,9 +142,11 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
   const authorBio = effectiveAuthor?.bio || null
   const authorSocialLinks = (effectiveAuthor as any)?.socialLinks || null
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aviatorgameguide.com"
+
   // Canonical post URL
-  const canonicalUrl = `https://betsetgo.xyz/blog/${post.slug}`
-  const bannerImage = post.featuredImage || "https://betsetgo.xyz/images/default-blog-banner.svg"
+  const canonicalUrl = `${siteUrl}/blog/${post.slug}`
+  const bannerImage = post.featuredImage || `${siteUrl}/images/default-blog-banner.svg`
 
   // Special clothing-brands SEO template fallback
   if (post.slug === "clothing-brands") {
@@ -182,7 +186,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       "@id": canonicalUrl,
     },
     headline: post.title,
-    description: post.metaDescription || post.excerpt || `Read ${post.title} on betsetgo.xyz`,
+    description: post.metaDescription || post.excerpt || `Read ${post.title} on I Sports Game Guide`,
     image: [bannerImage],
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt ? post.updatedAt.toISOString() : post.createdAt.toISOString(),
@@ -190,15 +194,15 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       "@type": "Person",
       name: post.author?.name || "Editorial Team",
       ...(post.author?.image ? { image: post.author.image } : {}),
-      ...(post.author?.slug ? { url: `https://betsetgo.xyz/author/${post.author.slug}` } : {}),
+      ...(post.author?.slug ? { url: `${siteUrl}/author/${post.author.slug}` } : {}),
       ...(post.author?.bio ? { description: post.author.bio } : {}),
     },
     publisher: {
       "@type": "Organization",
-      name: "betsetgo.xyz",
+      name: "I Sports Game Guide",
       logo: {
         "@type": "ImageObject",
-        url: "https://betsetgo.xyz/rocky-logo.png",
+        url: `${siteUrl}/icon.png`,
       },
     },
   }
@@ -209,13 +213,13 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://betsetgo.xyz",
+      item: siteUrl,
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Blog",
-      item: "https://betsetgo.xyz/blog",
+      item: `${siteUrl}/blog`,
     },
   ]
 
@@ -224,7 +228,7 @@ export default async function DynamicBlogPage({ params }: BlogPageProps) {
       "@type": "ListItem",
       position: 3,
       name: post.categories[0].name,
-      item: `https://betsetgo.xyz/categories/${post.categories[0].slug}`,
+      item: `${siteUrl}/categories/${post.categories[0].slug}`,
     })
     breadcrumbItems.push({
       "@type": "ListItem",

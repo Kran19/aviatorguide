@@ -3,26 +3,27 @@ import { CheckCircle2, Play } from "lucide-react"
 
 export function ServiceProviderSection() {
   return (
-    <section className="bg-[#050505] text-white py-16 md:py-24 relative overflow-hidden border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
+    <section className="bg-[#050505] text-white py-12 sm:py-16 md:py-24 relative overflow-hidden border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-20 items-center relative z-10">
 
         {/* Left side: Video and overlays */}
-        <div className="relative w-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] rounded-lg overflow-hidden border border-white/10 group">
+        <div className="relative w-full aspect-[4/5] sm:aspect-square md:aspect-[4/5] max-w-md mx-auto md:max-w-none rounded-2xl overflow-hidden border border-white/10 shadow-2xl group">
           <video
             src="/videos/rockybook.mp4"
             autoPlay
             loop
             muted
             playsInline
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
           />
           {/* Subtle gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
           {/* Central Play Button overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-              <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-white ml-1" />
+            <div className="w-14 h-14 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg">
+              <Play className="w-6 h-6 sm:w-10 sm:h-10 text-white fill-white ml-0.5 sm:ml-1" />
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Image from "next/image"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -42,11 +43,21 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
-      <div className="w-full max-w-md p-8 space-y-6 bg-card border rounded-xl shadow-sm">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Admin Login</h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your credentials to access the admin panel
+      <div className="w-full max-w-md p-8 space-y-6 bg-card border rounded-2xl shadow-xl">
+        <div className="flex flex-col items-center space-y-3 text-center">
+          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-emerald-500/40 shadow-lg shadow-emerald-500/20">
+            <Image
+              src="/logo.png"
+              alt="I Sports Game Guide Logo"
+              fill
+              sizes="64px"
+              priority
+              className="object-cover"
+            />
+          </div>
+          <h1 className="text-2xl font-black tracking-tight">I Sports Game Guide</h1>
+          <p className="text-xs text-muted-foreground">
+            Enter your credentials to access the administrative dashboard
           </p>
         </div>
         
@@ -59,7 +70,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="admin@betsetgo.xyz"
+              placeholder="admin@aviatorgameguide.com"
               required
             />
           </div>

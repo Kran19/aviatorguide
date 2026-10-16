@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy | betsetgo.xyz',
-  description: 'Privacy Policy and Terms for betsetgo.xyz',
+  title: 'Privacy Policy | I Sports Game Guide',
+  description: 'Privacy Policy and Terms for I Sports Game Guide (aviatorgameguide.com)',
   alternates: {
     canonical: '/privacy',
   },
@@ -11,14 +11,14 @@ export default function PrivacyPage() {
     <div className="container mx-auto max-w-4xl px-4 py-24">
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight mb-4">Privacy Policy for Betsetgo</h1>
+          <h1 className="text-4xl font-bold tracking-tight mb-4">Privacy Policy for I Sports Game Guide</h1>
           <p className="text-muted-foreground">Effective Date: {new Date().toLocaleDateString()}</p>
         </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <h2>1. Introduction</h2>
           <p>
-            Welcome to Betsetgo ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website (betsetgo.xyz) and use our platform. 
+            Welcome to I Sports Game Guide ("we," "our," or "us"). We respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website (aviatorgameguide.com) and use our platform. 
           </p>
           <p>
             By accessing or using our website, you agree to the terms outlined in this Privacy Policy.
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
             We aim to collect only the essential information needed to provide you with our services. The information we collect includes:
           </p>
           <ul>
-            <li><strong>Account Information:</strong> When you register, we collect your Betsetgo ID and related account credentials.</li>
+            <li><strong>Account Information:</strong> When you register, we collect your user credentials and related account data.</li>
             <li><strong>Usage Data:</strong> We automatically collect certain information about your device and how you interact with our platform (e.g., IP address, browser type, pages visited).</li>
           </ul>
 
@@ -38,10 +38,10 @@ export default function PrivacyPage() {
             We use the information we collect for the following purposes:
           </p>
           <ul>
-            <li>To create and manage your Betsetgo account.</li>
+            <li>To create and manage your I Sports Game Guide account.</li>
             <li>To process your activities on the platform.</li>
             <li>To analyze website traffic and improve our services.</li>
-            <li>To deliver personalized content and targeted advertising.</li>
+            <li>To deliver personalized content and relevant gaming guides.</li>
           </ul>
 
           <h2>4. Cookies and Tracking Technologies</h2>
@@ -49,19 +49,19 @@ export default function PrivacyPage() {
             We use cookies and similar tracking technologies to monitor activity on our website and store certain information. 
           </p>
           <ul>
-            <li><strong>Tracking and Advertising:</strong> We use these technologies to track user behavior, analyze trends, and deliver targeted advertising that may be of interest to you.</li>
+            <li><strong>Tracking and Analytics:</strong> We use these technologies to track user behavior, analyze trends, and deliver optimized experiences that may be of interest to you.</li>
             <li><strong>Managing Cookies:</strong> You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our website.</li>
           </ul>
 
-          <h2>5. Age Restrictions & Child Protection</h2>
+          <h2>5. Age Restrictions &amp; Child Protection</h2>
           <p>
             <strong>Strict 18+ Policy:</strong> Our website is strictly intended for users who are at least 18 years of age (or the legal age of majority in your jurisdiction, whichever is higher). 
           </p>
           <p>
-            <strong>Disclaimer of Responsibility:</strong> We do not knowingly collect personal information from minors. It is the sole responsibility of parents or legal guardians to monitor their children's internet usage. <strong>If a minor under the age of 18 accesses our platform, Betsetgo accepts absolutely no liability or responsibility for their actions, financial losses, or data submission.</strong> If we become aware that a minor has provided us with personal data, we will take steps to remove that information and terminate the account immediately.
+            <strong>Disclaimer of Responsibility:</strong> We do not knowingly collect personal information from minors. It is the sole responsibility of parents or legal guardians to monitor their children's internet usage. <strong>If a minor under the age of 18 accesses our platform, I Sports Game Guide accepts absolutely no liability or responsibility for their actions, financial losses, or data submission.</strong> If we become aware that a minor has provided us with personal data, we will take steps to remove that information and terminate the account immediately.
           </p>
 
-          <h2>6. Third-Party Links & External Websites</h2>
+          <h2>6. Third-Party Links &amp; External Websites</h2>
           <p>
             Our website may contain links to other websites, advertisements, or services that are not operated by us. 
           </p>
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
 
           <h2>8. International Users</h2>
           <p>
-            Our platform is accessible to users all over the world. Your information may be transferred to — and maintained on — computers located outside of your state, province, country, or other governmental jurisdiction where the data protection laws may differ from those from your jurisdiction. By using Betsetgo, you consent to the transfer and processing of your data globally.
+            Our platform is accessible to users all over the world. Your information may be transferred to — and maintained on — computers located outside of your state, province, country, or other governmental jurisdiction where the data protection laws may differ from those from your jurisdiction. By using I Sports Game Guide, you consent to the transfer and processing of your data globally.
           </p>
 
           <h2>9. Changes to This Privacy Policy</h2>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
             If you have any questions, concerns, or requests regarding this Privacy Policy or your data, please contact us at:
           </p>
           <ul>
-            <li><strong>Email:</strong> support@betsetgo.com</li>
+            <li><strong>Email:</strong> support@aviatorgameguide.com</li>
           </ul>
         </div>
       </div>

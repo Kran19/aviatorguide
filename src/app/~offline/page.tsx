@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Offline - BetSetGo',
+  title: 'Offline - I Sports Game Guide',
   description: 'You are currently offline.',
 };
 

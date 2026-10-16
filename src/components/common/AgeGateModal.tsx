@@ -4,7 +4,7 @@ import * as React from "react"
 import { ShieldAlert, ShieldCheck, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-const SESSION_STORAGE_KEY = "betsetgo_age_verified"
+const SESSION_STORAGE_KEY = "isportsguide_age_verified"
 
 export function AgeGateModal() {
   const [isOpen, setIsOpen] = React.useState(false)

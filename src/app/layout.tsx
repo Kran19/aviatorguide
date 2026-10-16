@@ -12,17 +12,20 @@ const outfit = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://betsetgo.xyz"),
-  title: "betsetgo.xyz - Premium Gaming Blog",
-  description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://aviatorgameguide.com"),
+  title: {
+    default: "I Sports Game Guide - Premier Esports & Crash Game Guides",
+    template: "%s | I Sports Game Guide",
+  },
+  description: "Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "betsetgo.xyz - Premium Gaming Blog",
-    description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+    title: "I Sports Game Guide - Premier Esports & Crash Game Guides",
+    description: "Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.",
     url: "/",
-    siteName: "betsetgo.xyz",
+    siteName: "I Sports Game Guide",
     locale: "en_US",
     type: "website",
     images: [
@@ -30,14 +33,14 @@ export const metadata: Metadata = {
         url: "/icon.png",
         width: 512,
         height: 512,
-        alt: "betsetgo.xyz logo",
+        alt: "I Sports Game Guide logo",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "betsetgo.xyz - Premium Gaming Blog",
-    description: "A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.",
+    title: "I Sports Game Guide - Premier Esports & Crash Game Guides",
+    description: "Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.",
     images: ["/icon.png"],
   },
   verification: {

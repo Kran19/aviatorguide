@@ -3,9 +3,9 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_USER: betsetgo_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-betsetgo_password}
-      POSTGRES_DB: betsetgo_db
+      POSTGRES_USER: ${POSTGRES_USER:-isports_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-isports_secure_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-isports_db}
     ports:
       - "5436:5432"
     volumes:
@@ -13,7 +13,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U betsetgo_user -d betsetgo_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-isports_user} -d ${POSTGRES_DB:-isports_db}"]
       interval: 3s
       timeout: 3s
       retries: 10
@@ -28,10 +28,11 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgresql://betsetgo_user:${POSTGRES_PASSWORD:-betsetgo_password}@db:5432/betsetgo_db?schema=public
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - AUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
-      - AUTH_SECRET=${AUTH_SECRET:-your-super-secret-key-change-in-production}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-isports_user}:${POSTGRES_PASSWORD:-isports_secure_pass}@db:5432/${POSTGRES_DB:-isports_db}?schema=public
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-https://aviatorgameguide.com}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://aviatorgameguide.com}
+      - AUTH_URL=${AUTH_URL:-https://aviatorgameguide.com}
+      - AUTH_SECRET=${AUTH_SECRET:-super-secret-production-auth-key-change-me}
       - AUTH_TRUST_HOST=true
     depends_on:
       db:

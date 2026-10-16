@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'BetSetGo Premium Gaming Blog',
-    short_name: 'BetSetGo',
-    description: 'A premium gaming blog covering eSports, RPGs, and the latest in the gaming world.',
+    name: 'I Sports Game Guide - Premier Gaming & Esports Guides',
+    short_name: 'ISportsGuide',
+    description: 'Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.',
     start_url: '/',
     display: 'standalone',
     background_color: '#000000',

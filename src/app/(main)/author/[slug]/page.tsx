@@ -52,16 +52,18 @@ export async function generateMetadata({ params }: AuthorPageProps): Promise<Met
     console.warn("Database unreachable during author metadata generation.", err)
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aviatorgameguide.com"
+
   if (!author) {
-    return { title: "Author Profile | betsetgo.xyz" }
+    return { title: "Author Profile | I Sports Game Guide" }
   }
 
-  const title = `${author.name} - Official Author & Contributor | betsetgo.xyz`
+  const title = `${author.name} - Official Author & Contributor | I Sports Game Guide`
   const description =
     author.bio ||
-    `Explore gaming articles, reviews, and eSports insights written by ${author.name} on betsetgo.xyz.`
-  const canonicalUrl = `https://betsetgo.xyz/author/${author.slug || slug}`
-  const image = author.image || "https://betsetgo.xyz/images/default-blog-banner.svg"
+    `Explore gaming articles, reviews, and eSports insights written by ${author.name} on I Sports Game Guide.`
+  const canonicalUrl = `${siteUrl}/author/${author.slug || slug}`
+  const image = author.image || `${siteUrl}/images/default-blog-banner.svg`
 
   return {
     title,
@@ -141,11 +143,13 @@ export default async function AuthorProfilePage({ params }: AuthorPageProps) {
     notFound()
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://aviatorgameguide.com"
+
   const authorName = author.name || "Gaming Author"
   const authorDesignation = author.designation || "Content Creator & Gaming Analyst"
   const authorBio =
     author.bio ||
-    "BetSetGo content specialist bringing accurate guides, deep multiplier breakdowns, and official fair play analysis to our gaming community."
+    "I Sports Game Guide content specialist bringing accurate guides, deep multiplier breakdowns, and official fair play analysis to our gaming community."
   const authorImage = author.image
   const authorCover = author.coverImage
   const socialLinks = author.socialLinks || {}
@@ -167,7 +171,7 @@ export default async function AuthorProfilePage({ params }: AuthorPageProps) {
       jobTitle: authorDesignation,
       description: authorBio,
       ...(authorImage ? { image: authorImage } : {}),
-      url: `https://betsetgo.xyz/author/${author.slug || slug}`,
+      url: `${siteUrl}/author/${author.slug || slug}`,
       sameAs: Object.values(socialLinks).filter((url): url is string => typeof url === "string" && url.length > 0),
     },
   }

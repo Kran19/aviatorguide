@@ -1,8 +1,8 @@
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Terms of Service - betsetgo.xyz",
-  description: "Terms of Service for betsetgo.xyz gaming blog.",
+  title: "Terms of Service - I Sports Game Guide",
+  description: "Terms of Service for I Sports Game Guide (aviatorgameguide.com).",
   alternates: {
     canonical: "/terms",
   },
@@ -24,7 +24,7 @@ export default function TermsPage() {
 
             <h2>1. Acceptance of Terms</h2>
             <p>
-              By accessing and using betsetgo.xyz ("the Website"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Website.
+              By accessing and using I Sports Game Guide at aviatorgameguide.com ("the Website"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our Website.
             </p>
 
             <h2>2. User Content</h2>
@@ -34,7 +34,7 @@ export default function TermsPage() {
 
             <h2>3. Intellectual Property</h2>
             <p>
-              All content on the Website, including text, graphics, logos, images, and software, is the property of betsetgo.xyz or its content suppliers and is protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without express written permission.
+              All content on the Website, including text, graphics, logos, images, and software, is the property of I Sports Game Guide or its content suppliers and is protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without express written permission.
             </p>
 
             <h2>4. Third-Party Links</h2>
@@ -49,7 +49,7 @@ export default function TermsPage() {
 
             <h2>6. Limitation of Liability</h2>
             <p>
-              In no event shall betsetgo.xyz, its authors, or its affiliates be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the Website.
+              In no event shall I Sports Game Guide, its authors, or its affiliates be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or in connection with your use of the Website.
             </p>
 
             <h2>7. Changes to Terms</h2>

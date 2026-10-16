@@ -42,7 +42,7 @@ export function AuthorCard({
   const authorSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   const authorProfileUrl = `/author/${authorSlug}`
 
-  const defaultBio = "BetSetGo content team combines years of expertise in online gaming, sports analysis, and platform mechanics to bring you accurate guides, game reviews, and responsible gaming information."
+  const defaultBio = "I Sports Game Guide content team combines years of expertise in online gaming, sports analysis, and platform mechanics to bring you accurate guides, game reviews, and responsible gaming information."
 
   return (
     <div className={`glass-card rounded-2xl border border-border/50 bg-card/60 backdrop-blur-md p-6 sm:p-8 transition-all duration-300 hover:border-primary/40 shadow-lg ${className}`}>

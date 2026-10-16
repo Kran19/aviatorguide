@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Disclaimer | Betsetgo',
-  description: 'Read our Disclaimer covering age restrictions, jurisdiction limitations, and informational nature of content on betsetgo\'s blog.',
+  title: 'Disclaimer | I Sports Game Guide',
+  description: 'Read our Disclaimer covering age restrictions, jurisdiction limitations, and informational nature of content on I Sports Game Guide.',
   robots: 'index, follow',
   alternates: {
     canonical: '/disclaimer',
@@ -13,13 +13,13 @@ export default function DisclaimerPage() {
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
         <div>
           <h1 className="text-4xl font-bold tracking-tight mb-4">Disclaimer</h1>
-          <p className="text-muted-foreground">Last Updated: 22-08-2026</p>
+          <p className="text-muted-foreground">Last Updated: {new Date().toLocaleDateString()}</p>
         </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none">
           <h2>1. General Information</h2>
           <p>
-            The content published on this blog betsetgo.xyz is provided for general informational and entertainment purposes only. It relates to online gaming topics, including game guides, reviews, and industry-related content.
+            The content published on this blog (aviatorgameguide.com) is provided for general informational and entertainment purposes only. It relates to online gaming topics, including game guides, crash game mechanics, esports reviews, and industry-related content.
           </p>
           <p>
             Nothing on this website should be interpreted as professional, financial, legal, or gambling advice. Any reliance you place on the information provided is strictly at your own discretion and risk.
@@ -80,7 +80,7 @@ export default function DisclaimerPage() {
 
           <h2>9. Limitation of Liability</h2>
           <p>
-            To the fullest extent permitted by law, betsetgo and its affiliates shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of this website, reliance on its content, or use of any linked platform.
+            To the fullest extent permitted by law, I Sports Game Guide and its affiliates shall not be liable for any direct, indirect, incidental, or consequential damages arising from your use of this website, reliance on its content, or use of any linked platform.
           </p>
 
           <h2>10. Changes to This Disclaimer</h2>
@@ -93,8 +93,8 @@ export default function DisclaimerPage() {
             If you have questions about this Disclaimer, please contact us at:
           </p>
           <ul>
-            <li><strong>Mo.Number:</strong> 8905071059</li>
-            <li><strong>Website:</strong> betsetgo.xyz</li>
+            <li><strong>Website:</strong> aviatorgameguide.com</li>
+            <li><strong>Email:</strong> support@aviatorgameguide.com</li>
           </ul>
         </div>
       </div>

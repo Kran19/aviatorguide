@@ -14,9 +14,9 @@
   <circle cx="1000" cy="150" r="300" fill="#10b981" opacity="0.1" filter="blur(60px)"/>
   <circle cx="200" cy="500" r="250" fill="#06b6d4" opacity="0.1" filter="blur(60px)"/>
   <g transform="translate(100, 220)">
-    <rect x="0" y="0" width="140" height="36" rx="18" fill="url(#accent)" opacity="0.2"/>
-    <text x="70" y="23" fill="#10b981" font-family="system-ui, sans-serif" font-size="14" font-weight="700" text-anchor="middle" letter-spacing="2">BETSETGO EDITORIAL</text>
-    <text x="0" y="90" fill="#ffffff" font-family="system-ui, sans-serif" font-size="48" font-weight="800" letter-spacing="-1">NextBlog Official Insight</text>
+    <rect x="0" y="0" width="230" height="36" rx="18" fill="url(#accent)" opacity="0.2"/>
+    <text x="115" y="23" fill="#10b981" font-family="system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle" letter-spacing="2">I SPORTS GAME GUIDE</text>
+    <text x="0" y="90" fill="#ffffff" font-family="system-ui, sans-serif" font-size="48" font-weight="800" letter-spacing="-1">I Sports Official Guide</text>
     <text x="0" y="140" fill="#94a3b8" font-family="system-ui, sans-serif" font-size="22" font-weight="400">In-depth guides, strategy breakdowns &amp; industry analysis</text>
   </g>
 </svg>

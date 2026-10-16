@@ -28,7 +28,7 @@ export default async function NewPostPage() {
   } catch (e: any) {
     console.warn("Database offline or unreachable; using fallback categories/authors:", e?.message || e)
     categories = [{ id: "cat-default", name: "General", slug: "general" }]
-    authors = [{ id: "auth-default", name: "Default Admin Author", email: "admin@betsetgo.xyz" }]
+    authors = [{ id: "auth-default", name: "Default Admin Author", email: "admin@aviatorgameguide.com" }]
   }
 
   return (

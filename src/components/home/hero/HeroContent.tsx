@@ -13,20 +13,20 @@ export function HeroContent() {
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         className="pointer-events-auto flex flex-col items-center max-w-[650px] space-y-6"
       >
-        <span className="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.2em] text-white/90 shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-          THE FUTURE OF SPORTS BETTING
+        <span className="inline-block border border-white/20 bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.2em] text-white/90 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+          THE FUTURE OF I-SPORTS &amp; ESPORTS
         </span>
 
         <h1 className="text-5xl md:text-7xl lg:text-[96px] font-extrabold leading-[0.9] text-white drop-shadow-2xl">
-          <span className="block">BET SMART.</span>
-          <span className="block">BET FASTER.</span>
-          <span className="block bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(59,130,246,0.6)]">
-            BETSETGO.
+          <span className="block">PLAY SMART.</span>
+          <span className="block">WIN STRATEGIC.</span>
+          <span className="block bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(16,185,129,0.6)]">
+            I SPORTS GUIDE.
           </span>
         </h1>
 
         <p className="text-lg md:text-xl text-white/70 font-medium">
-          Experience real-time betting, AI-powered insights, instant payouts, and premium gaming designed for the next generation.
+          Comprehensive game mechanics, crash multiplier analysis, proven betting systems, and real-time esports insights.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">

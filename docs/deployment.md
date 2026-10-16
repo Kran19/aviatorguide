@@ -10,21 +10,22 @@ Create a `.env` file in the root directory based on the following template:
 
 ```env
 # Database Connection (PostgreSQL)
-DATABASE_URL="postgresql://betsetgo_user:betsetgo_password@localhost:5433/betsetgo_db?schema=public"
+DATABASE_URL="postgresql://isports_user:isports_secure_pass@db:5432/isports_db?schema=public"
 
 # PostgreSQL Container Credentials (used by docker-compose)
-POSTGRES_USER="betsetgo_user"
-POSTGRES_PASSWORD="betsetgo_password"
-POSTGRES_DB="betsetgo_db"
+POSTGRES_USER="isports_user"
+POSTGRES_PASSWORD="isports_secure_pass"
+POSTGRES_DB="isports_db"
 
-# NextAuth Configuration
-NEXTAUTH_URL="http://localhost:3000"
-AUTH_URL="http://localhost:3000"
+# Public Site & Auth URLs
+NEXT_PUBLIC_SITE_URL="https://aviatorgameguide.com"
+NEXTAUTH_URL="https://aviatorgameguide.com"
+AUTH_URL="https://aviatorgameguide.com"
 AUTH_SECRET="your-super-secret-key-change-in-production"
 AUTH_TRUST_HOST="true"
 
 # Environment
-NODE_ENV="development"
+NODE_ENV="production"
 ```
 
 ---

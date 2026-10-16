@@ -6,8 +6,8 @@ import { FolderHeart } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'Categories | betsetgo.xyz',
-  description: 'Browse gaming blog posts by category.',
+  title: 'Categories | I Sports Game Guide',
+  description: 'Browse gaming blog posts and crash game guides by category.',
   alternates: {
     canonical: '/categories',
   },

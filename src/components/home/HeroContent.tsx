@@ -10,7 +10,7 @@ const orbitron = Orbitron({
   weight: ['900'],
 })
 
-export function HeroContent({ siteName = "betsetgo.xyz", siteDesc = "Reviews, guides, eSports news, and deep dives into the modern gaming world." }: { siteName?: string, siteDesc?: string }) {
+export function HeroContent({ siteName = "I Sports Game Guide", siteDesc = "Reviews, guides, eSports news, and deep dives into the modern gaming world." }: { siteName?: string, siteDesc?: string }) {
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, -150])
   const opacity = useTransform(scrollY, [0, 300], [1, 0])

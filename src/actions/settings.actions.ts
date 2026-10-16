@@ -36,7 +36,7 @@ export async function updateGlobalSettings(data: FormData) {
   const session = await auth()
   if (session?.user?.role !== "ADMIN") throw new Error("Unauthorized")
 
-  const siteName = (data.get("siteName") as string) || "betsetgo.xyz"
+  const siteName = (data.get("siteName") as string) || "I Sports Game Guide"
   const seoTitle = (data.get("seoTitle") as string) || ""
   const seoDescription = (data.get("seoDescription") as string) || ""
   const seoKeywords = (data.get("seoKeywords") as string) || ""

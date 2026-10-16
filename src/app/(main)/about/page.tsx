@@ -2,8 +2,8 @@ import React from 'react';
 import { Target, TrendingUp, ShieldCheck, Gamepad2 } from 'lucide-react';
 
 export const metadata = {
-  title: 'About - betsetgo.xyz',
-  description: 'Learn more about betsetgo.xyz and our mission for ethical, strategic gaming.',
+  title: 'About - I Sports Game Guide',
+  description: 'Learn more about I Sports Game Guide and our mission for ethical, strategic gaming and esports analytics.',
   alternates: {
     canonical: '/about',
   },
@@ -25,7 +25,7 @@ export default function AboutPage() {
         <div className="space-y-6 animate-in fade-in slide-in-from-left-8 duration-1000">
           <h2 className="text-3xl font-bold">The Strategy of the Win</h2>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            At betsetgo.xyz, we view online gaming not merely as chance, but as a complex landscape of probability, psychology, and tactical execution. Professional gamers and successful bettors share a common trait: they don't rely on luck. They rely on data, emotional control, and relentless preparation.
+            At I Sports Game Guide, we view online gaming not merely as chance, but as a complex landscape of probability, psychology, and tactical execution. Professional gamers and successful bettors share a common trait: they don't rely on luck. They rely on data, emotional control, and relentless preparation.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
             Winning is the byproduct of making mathematically sound decisions over a long period. We are here to provide you with the deep dives, the meta-analysis, and the strategic frameworks you need to elevate your game from amateur to professional.

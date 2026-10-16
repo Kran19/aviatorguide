@@ -239,9 +239,9 @@ model ContactMessage {
 
 model GlobalSettings {
   id                         String   @id @default("global")
-  siteName                   String   @default("betsetgo.xyz")
-  seoTitle                   String?
-  seoDescription             String?  @db.Text
+  siteName                   String   @default("I Sports Game Guide")
+  seoTitle                   String?  @default("I Sports Game Guide - Premier Esports & Crash Game Guides")
+  seoDescription             String?  @db.Text @default("Your premier destination for i-sports guides, crash game mechanics, sports analytics, and competitive gameplay intelligence.")
   seoKeywords                String?
   featuredPortalEnabled      Boolean  @default(true)
   featuredPortalHeading      String?  @default("Featured Gaming Portal")
