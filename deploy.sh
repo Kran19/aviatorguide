@@ -8,8 +8,9 @@ echo "📥 Pulling latest git changes..."
 git pull origin main
 
 # 2. Rebuild and restart docker containers in background
-echo "🐳 Rebuilding and starting Docker containers..."
-docker compose up -d --build
+echo "🐳 Rebuilding and starting Docker containers with fresh code..."
+docker compose build --no-cache app
+docker compose up -d
 
 # 3. Wait briefly for services to be ready
 echo "⏳ Waiting for app container to initialize..."
