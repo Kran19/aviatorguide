@@ -57,7 +57,8 @@ const ImageNodeView = (props: any) => {
   }, [isResizing, currentWidth, width, updateAttributes])
 
   const align = textAlign || 'left'
-  const outerJustify = align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
+  const isCentered = align === 'center' || align === 'justify'
+  const outerJustify = isCentered ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
   const floatValue = float || 'none'
   const isFloating = floatValue !== 'none'
 
@@ -69,14 +70,14 @@ const ImageNodeView = (props: any) => {
         display: isFloating ? 'block' : 'flex', 
         justifyContent: isFloating ? undefined : outerJustify,
         float: isFloating ? floatValue : undefined,
-        margin: floatValue === 'left' ? '0 1.5rem 1rem 0' : floatValue === 'right' ? '0 0 1rem 1.5rem' : align === 'center' ? '1.5rem auto' : align === 'right' ? '1.5rem 0 1.5rem auto' : '1.5rem auto 1.5rem 0',
+        margin: floatValue === 'left' ? '0 1.5rem 1rem 0' : floatValue === 'right' ? '0 0 1rem 1.5rem' : isCentered ? '1.5rem auto' : align === 'right' ? '1.5rem 0 1.5rem auto' : '1.5rem auto 1.5rem 0',
       }}
       data-align={align}
       data-float={floatValue}
       data-width={currentWidth}
       data-height={height || 'auto'}
     >
-      <div style={{ width: currentWidth, maxWidth: '100%', marginLeft: align === 'center' || align === 'right' ? 'auto' : undefined, marginRight: align === 'center' ? 'auto' : undefined }}>
+      <div style={{ width: currentWidth, maxWidth: '100%', marginLeft: isCentered || align === 'right' ? 'auto' : undefined, marginRight: isCentered ? 'auto' : undefined }}>
         <div className="relative group inline-block w-full">
           <img
             src={src}
@@ -145,6 +146,8 @@ export const CustomImage = Node.create({
               alignVal = 'center'
             } else if (el.classList.contains('align-right') || el.style.justifyContent === 'flex-end' || el.style.textAlign === 'right') {
               alignVal = 'right'
+            } else if (el.classList.contains('align-justify') || el.style.textAlign === 'justify') {
+              alignVal = 'justify'
             }
           }
           
@@ -178,6 +181,8 @@ export const CustomImage = Node.create({
               alignVal = 'center'
             } else if (el.classList.contains('align-right') || el.style.justifyContent === 'flex-end' || el.style.textAlign === 'right') {
               alignVal = 'right'
+            } else if (el.classList.contains('align-justify') || el.style.textAlign === 'justify') {
+              alignVal = 'justify'
             }
           }
           
@@ -232,8 +237,9 @@ export const CustomImage = Node.create({
     if (isFloating) {
       wrapperStyle += `display:block;float:${floatValue};margin:${floatValue === 'left' ? '0 1.5rem 1rem 0' : '0 0 1rem 1.5rem'};`
     } else {
-      const justify = align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
-      margin = align === 'center' ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0 auto 0 0'
+      const isCentered = align === 'center' || align === 'justify'
+      const justify = isCentered ? 'center' : align === 'right' ? 'flex-end' : 'flex-start'
+      margin = isCentered ? '0 auto' : align === 'right' ? '0 0 0 auto' : '0 auto 0 0'
       wrapperStyle += `display:flex;justify-content:${justify};text-align:${align};margin:${margin};`
     }
 

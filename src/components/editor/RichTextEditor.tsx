@@ -38,6 +38,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
+  ChevronDown,
   Check,
   ArrowUp,
   Table2,
@@ -45,6 +47,7 @@ import {
   Columns2,
   Trash2
 } from 'lucide-react'
+import { toast } from 'sonner'
 import { MediaLibraryModal } from './MediaLibraryModal'
 import { LinkModal } from './LinkModal'
 import { TableModal } from './TableModal'
@@ -117,6 +120,20 @@ const MenuBar = ({
   onOpenLinkModal: () => void
   onOpenTableModal: () => void
 }) => {
+  const [justifyMenuOpen, setJustifyMenuOpen] = React.useState(false)
+  const justifyMenuRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if (!justifyMenuOpen) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (justifyMenuRef.current && !justifyMenuRef.current.contains(e.target as Node)) {
+        setJustifyMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [justifyMenuOpen])
+
   if (!editor) {
     return null
   }
@@ -194,6 +211,67 @@ const MenuBar = ({
       >
         <AlignRight className="h-4 w-4" />
       </Button>
+
+      {/* Justify Align Control with Word-like full document option */}
+      <div ref={justifyMenuRef} className="relative inline-flex items-center">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            if (editor.isActive('customImage')) {
+              editor.chain().focus().updateAttributes('customImage', { textAlign: 'justify', float: 'none' }).run()
+            } else {
+              editor.chain().focus().setTextAlign('justify').run()
+            }
+          }}
+          className={`${justifyMenuOpen ? 'rounded-r-none pr-1' : ''} ${editor.isActive({ textAlign: 'justify' }) || editor.isActive('customImage', { textAlign: 'justify' }) ? 'bg-muted text-primary shadow-sm' : 'hover:bg-muted/80'}`}
+          title="Justify Align (Ctrl+J)"
+        >
+          <AlignJustify className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setJustifyMenuOpen(prev => !prev)}
+          className={`rounded-l-none px-1 h-8 ${justifyMenuOpen ? 'bg-muted text-primary' : 'hover:bg-muted/80'}`}
+          title="Justify Options (e.g. Justify All Content)"
+        >
+          <ChevronDown className="h-3 w-3" />
+        </Button>
+
+        {justifyMenuOpen && (
+          <div 
+            className="absolute top-full left-0 mt-1 z-50 min-w-[210px] bg-popover text-popover-foreground border border-border rounded-lg shadow-xl py-1 text-xs animate-in fade-in zoom-in-95 duration-150"
+            onMouseLeave={() => setJustifyMenuOpen(false)}
+          >
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-muted flex items-center justify-between transition-colors"
+              onClick={() => {
+                setJustifyMenuOpen(false)
+                editor.chain().focus().setTextAlign('justify').run()
+              }}
+            >
+              <span>Justify Selection</span>
+              <kbd className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border/50">Ctrl+J</kbd>
+            </button>
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 hover:bg-muted flex items-center justify-between transition-colors font-medium text-primary hover:text-primary"
+              onClick={() => {
+                setJustifyMenuOpen(false)
+                editor.chain().focus().selectAll().setTextAlign('justify').run()
+                toast.success("All content justified like in Word!")
+              }}
+            >
+              <span>Justify All Content</span>
+              <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-semibold">Entire Post</span>
+            </button>
+          </div>
+        )}
+      </div>
       
       <div className="w-px h-6 bg-border mx-1" />
 
@@ -499,6 +577,7 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
       Color,
       TextAlign.configure({
         types: ['heading', 'paragraph', 'customImage'],
+        alignments: ['left', 'center', 'right', 'justify'],
       }),
       Highlight.configure({ multicolor: true }),
       Table.configure({
@@ -556,6 +635,11 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
           event.preventDefault()
           handleOpenLinkModal()
+          return true
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'j') {
+          event.preventDefault()
+          editor?.chain().focus().setTextAlign('justify').run()
           return true
         }
 
@@ -876,6 +960,22 @@ export default function RichTextEditor({ content, onChange, onImageClick }: Rich
             title="Align Right"
           >
             <AlignRight className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              if (editor.isActive('customImage')) {
+                editor.chain().focus().updateAttributes('customImage', { textAlign: 'justify', float: 'none' }).run()
+              } else {
+                editor.chain().focus().setTextAlign('justify').run()
+              }
+            }}
+            className={editor.isActive({ textAlign: 'justify' }) || editor.isActive('customImage', { textAlign: 'justify' }) ? 'bg-muted text-primary' : 'hover:bg-muted/80'}
+            title="Justify Align (Ctrl+J)"
+          >
+            <AlignJustify className="h-4 w-4" />
           </Button>
 
           <div className="w-px h-6 bg-border mx-1" />

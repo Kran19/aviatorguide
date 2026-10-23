@@ -161,6 +161,14 @@
   margin-right: 0 !important;
 }
 
+.blog-image-wrapper.align-justify {
+  display: flex !important;
+  justify-content: center !important;
+  text-align: justify !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 .blog-image-wrapper.float-left {
   display: block !important;
   float: left !important;
@@ -232,6 +240,24 @@ article.prose p:blank {
   justify-content: flex-end !important;
   text-align: right !important;
   margin-left: auto !important;
+}
+
+.prose figure.align-justify,
+.prose figure[data-align="justify"] {
+  display: flex !important;
+  justify-content: center !important;
+  text-align: justify !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Word-like justified text alignment */
+.prose [style*="text-align: justify"],
+.prose [style*="text-align:justify"],
+[data-align="justify"],
+.text-justify {
+  text-align: justify !important;
+  text-justify: inter-word;
 }
 
 /* View Transitions API overrides for Theme Toggle */
